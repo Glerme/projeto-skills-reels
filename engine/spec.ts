@@ -45,7 +45,7 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
       errors.push(`${c}: começa em ${s.start.toFixed(1)} s mas ${i ? `a cena anterior termina em ${prevEnd.toFixed(1)} s` : "o vídeo começa em 0 s"}`);
     prevEnd = s.end;
     if (s.end - s.start < 0.5 - EPS) errors.push(`${c}: dura menos de 0.5 s`);
-    const a = ANCHORS[s.set as SetId];
+    const a = Object.hasOwn(ANCHORS, s.set) ? ANCHORS[s.set as SetId] : undefined;
     if (!a) { errors.push(`${c}: set desconhecido "${s.set}" (use ${SET_IDS.join(", ")})`); return; }
     const spot = (n: unknown, what: string) => { if (!a.spots.includes(n as string)) errors.push(`${c}: ${what} "${n}" não existe em ${s.set}`); };
     const view = (n: unknown, what: string) => { if (!a.views.includes(n as string)) errors.push(`${c}: ${what} "${n}" não existe em ${s.set}`); };
@@ -55,21 +55,30 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
       if (s.cam.to !== undefined) view(s.cam.to, "cam.to");
       if (s.cam.recipe === "glide" && s.cam.to === undefined) errors.push(`${c}: cam.to é obrigatório em glide`);
     }
-    if (s.focus !== undefined && !a.spots.includes(s.focus) && !(x.cast && s.focus in x.cast)) errors.push(`${c}: focus "${s.focus}" não existe em ${s.set}`);
+    if (s.focus !== undefined && !a.spots.includes(s.focus) && !(isObj(x.cast) && Object.hasOwn(x.cast, s.focus))) errors.push(`${c}: focus "${s.focus}" não existe em ${s.set}`);
     const inside = (t: unknown, what: string) => {
       if (typeof t !== "number" || t < s.start - EPS || t > s.end + EPS) errors.push(`${c}: ${what} ${t} fora da cena (${s.start}–${s.end} s)`);
     };
-    (s.kicks ?? []).forEach((t: number) => inside(t, "kick"));
-    (s.cam?.punch ?? []).forEach((t: number) => inside(t, "punch"));
-    for (const ac of s.actors ?? []) {
-      if (!isObj(x.cast) || !(ac.who in x.cast)) errors.push(`${c}: personagem "${ac.who}" não existe em cast`);
+    const list = (v: unknown, what: string): unknown[] => {
+      if (v === undefined) return [];
+      if (Array.isArray(v)) return v;
+      errors.push(`${c}: ${what} deve ser uma lista`); return [];
+    };
+    list(s.kicks, "kicks").forEach((t) => inside(t, "kick"));
+    list(s.cam?.punch, "cam.punch").forEach((t) => inside(t, "punch"));
+    list(s.actors, "actors").forEach((ac, j) => {
+      if (!isObj(ac)) { errors.push(`${c}: ator ${j + 1} não é um objeto`); return; }
+      if (!isObj(x.cast) || typeof ac.who !== "string" || !Object.hasOwn(x.cast, ac.who)) errors.push(`${c}: personagem "${ac.who}" não existe em cast`);
       spot(ac.at, "at");
       if (ac.to !== undefined) spot(ac.to, "to");
-      (ac.expr ?? []).forEach(([t]: [number]) => inside(t, "expr"));
-    }
+      list(ac.expr, "expr").forEach((e) => {
+        if (!Array.isArray(e) || e.length !== 2) errors.push(`${c}: expr deve ser uma lista de [tempo, expressão]`);
+        else inside(e[0], "expr");
+      });
+    });
     if (s.xfade !== undefined) {
       const prev = shots[i - 1];
-      const lim = Math.min(s.end - s.start, prev ? prev.end - prev.start : Infinity) / 2;
+      const lim = Math.min(s.end - s.start, isObj(prev) && typeof prev.end === "number" && typeof prev.start === "number" ? prev.end - prev.start : Infinity) / 2;
       if (s.xfade > lim + EPS) errors.push(`${c}: xfade ${s.xfade} s maior que metade da menor cena vizinha (${lim} s)`);
     }
   });

@@ -28,9 +28,12 @@ const makeBloom = () => {
 };
 
 const fwd = new THREE.Vector3();
-const raw: unknown = JSON.parse(document.getElementById("video-spec")!.textContent!);
-const checked = validateSpec(raw);
-const spec = (checked.ok ? checked.spec : raw) as VideoSpec;
+/** the spec, or the reason it can't be drawn (bad JSON included): both end up in the same rejected `ready` below */
+const checked = ((): ReturnType<typeof validateSpec> => {
+  try { return validateSpec(JSON.parse(document.getElementById("video-spec")?.textContent ?? "")); }
+  catch (e) { return { ok: false, errors: [`JSON do spec ilegível: ${(e as Error).message}`] }; }
+})();
+const spec = (checked.ok ? checked.spec : null) as VideoSpec;
 
 /** One canvas with its own stage, camera and post chain; returns draw(shot, t). */
 const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => {
@@ -113,4 +116,4 @@ window.addEventListener("hf-seek", (e) => {
   if (views) renderAt(views, time);
   else waitUntil?.(ready.then((v) => renderAt(v, time)));
 });
-ready.then((v) => { views = v; renderAt(v, lastT); });
+ready.then((v) => { views = v; renderAt(v, lastT); }, () => {}); // the rejection is reported by ready.catch above

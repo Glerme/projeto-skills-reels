@@ -40,3 +40,26 @@ test("flashAlpha follows 1/.75/.45/.2", () => {
   assert.equal(f(4), 0);
   assert.equal(flashAlpha(spec, 1), 0);
 });
+
+test("never throws on malformed input", () => {
+  const good = () => JSON.parse(readFileSync("engine/fixtures/two-shots.json", "utf8"));
+  const bad: unknown[] = [null, 42, "x", [], {}, { ...good(), shots: "x" }, { ...good(), shots: [null, 7] }];
+  const shot = (patch: object) => { const g = good(); Object.assign(g.shots[0], patch); return g; };
+  bad.push(shot({ actors: [null] }), shot({ actors: "x" }), shot({ kicks: "x" }), shot({ cam: { recipe: "hold", from: "aberto", punch: 3 } }),
+    shot({ actors: [{ who: "homem", at: "centro", action: "talk", expr: [null] }] }), shot({ actors: [{ who: "homem", at: "centro", action: "talk", expr: "x" }] }),
+    shot({ set: "constructor" }), shot({ focus: "constructor" }), { ...good(), cast: { constructor: null } });
+  { const g = good(); g.shots[0] = null; g.shots[1].xfade = 0.4; bad.push(g); }
+  for (const b of bad) {
+    let r: ReturnType<typeof validateSpec> | undefined;
+    assert.doesNotThrow(() => { r = validateSpec(b); }, JSON.stringify(b));
+    assert.equal(r!.ok, false, JSON.stringify(b));
+    assert.ok(!r!.ok && r!.errors.length > 0);
+  }
+});
+
+test("who: constructor is not a cast member", () => {
+  const g = JSON.parse(readFileSync("engine/fixtures/two-shots.json", "utf8"));
+  g.shots[0].actors[0].who = "constructor";
+  const r = validateSpec(g);
+  assert.ok(!r.ok && r.errors.some((e) => e.includes('personagem "constructor" não existe')), JSON.stringify(r));
+});
