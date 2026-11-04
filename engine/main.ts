@@ -12,7 +12,7 @@ import { InkPass, noInkFallback } from "./style/ink";
 import { LensBlur, GrainEffect } from "./style/lensblur";
 import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./style/grade";
 import type { Kit } from "./style/build";
-import { layersAt, flashAlpha, type ShotSpec, type VideoSpec } from "./spec";
+import { layersAt, flashAlpha, validateSpec, type ShotSpec, type VideoSpec } from "./spec";
 
 /** A/B switches for test stills; everything but grain is on. Grain is OFF: the reference has none and it quadruples the file size. */
 const POST = { ink: true, lens: true, pre: true, bloom: true, grade: true, grain: false };
@@ -28,7 +28,9 @@ const makeBloom = () => {
 };
 
 const fwd = new THREE.Vector3();
-const spec = JSON.parse(document.getElementById("video-spec")!.textContent!) as VideoSpec;
+const raw: unknown = JSON.parse(document.getElementById("video-spec")!.textContent!);
+const checked = validateSpec(raw);
+const spec = (checked.ok ? checked.spec : raw) as VideoSpec;
 
 /** One canvas with its own stage, camera and post chain; returns draw(shot, t). */
 const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => {
@@ -97,7 +99,10 @@ const renderAt = (views: Draw[], time: number) => {
   flash.style.opacity = String(flashAlpha(spec, t));
 };
 
-const ready = loadKit().then((kit) => canvases.map((c) => makeView(c, kit, W, H)));
+// an invalid spec rejects buildReady (with the validator's pt-BR messages) instead of drawing a stale or blank frame
+const ready = (checked.ok ? loadKit() : Promise.reject(new Error("spec inválido:\n" + checked.errors.join("\n"))))
+  .then((kit) => canvases.map((c) => makeView(c, kit, W, H)));
+ready.catch((e: Error) => { console.error(e); document.title = "ERRO: " + e.message; });
 const hf = ((window as any).__hf ??= {});
 (hf.buildReady ??= {}).engine = ready; // HyperFrames waits for this before the first capture
 
