@@ -105,7 +105,7 @@ Remova `prototipo-hyperframes/` na Tarefa 5, quando o motor novo substituí-lo. 
 
 ---
 
-### Tarefa 1: Projeto e módulos de estilo
+### Task 1: Projeto e módulos de estilo
 
 **Arquivos:**
 - Criar: `package.json`, `tsconfig.json`, `.gitignore`, `engine/style/*` (a partir de `prototipo-hyperframes/src/`),
@@ -132,7 +132,7 @@ Remova `prototipo-hyperframes/` na Tarefa 5, quando o motor novo substituí-lo. 
 - [ ] **Passo 4:** rode `npm run typecheck`. Esperado: sem erros e `grep -r "story" engine/style` vazio.
 - [ ] **Passo 5:** commit `chore: projeto e módulos de estilo do motor`.
 
-### Tarefa 2: Spec do vídeo e validador
+### Task 2: Spec do vídeo e validador
 
 **Arquivos:**
 - Criar: `engine/spec.ts`, `engine/sets/anchors.ts`, `engine/validate-cli.ts`, `engine/spec.test.ts`,
@@ -192,7 +192,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode `npm test`. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: spec do vídeo e validador`.
 
-### Tarefa 3: Câmera
+### Task 3: Câmera
 
 **Arquivos:**
 - Criar: `engine/camera.ts`, `engine/camera.test.ts`.
@@ -222,7 +222,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode `npm test`. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: receitas de câmera`.
 
-### Tarefa 4: Personagens, ações e acervo inicial
+### Task 4: Personagens, ações e acervo inicial
 
 **Arquivos:**
 - Criar: `engine/cast/actions.ts`, `engine/cast/chars.ts`, `engine/cast/actions.test.ts`, `kit/characters/*.json`
@@ -260,7 +260,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode `npm test`. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: ações, piscadas e acervo inicial de personagens`.
 
-### Tarefa 5: Stage genérico, palco neutro e entrada HyperFrames
+### Task 5: Stage genérico, palco neutro e entrada HyperFrames
 
 **Arquivos:**
 - Criar: `engine/stage.ts`, `engine/sets/types.ts`, `engine/sets/palco.ts`, `engine/main.ts`, `template/index.html`,
@@ -308,7 +308,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   - Os desvios-padrão de luma (`python -c` com PIL) são > 0,05, ou seja, o frame não está liso.
 - [ ] **Passo 5:** commit `feat: stage genérico, palco neutro e entrada HyperFrames`.
 
-### Tarefa 6: Cenário rua
+### Task 6: Cenário rua
 
 **Arquivos:**
 - Criar: `engine/sets/rua.ts`, com o `buildTown` e o `flagTex` tirados do `build.ts` original e adaptados.
@@ -329,7 +329,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
     de casa.
 - [ ] **Passo 3:** commit `feat: cenário rua`.
 
-### Tarefa 7: Casa e escritório (interiores)
+### Task 7: Casa e escritório (interiores)
 
 **Arquivos:**
 - Criar: `engine/sets/room.ts`, `engine/sets/casa.ts`, `engine/sets/escritorio.ts`.
@@ -348,7 +348,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   medido com PIL) e o contorno aparece nas quinas dos móveis, mas não na junção parede/chão.
 - [ ] **Passo 3:** commit `feat: cenários casa e escritório`.
 
-### Tarefa 8: Laboratório e natureza
+### Task 8: Laboratório e natureza
 
 **Arquivos:**
 - Criar: `engine/sets/laboratorio.ts` (usa `buildRoom`: bancadas, vidraria com emissivo leve, quadro de fórmulas sem
@@ -361,7 +361,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   - Os planos abertos de natureza ficam nítidos (`dof` 0).
 - [ ] **Passo 3:** commit `feat: cenários laboratório e natureza`.
 
-### Tarefa 9: Ajuste e aprovação única do kit
+### Task 9: Ajuste e aprovação única do kit
 
 **Arquivos:**
 - Criar: `videos/_kit/` (uma cena por cenário × luz, mais um "line-up" com os 8 personagens no palco) e
@@ -378,7 +378,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   a única aprovação do kit (spec). Se ele pedir mudança, volte ao Passo 2 só na área pedida.
 - [ ] **Passo 4:** commit `feat: kit inicial aprovado`.
 
-### Tarefa 10: Voz e palavras
+### Task 10: Voz e palavras
 
 **Arquivos:**
 - Criar: `pipeline/voice.py` (a partir de `scripts/tts_pt.py`), `pipeline/words.py`, `pipeline/tests/test_voice.py`,
@@ -417,7 +417,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode `python -m unittest discover pipeline/tests`. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: voz Kokoro e alinhamento de palavras`.
 
-### Tarefa 11: Legendas
+### Task 11: Legendas
 
 **Arquivos:**
 - Criar: `pipeline/captions.py`, `pipeline/tests/test_captions.py`.
@@ -452,7 +452,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode os testes. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: legendas estilo E`.
 
-### Tarefa 12: Som
+### Task 12: Som
 
 **Arquivos:**
 - Copiar: `templates/audio/{dsp.py,instruments.py,sfx_gen.py}` do repositório da ponte para `pipeline/audio/`.
@@ -484,7 +484,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 4:** rode os testes. Esperado: PASS.
 - [ ] **Passo 5:** commit `feat: efeitos, trilhas originais e mix`.
 
-### Tarefa 13: Montagem do projeto do vídeo
+### Task 13: Montagem do projeto do vídeo
 
 **Arquivos:**
 - Criar: `pipeline/assemble.py`, `pipeline/tests/test_assemble.py`, `pipeline/tests/fixtures/mini/` (`video.json`,
@@ -514,7 +514,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   runtime sem erros.
 - [ ] **Passo 5:** commit `feat: montagem do projeto HyperFrames do vídeo`.
 
-### Tarefa 14: QA e render
+### Task 14: QA e render
 
 **Arquivos:**
 - Criar: `pipeline/qa.py` (a partir de `templates/scripts/short_qa.py`, com os limites de cena tirados do
@@ -538,7 +538,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
   QA sem problemas.
 - [ ] **Passo 4:** commit `feat: QA e render`.
 
-### Tarefa 15: A skill
+### Task 15: A skill
 
 **Arquivos:**
 - Criar: `skill/SKILL.md`, `skill/references/formatos.md`, `skill/references/cenas.md`, `skill/references/kit.md`,
@@ -567,7 +567,7 @@ export const ANCHORS: Record<SetId, { spots: string[]; views: string[] }>;
 - [ ] **Passo 2:** abra uma sessão nova e confira que a skill aparece na lista com a descrição em pt-BR.
 - [ ] **Passo 3:** commit `feat: skill shorts-cartoon`.
 
-### Tarefa 16: Primeiro vídeo de ponta a ponta
+### Task 16: Primeiro vídeo de ponta a ponta
 
 - [ ] **Passo 1:** em sessão nova, peça "faz um short de curiosidade sobre <tema escolhido pelo usuário>" e siga só a
   skill.
