@@ -1,0 +1,1 @@
+{ "id": "executivo", "label": "Executivo", "build": "stout", "skin": 1, "outfit": { "jacket": "#2b3040", "pants": "#2b3040", "boots": "#1c1c1c", "buttons": "#c8ccd2", "hat": "hair", "hair": "#3a2a20" } }

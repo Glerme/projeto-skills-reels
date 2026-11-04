@@ -1,0 +1,1 @@
+{ "id": "medico", "label": "Médico", "build": "adult", "skin": 3, "outfit": { "jacket": "#a9cfe0", "pants": "#7fa9bf", "boots": "#f4f1ea", "buttons": "#ffffff", "hat": "hair", "hair": "#2e2a2a" } }

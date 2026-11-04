@@ -1,0 +1,1 @@
+{ "id": "operario", "label": "Operário", "build": "stout", "skin": 3, "outfit": { "jacket": "#3f6fa0", "pants": "#3f6fa0", "boots": "#4a3426", "hat": "cap", "cap": "#d9822b" } }
