@@ -1,0 +1,43 @@
+<style>
+  .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .cards .card-image { aspect-ratio: auto; display: block; }
+  .cards { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important; }
+  .ph { width: 100%; position: relative; aspect-ratio: 9/16; border-radius: 14px; overflow: hidden; background: #cfe3f2 center/cover; }
+  .ph .cap { position: absolute; left: 6%; right: 6%; top: 62%; text-align: center; font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif; font-weight: 900; line-height: 1.05; }
+  /* A: uma palavra por vez, branca com contorno fino (o que a referência usa) */
+  .a .cap { font-size: 34px; color: #fff; -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; text-shadow: 0 2px 0 #000; }
+  /* B: 2-3 palavras, a palavra falada em amarelo */
+  .b .cap { font-size: 24px; color: #fff; -webkit-text-stroke: 5px #000; paint-order: stroke fill; text-transform: uppercase; }
+  .b .cap em { font-style: normal; color: #ffd400; display: inline-block; transform: scale(1.12) rotate(-2deg); }
+  /* C: faixa escura arredondada, frase inteira */
+  .c .cap { top: 66%; font-family: "Helvetica Neue", Arial, sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+  .c .cap span { background: rgba(10, 8, 14, .78); padding: 6px 10px; border-radius: 10px; box-decoration-break: clone; -webkit-box-decoration-break: clone; line-height: 1.75; }
+  .c .cap em { font-style: normal; color: #7fd1ff; }
+  /* D: "de desenho": letra gorda arredondada com contorno ameixa grosso, igual à tinta dos personagens */
+  .d .cap { font-family: "Arial Rounded MT Bold", "Nunito", "Baloo 2", "Comic Sans MS", sans-serif; font-size: 27px; color: #fff7e6; -webkit-text-stroke: 7px #241726; paint-order: stroke fill; text-shadow: 0 4px 0 #241726; }
+  .d .cap em { font-style: normal; color: #ffb36b; display: inline-block; transform: translateY(-3px) scale(1.1); }
+  .note { font-size: 13px; opacity: .75; margin-top: 6px; }
+</style>
+
+<h2>Qual estilo de legenda combina com o perfil?</h2>
+<p class="subtitle">Frames reais do motor 3D, já rodando no HyperFrames. A legenda troca a cada palavra falada; aqui é um instante congelado. Clique no que mais gostar (pode comentar no terminal o que mudaria).</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph a" style="background-image:url(/files/f3.jpg)"><div class="cap">PONTE</div></div></div>
+    <div class="card-body"><h3>A · Uma palavra por vez</h3><p>Branca, contorno fino, troca seca a cada palavra. É o que o canal de referência usa.</p></div>
+  </div>
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph b" style="background-image:url(/files/f3.jpg)"><div class="cap">derrubaram uma <em>ponte</em></div></div></div>
+    <div class="card-body"><h3>B · Grupinho + palavra em destaque</h3><p>2-3 palavras, a falada em amarelo e maior. Estilo "viral" do TikTok/Reels.</p></div>
+  </div>
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph c" style="background-image:url(/files/f40.jpg)"><div class="cap"><span>Por azar, o rio só tinha <em>meio metro</em> de fundura.</span></div></div></div>
+    <div class="card-body"><h3>C · Frase em faixa escura</h3><p>Mais calma e legível, frase inteira, palavra-chave colorida. Lembra legenda de documentário.</p></div>
+  </div>
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph d" style="background-image:url(/files/f40.jpg)"><div class="cap">Por <em>azar</em>…</div></div></div>
+    <div class="card-body"><h3>D · "De desenho"</h3><p>Letra gorda arredondada com o mesmo contorno ameixa dos personagens; a palavra falada pula em laranja.</p></div>
+  </div>
+</div>
+<p class="note">Altura: todas ficam acima dos 20 % de baixo, onde o TikTok/Reels põe o nome do perfil e a descrição.</p>

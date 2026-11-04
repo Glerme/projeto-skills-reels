@@ -1,0 +1,13 @@
+node_modules/
+lib/
+dist/
+.test/
+.hyperframes/
+renders/
+kit/kenney/
+videos/*/lib/
+videos/*/assets/kenney
+.superpowers/
+__pycache__/
+prototipo-hyperframes/node_modules/
+prototipo-hyperframes/lib/

@@ -1,0 +1,20 @@
+{
+  "name": "prototipo-hyperframes",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --format=esm --outfile=lib/bridge.js",
+    "typecheck": "tsc -p .",
+    "check": "npx --yes hyperframes@0.9.9 check",
+    "dev": "npx --yes hyperframes@0.9.9 preview",
+    "render": "npx --yes hyperframes@0.9.9 render"
+  },
+  "dependencies": {
+    "@types/three": "^0.187.0",
+    "esbuild": "^0.28.2",
+    "postprocessing": "^6.39.6",
+    "three": "^0.187.0",
+    "typescript": "^7.0.2"
+  },
+  "private": true,
+  "type": "module"
+}

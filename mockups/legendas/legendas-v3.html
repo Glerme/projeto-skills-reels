@@ -1,0 +1,20 @@
+<style>
+  .cards .card-image { aspect-ratio: auto; display: block; }
+  .cards { grid-template-columns: repeat(auto-fit, minmax(240px, 300px)) !important; }
+  .ph { width: 100%; position: relative; aspect-ratio: 9/16; border-radius: 14px; overflow: hidden; background: #cfe3f2 center/cover; }
+  .ph .cap { position: absolute; left: 7%; right: 7%; top: 60%; text-align: center; font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif; font-weight: 900; line-height: 1.08; color: #fff; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
+  .e .cap { font-size: 22px; text-transform: uppercase; }
+  .f .cap { font-size: 23px; }
+</style>
+<h2>Frase inteira, sem destaque, no visual da B</h2>
+<p class="subtitle">Uma frase curta por vez (troca quando a frase muda, não a cada palavra). Branca, grossa, contorno preto. Só muda maiúsculas x normal. Clique na que preferir.</p>
+<div class="cards">
+  <div class="card" data-choice="e" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph e" style="background-image:url(/files/f40.jpg)"><div class="cap">Por azar, o rio só tinha meio metro de fundura.</div></div></div>
+    <div class="card-body"><h3>E · TUDO MAIÚSCULO</h3><p>Mais impacto, cara de "viral".</p></div>
+  </div>
+  <div class="card" data-choice="f" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="ph f" style="background-image:url(/files/f40.jpg)"><div class="cap">Por azar, o rio só tinha meio metro de fundura.</div></div></div>
+    <div class="card-body"><h3>F · Normal (maiúscula só no começo)</h3><p>Lê mais rápido em frases longas, mais calma.</p></div>
+  </div>
+</div>
