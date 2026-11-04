@@ -1,0 +1,164 @@
+{
+ "version": 1,
+ "slug": "teste-rua",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 8,
+ "cast": {
+  "homem": {
+   "id": "homem",
+   "label": "Homem",
+   "build": "adult",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#3b5b8c",
+    "pants": "#2b2b3a",
+    "boots": "#3a2a20",
+    "hat": "hair",
+    "hair": "#4a3426"
+   }
+  },
+  "mulher": {
+   "id": "mulher",
+   "label": "Mulher",
+   "build": "slim",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#a24a5c",
+    "pants": "#4a3a5a",
+    "boots": "#3a2a20",
+    "dress": "#a24a5c",
+    "hat": "hair",
+    "hair": "#3a2418"
+   }
+  },
+  "crianca": {
+   "id": "crianca",
+   "label": "Criança",
+   "build": "kid",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#e08a3c",
+    "pants": "#3b5b9a",
+    "boots": "#f4f1ea",
+    "hat": "cap",
+    "cap": "#c9473e"
+   }
+  },
+  "idoso": {
+   "id": "idoso",
+   "label": "Idoso",
+   "build": "elder",
+   "skin": 0,
+   "outfit": {
+    "jacket": "#7a6a52",
+    "pants": "#4a4a4a",
+    "boots": "#3a2a20",
+    "hat": "hair",
+    "hair": "#b8b8b4"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 2,
+   "set": "rua",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "mulher",
+     "at": "esquerda",
+     "action": "point"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "wave"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 2,
+   "end": 4,
+   "set": "rua",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "mulher",
+     "at": "esquerda",
+     "action": "stand"
+    }
+   ],
+   "dof": 10
+  },
+  {
+   "id": 3,
+   "start": 4,
+   "end": 6,
+   "set": "rua",
+   "light": "golden",
+   "cam": {
+    "recipe": "push",
+    "from": "close"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "shock"
+    }
+   ],
+   "dof": 13
+  },
+  {
+   "id": 4,
+   "start": 6,
+   "end": 8,
+   "set": "rua",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aereo"
+   },
+   "actors": [
+    {
+     "who": "idoso",
+     "at": "esquina",
+     "action": "walk",
+     "to": "centro"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "cheer"
+    }
+   ]
+  }
+ ],
+ "sfx": [],
+ "music": {
+  "mood": "curioso"
+ }
+}
