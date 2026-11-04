@@ -1,0 +1,22 @@
+{
+  "name": "claude-animated-shorts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild engine/main.ts --bundle --format=esm --outfile=lib/engine.js",
+    "validate:build": "esbuild engine/validate-cli.ts --bundle --platform=node --format=esm --outfile=dist/validate.mjs",
+    "test": "rm -rf .test && esbuild $(find engine -name '*.test.ts') --bundle --platform=node --format=esm --outdir=.test --outbase=engine --packages=external && node --test '.test/**/*.test.js'",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@types/three": "^0.187.0",
+    "esbuild": "^0.28.2",
+    "postprocessing": "^6.39.6",
+    "three": "^0.187.0",
+    "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}
