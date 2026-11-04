@@ -42,7 +42,7 @@ export const palco: SetDef = {
   views: {
     aberto: { pos: [0, 1.6, 6], look: [0, 1.0, 0], fov: 65, roll: 0 },
     medio: { pos: [0, 1.5, 3.5], look: [0, 1.1, 0], fov: 50, roll: 0 },
-    close: { pos: [0, 1.55, 1.8], look: [0, 1.5, 0], fov: 40, roll: 0 },
+    close: { pos: [0, 1.55, 1.8], look: [0, 1.25, 0], fov: 40, roll: 0 },
     baixo: { pos: [0, 0.6, 4], look: [0, 1.4, 0], fov: 50, roll: 0 },
   },
   look: { sky: { c: ["#7cc0bb", "#6bb3ae", "#5aa6a1", "#4c9a96", "#3f8e8a"], e: [0, 3, 8, 16, 40] } },

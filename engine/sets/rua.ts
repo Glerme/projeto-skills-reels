@@ -101,7 +101,7 @@ export const rua: SetDef = {
   views: {
     aberto: { pos: [0, 1.7, 9], look: [0, 1.4, -8], fov: 50, roll: 0 },
     medio: { pos: [0.4, 1.6, 4.2], look: [0, 1.15, 0], fov: 45, roll: 0 },
-    close: { pos: [0.2, 1.55, 2.0], look: [0, 1.5, 0], fov: 38, roll: 0 },
+    close: { pos: [0.2, 1.55, 2.0], look: [0, 1.25, 0], fov: 38, roll: 0 },
     baixo: { pos: [0.5, 0.6, 4.0], look: [0, 2.6, -3], fov: 55, roll: 0 },
     aereo: { pos: [2, 16, 16], look: [0, 0, -14], fov: 50, roll: 0 },
   },

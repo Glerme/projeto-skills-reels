@@ -98,7 +98,7 @@ export const pendant = (b: Batch, x: number, z: number, h: number, shade = "#2f5
 export const ROOM_VIEWS = {
   aberto: { pos: [0, 1.6, 4.85], look: [0, 1.2, -1.5], fov: 54, roll: 0 },
   medio: { pos: [0, 1.5, 3.2], look: [0, 1.15, 0.3], fov: 45, roll: 0 },
-  close: { pos: [0.1, 1.55, 2.0], look: [0, 1.5, 0.5], fov: 38, roll: 0 },
+  close: { pos: [0.1, 1.55, 2.0], look: [0, 1.25, 0.5], fov: 38, roll: 0 },
   baixo: { pos: [0.3, 0.6, 3.4], look: [0, 1.7, -1.5], fov: 55, roll: 0 },
 } satisfies Record<string, { pos: [number, number, number]; look: [number, number, number]; fov: number; roll: number }>;
 export const ROOM_SPOTS = { centro: [0, 0, 0.5], esquerda: [-0.95, 0, 0.6], direita: [0.95, 0, 0.4], fundo: [0, 0, -2] } satisfies Record<string, [number, number, number]>;

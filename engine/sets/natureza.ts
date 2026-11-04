@@ -57,7 +57,7 @@ export const natureza: SetDef = {
   views: {
     aberto: { pos: [0, 1.6, 7], look: [0, 1.2, -4], fov: 60, roll: 0 },
     medio: { pos: [0, 1.5, 3.6], look: [0, 1.15, 0], fov: 45, roll: 0 },
-    close: { pos: [0.1, 1.55, 1.9], look: [0, 1.5, 0], fov: 38, roll: 0 },
+    close: { pos: [0.1, 1.55, 1.9], look: [0, 1.25, 0], fov: 38, roll: 0 },
     baixo: { pos: [0.4, 0.6, 4], look: [0, 1.8, -3], fov: 55, roll: 0 },
   },
   build,
