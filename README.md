@@ -26,7 +26,7 @@ O design completo está em [`docs/design.md`](docs/design.md). Ele ainda está a
 | `docs/design.md` | documento do projeto: intenção, objetivos, restrições, fluxo, kit |
 | `engine/`, `template/` | o motor 3D genérico (`npm run build` gera `lib/engine.js`) e a página HyperFrames que recebe o `video.json` |
 | `scripts/mk-test-video.sh`, `scripts/snap.sh` | monta um projeto de teste a partir de um spec e tira stills dele |
-| `scripts/tts_pt.py` | gera a narração com Kokoro: `python tts_pt.py "<texto>" saida.wav [voz]` |
+| `pipeline/` | voz (`python3 -m pipeline.voice roteiro.txt voz.wav`), palavras (`pipeline.words`) e o resto do pipeline; ambiente: `scripts/setup_venv.sh` |
 | `assets/voz/` | amostras das três vozes pt-BR do Kokoro. A escolhida foi `pm_alex` |
 | `assets/stills-motor/` | frames renderizados pelo protótipo (3 s, 40 s, 67 s) |
 | `mockups/legendas/` | os modelos de legenda mostrados na conversa e os prints. A escolhida foi a "E", em `legendas-v3.html` |
