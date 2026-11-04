@@ -1,0 +1,154 @@
+{
+ "version": 1,
+ "slug": "teste-interiores",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 8,
+ "cast": {
+  "mulher": {
+   "id": "mulher",
+   "label": "Mulher",
+   "build": "slim",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#a24a5c",
+    "pants": "#4a3a5a",
+    "boots": "#3a2a20",
+    "dress": "#a24a5c",
+    "hat": "hair",
+    "hair": "#3a2418"
+   }
+  },
+  "executivo": {
+   "id": "executivo",
+   "label": "Executivo",
+   "build": "stout",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#2b3040",
+    "pants": "#2b3040",
+    "boots": "#1c1c1c",
+    "buttons": "#c8ccd2",
+    "hat": "hair",
+    "hair": "#3a2a20"
+   }
+  },
+  "cientista": {
+   "id": "cientista",
+   "label": "Cientista",
+   "build": "adult",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#f1efe6",
+    "pants": "#3d4a5c",
+    "boots": "#3a2a20",
+    "buttons": "#d9dde0",
+    "hat": "hair",
+    "hair": "#2e2a2a"
+   }
+  },
+  "crianca": {
+   "id": "crianca",
+   "label": "Criança",
+   "build": "kid",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#e08a3c",
+    "pants": "#3b5b9a",
+    "boots": "#f4f1ea",
+    "hat": "cap",
+    "cap": "#c9473e"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 2,
+   "set": "casa",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "mulher",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "wave"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 2,
+   "end": 4,
+   "set": "casa",
+   "light": "golden",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "mulher",
+     "at": "centro",
+     "action": "point"
+    }
+   ],
+   "dof": 10
+  },
+  {
+   "id": 3,
+   "start": 4,
+   "end": 6,
+   "set": "escritorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "executivo",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "cientista",
+     "at": "direita",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "start": 6,
+   "end": 8,
+   "set": "escritorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "baixo"
+   },
+   "actors": [
+    {
+     "who": "executivo",
+     "at": "centro",
+     "action": "shock"
+    }
+   ]
+  }
+ ],
+ "sfx": [],
+ "music": {
+  "mood": "curioso"
+ }
+}
