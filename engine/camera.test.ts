@@ -45,3 +45,14 @@ test("punch speeds up, unknown view throws", () => {
   assert.ok(dist(camAt(p, T(p, 30), views)) < dist(camAt(h, T(h, 30), views)));
   assert.throws(() => camAt(shot({ cam: { recipe: "hold", from: "zz" } }), 2, views), /view desconhecida: zz/);
 });
+
+test("kick lateral offset follows d x up (right) at k=0, opposite at k=1", () => {
+  const base = shot({ cam: { recipe: "hold", from: "a" } }), kicked = { ...base, kicks: [3] };
+  const dot = (f: number) => {
+    const c = camAt(base, T(base, f), views), k = camAt(kicked, T(base, f), views);
+    const d = [c.look[0] - c.pos[0], c.look[2] - c.pos[2]];
+    return (k.pos[0] - c.pos[0]) * -d[1] + (k.pos[2] - c.pos[2]) * d[0];
+  };
+  assert.ok(dot(30) > 0);
+  assert.ok(dot(31) < 0);
+});

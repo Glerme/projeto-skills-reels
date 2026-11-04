@@ -34,7 +34,7 @@ export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps
   }
   if (!a) return c;
   const d = [c.look[0] - c.pos[0], c.look[1] - c.pos[1], c.look[2] - c.pos[2]];
-  const r = [d[2], 0, -d[0]]; // d x up(0,1,0)
+  const r = [-d[2], 0, d[0]]; // d x up(0,1,0)
   const n = Math.hypot(r[0], r[2]) || 1;
   const off = r.map((v) => (v / n) * KICK_M * a);
   return { ...c, pos: c.pos.map((v, i) => v + off[i]) as V3, look: c.look.map((v, i) => v + off[i]) as V3, roll: c.roll + KICK_DEG * a };
