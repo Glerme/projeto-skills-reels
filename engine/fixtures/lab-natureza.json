@@ -1,0 +1,153 @@
+{
+ "version": 1,
+ "slug": "teste-lab-natureza",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 8,
+ "cast": {
+  "cientista": {
+   "id": "cientista",
+   "label": "Cientista",
+   "build": "adult",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#f1efe6",
+    "pants": "#3d4a5c",
+    "boots": "#3a2a20",
+    "buttons": "#d9dde0",
+    "hat": "hair",
+    "hair": "#2e2a2a"
+   }
+  },
+  "medico": {
+   "id": "medico",
+   "label": "Médico",
+   "build": "adult",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#a9cfe0",
+    "pants": "#7fa9bf",
+    "boots": "#f4f1ea",
+    "buttons": "#ffffff",
+    "hat": "hair",
+    "hair": "#2e2a2a"
+   }
+  },
+  "homem": {
+   "id": "homem",
+   "label": "Homem",
+   "build": "adult",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#3b5b8c",
+    "pants": "#2b2b3a",
+    "boots": "#3a2a20",
+    "hat": "hair",
+    "hair": "#4a3426"
+   }
+  },
+  "crianca": {
+   "id": "crianca",
+   "label": "Criança",
+   "build": "kid",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#e08a3c",
+    "pants": "#3b5b9a",
+    "boots": "#f4f1ea",
+    "hat": "cap",
+    "cap": "#c9473e"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 2,
+   "set": "laboratorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "cientista",
+     "at": "centro",
+     "action": "point"
+    },
+    {
+     "who": "medico",
+     "at": "direita",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 2,
+   "end": 4,
+   "set": "laboratorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "cientista",
+     "at": "centro",
+     "action": "talk"
+    }
+   ],
+   "dof": 10
+  },
+  {
+   "id": 3,
+   "start": 4,
+   "end": 6,
+   "set": "natureza",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "cheer"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "start": 6,
+   "end": 8,
+   "set": "natureza",
+   "light": "golden",
+   "cam": {
+    "recipe": "hold",
+    "from": "baixo"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "shock"
+    }
+   ]
+  }
+ ],
+ "sfx": [],
+ "music": {
+  "mood": "curioso"
+ }
+}
