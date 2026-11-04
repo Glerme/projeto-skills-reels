@@ -10,3 +10,4 @@ videos/*/assets/kenney
 .superpowers/
 __pycache__/
 videos/_teste*/
+videos/_*/
