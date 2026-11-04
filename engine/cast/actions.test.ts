@@ -36,7 +36,8 @@ test("every kit character validates", () => {
   const cast = loadCharacters("kit/characters");
   assert.equal(Object.keys(cast).length, 8);
   const fx = JSON.parse(readFileSync("engine/fixtures/all-chars.json", "utf8"));
+  assert.deepEqual(fx.cast, cast); // fixture must not drift from the kit
+  fx.cast = cast;
   const r = validateSpec(fx);
   assert.ok(r.ok, r.ok ? "" : r.errors.join("\n"));
-  assert.deepEqual(Object.keys(fx.cast).sort(), Object.keys(cast).sort());
 });
