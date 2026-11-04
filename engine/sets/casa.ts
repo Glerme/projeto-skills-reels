@@ -3,14 +3,14 @@
 // right. Everything stays against the walls, so the spots in the middle and the cameras' sight lines are clear.
 import * as THREE from "three";
 import { Batch, prop, type Kit } from "../style/build";
-import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom, legs4 } from "./room";
+import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom, legs4, pendant, picture } from "./room";
 import type { SetDef } from "./types";
 
 const WOOD = "#8f5d3b", DARK = "#6a4128";
 const BOOKS = ["#b5543c", "#2f6a43", "#3f6fb5", "#d8a95f", "#8c3b4a", "#2f5f6a", "#c9775a"];
 
 const build = (root: THREE.Group, kit: Kit) => {
-  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#e9cfa4", floor: "planks", windows: 2 });
+  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#d4b282", floor: "planks", windows: 2 });
   const b = new Batch();
   // sofa (back wall)
   block(b, "#c0684a", 0, 0, -4.4, 2.4, 0.45, 0.9);
@@ -40,6 +40,14 @@ const build = (root: THREE.Group, kit: Kit) => {
   block(b, "#f0d3a8", 3.3, 1.5, -4.4, 0.45, 0.32, 0.45);
   block(b, DARK, -2.2, 1.35, -4.97, 0.9, 0.65, 0.04);
   block(b, "#d8a95f", -2.2, 1.41, -4.94, 0.76, 0.53, 0.02);
+  // decor: pictures above the sofa and on the right wall, a pendant lamp, a tall corner plant, a side table
+  picture(root, b, 0, 1.45, -4.97, 1.0, 0.75, 1, "+z");
+  picture(root, b, 3.97, 1.4, -2.9, 0.7, 0.9, 2, "-x");
+  pendant(b, 0, -1.6, 3.2, "#c47a5c");
+  block(b, "#c47a5c", -3.4, 0, -4.4, 0.42, 0.42, 0.42);
+  prop(b, kit, "plant_bushLarge", -3.4, 0.42, -4.4, 1.2);
+  block(b, WOOD, -1.7, 0, -4.4, 0.5, 0.55, 0.5);
+  block(b, "#3f6fb5", -1.7, 0.55, -4.4, 0.16, 0.22, 0.16);
   b.build(root);
 };
 

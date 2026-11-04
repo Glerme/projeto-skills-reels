@@ -1,0 +1,351 @@
+{
+ "version": 1,
+ "slug": "kit",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 9.0,
+ "cast": {
+  "cientista": {
+   "id": "cientista",
+   "label": "Cientista",
+   "build": "adult",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#f1efe6",
+    "pants": "#3d4a5c",
+    "boots": "#3a2a20",
+    "buttons": "#d9dde0",
+    "hat": "hair",
+    "hair": "#2e2a2a"
+   }
+  },
+  "crianca": {
+   "id": "crianca",
+   "label": "Criança",
+   "build": "kid",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#e08a3c",
+    "pants": "#3b5b9a",
+    "boots": "#f4f1ea",
+    "hat": "cap",
+    "cap": "#c9473e"
+   }
+  },
+  "executivo": {
+   "id": "executivo",
+   "label": "Executivo",
+   "build": "stout",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#2b3040",
+    "pants": "#2b3040",
+    "boots": "#1c1c1c",
+    "buttons": "#c8ccd2",
+    "hat": "hair",
+    "hair": "#3a2a20"
+   }
+  },
+  "homem": {
+   "id": "homem",
+   "label": "Homem",
+   "build": "adult",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#3b5b8c",
+    "pants": "#2b2b3a",
+    "boots": "#3a2a20",
+    "hat": "hair",
+    "hair": "#4a3426"
+   }
+  },
+  "idoso": {
+   "id": "idoso",
+   "label": "Idoso",
+   "build": "elder",
+   "skin": 0,
+   "outfit": {
+    "jacket": "#7a6a52",
+    "pants": "#4a4a4a",
+    "boots": "#3a2a20",
+    "hat": "hair",
+    "hair": "#b8b8b4"
+   }
+  },
+  "medico": {
+   "id": "medico",
+   "label": "Médico",
+   "build": "adult",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#a9cfe0",
+    "pants": "#7fa9bf",
+    "boots": "#f4f1ea",
+    "buttons": "#ffffff",
+    "hat": "hair",
+    "hair": "#2e2a2a"
+   }
+  },
+  "mulher": {
+   "id": "mulher",
+   "label": "Mulher",
+   "build": "slim",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#a24a5c",
+    "pants": "#4a3a5a",
+    "boots": "#3a2a20",
+    "dress": "#a24a5c",
+    "hat": "hair",
+    "hair": "#3a2418"
+   }
+  },
+  "operario": {
+   "id": "operario",
+   "label": "Operário",
+   "build": "stout",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#3f6fa0",
+    "pants": "#3f6fa0",
+    "boots": "#4a3426",
+    "hat": "cap",
+    "cap": "#d9822b"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0.0,
+   "end": 1.0,
+   "set": "palco",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "mulher",
+     "at": "esquerda",
+     "action": "point"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 1.0,
+   "end": 2.0,
+   "set": "rua",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "wave"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "start": 2.0,
+   "end": 3.0,
+   "set": "rua",
+   "light": "golden",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "mulher",
+     "at": "centro",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "start": 3.0,
+   "end": 4.0,
+   "set": "casa",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "mulher",
+     "at": "centro",
+     "action": "talk"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "cheer"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "start": 4.0,
+   "end": 5.0,
+   "set": "escritorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "executivo",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "operario",
+     "at": "direita",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "start": 5.0,
+   "end": 6.0,
+   "set": "laboratorio",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "cientista",
+     "at": "centro",
+     "action": "point"
+    },
+    {
+     "who": "medico",
+     "at": "direita",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "start": 6.0,
+   "end": 7.0,
+   "set": "natureza",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "crianca",
+     "at": "direita",
+     "action": "cheer"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "start": 7.0,
+   "end": 8.0,
+   "set": "natureza",
+   "light": "golden",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "idoso",
+     "at": "centro",
+     "action": "stand"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "start": 8.0,
+   "end": 9.0,
+   "set": "palco",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "cientista",
+     "at": "esquerda",
+     "action": "stand"
+    },
+    {
+     "who": "crianca",
+     "at": "centro",
+     "action": "wave"
+    },
+    {
+     "who": "executivo",
+     "at": "direita",
+     "action": "talk"
+    },
+    {
+     "who": "homem",
+     "at": "esquerda",
+     "action": "cheer"
+    },
+    {
+     "who": "idoso",
+     "at": "centro",
+     "action": "stand"
+    },
+    {
+     "who": "medico",
+     "at": "direita",
+     "action": "wave"
+    },
+    {
+     "who": "mulher",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "operario",
+     "at": "centro",
+     "action": "cheer"
+    }
+   ]
+  }
+ ],
+ "sfx": [],
+ "music": {
+  "mood": "curioso"
+ }
+}

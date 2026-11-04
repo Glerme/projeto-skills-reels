@@ -3,7 +3,7 @@
 // corners. The middle of the room (the spots) and the camera axis stay free.
 import * as THREE from "three";
 import { Batch, prop, type Kit } from "../style/build";
-import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom, legs4 } from "./room";
+import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom, legs4, pendant, picture } from "./room";
 import type { SetDef } from "./types";
 
 const DESK = "#c9a27a", METAL = "#5b6470", SCREEN = "#27323f", CHAIR = "#2f5f6a";
@@ -25,7 +25,7 @@ const workstation = (b: Batch, x: number, z: number, along: "x" | "z", front: 1 
 };
 
 const build = (root: THREE.Group, kit: Kit) => {
-  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#aebf9c", floor: "tiles", windows: 3 });
+  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#97ad86", floor: "tiles", windows: 3 });
   const b = new Batch();
   workstation(b, -2.3, -4.2, "x", 1);
   workstation(b, 2.3, -4.2, "x", 1);
@@ -38,6 +38,13 @@ const build = (root: THREE.Group, kit: Kit) => {
   block(b, METAL, -3.65, 0, -2.4, 0.55, 1.2, 0.6);
   block(b, "#c47a5c", 3.55, 0, -2.6, 0.45, 0.45, 0.45);
   prop(b, kit, "plant_bushLarge", 3.55, 0.45, -2.6, 0.9);
+  // decor: posters, a cork board with notes, two pendant lamps over the desks
+  picture(root, b, -3.97, 1.3, -1.0, 0.7, 0.9, 3, "+x");
+  picture(root, b, 3.97, 1.4, 1.2, 0.8, 0.6, 0, "-x");
+  block(b, "#b98a5e", 0, 2.05, -4.97, 1.0, 0.5, 0.03);
+  for (let i = 0; i < 5; i++) block(b, ["#f4efe4", "#e8c14a", "#9fd3c7"][i % 3], -0.38 + i * 0.19, 2.15 + (i % 2) * 0.12, -4.95, 0.13, 0.13, 0.01);
+  pendant(b, -2.3, -3.6, 3.2);
+  pendant(b, 2.3, -3.6, 3.2);
   b.build(root);
 };
 

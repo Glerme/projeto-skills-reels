@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { lam } from "../style/build";
 import type { SetDef } from "./types";
 
-const FLOOR = "#f0d3a8", WALL = "#4f908d";
+const FLOOR = "#ddb27a", WALL = "#4f908d";
 const Z0 = -5.5, R = 3, LEAN = Math.PI / 3, TOP = 25, W = 30, FRONT = 40; // cove from z = Z0, LEAN = cove arc (wall 30 deg off vertical)
 
 /** profile in (z, y) with its normal and a 0..1 floor -> wall colour weight, extruded along x */

@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import { Batch, V, lam, quad, type Kit } from "../style/build";
 import { ctex } from "../style/paint";
-import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom } from "./room";
+import { ROOM_SPOTS, ROOM_VIEWS, block, buildRoom, pendant, picture } from "./room";
 import type { SetDef } from "./types";
 
 const CAB = "#e9e4d8", TOP = "#3b4650", GLASS = "#cfe6e8";
@@ -33,7 +33,7 @@ const flask = (b: Batch, x: number, y: number, z: number, s: number, liquid: str
 };
 
 const build = (root: THREE.Group, _kit: Kit) => {
-  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#c4dccd", floor: "tiles", windows: 2 });
+  buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#9fc0ad", floor: "tiles", windows: 2 });
   const b = new Batch();
   // benches: back wall (two runs either side of the board) and both side walls
   for (const [x, z, sx, sz] of [[-2.6, -4.55, 2.6, 0.8], [2.6, -4.55, 2.6, 0.8], [-3.6, -1.4, 0.8, 2.6], [3.6, -1.4, 0.8, 2.6]] as const) {
@@ -51,6 +51,12 @@ const build = (root: THREE.Group, _kit: Kit) => {
   root.add(board);
   block(b, "#8f5d3b", -2.6, 1.85, -4.85, 2.2, 0.05, 0.3);
   for (let i = 0; i < 6; i++) block(b, LIQUID[i % 4], -3.5 + i * 0.36, 1.9, -4.85, 0.16, 0.24, 0.16);
+  // decor: a chart poster on each side wall, wall cabinets above the right bench, pendant lamps
+  picture(root, b, -3.97, 1.4, 0.6, 0.6, 0.8, 0, "+x");
+  picture(root, b, 3.97, 1.45, 0.2, 0.6, 0.8, 3, "-x");
+  block(b, CAB, 3.8, 1.75, -1.4, 0.4, 0.7, 2.4);
+  pendant(b, -1.6, -3.0, 3.2, "#5b6470");
+  pendant(b, 1.6, -3.0, 3.2, "#5b6470");
   b.build(root);
 };
 
