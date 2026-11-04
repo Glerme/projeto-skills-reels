@@ -1,18 +1,18 @@
-// "The Bridge That Fell for a Song": HyperFrames entry (replaces the Remotion Bridge.tsx).
-// One three.js world (world.ts) posed per frame from the story timeline (story.ts), drawn for the time HyperFrames
-// seeks to (hf-seek). Post chain: InkPass (own pass) -> lens blur pre -> lens main -> [bloom + NEUTRAL tone map +
-// grade] (one EffectPass), MSAA 4. Ink runs before the DOF so lines blur with what they belong to; bloom after the
-// DOF so glows defocus with their source; the grade is display-referred, so it comes after tone mapping. Every
-// pixel-sized parameter is specified at 1080x1920 and scales with the drawing-buffer height.
-// Place changes crossfade by drawing the next shot on a second canvas; the hook ends on a 4-frame white flash.
+// HyperFrames entry for every video. The spec (video.json) is inlined in the page as #video-spec; one Stage per
+// canvas is posed for the time HyperFrames seeks to (hf-seek). Post chain: InkPass (own pass) -> lens blur pre ->
+// lens main -> [bloom + NEUTRAL tone map + grade] (one EffectPass), MSAA 4. Ink runs before the DOF so lines blur
+// with what they belong to; bloom after the DOF so glows defocus with their source; the grade is display-referred,
+// so it comes after tone mapping. Every pixel-sized parameter is specified at 1080x1920 and scales with the
+// drawing-buffer height. Crossfades draw the incoming shot on a second canvas; spec.flash gives 4-frame white flashes.
 import * as THREE from "three";
 import { BlendFunction, BloomEffect, Effect, EffectComposer, EffectPass, RenderPass, ToneMappingEffect, ToneMappingMode } from "postprocessing";
-import { World, loadKit } from "./world";
-import { InkPass, noInkFallback } from "./ink";
-import { LensBlur, GrainEffect } from "./lensblur";
-import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./grade";
-import { Kit } from "./build";
-import { FPS, TOTAL, FLASH_AT, SHOTS, layersAt, dofAt } from "./story";
+import { Stage } from "./stage";
+import { loadKit } from "./kit";
+import { InkPass, noInkFallback } from "./style/ink";
+import { LensBlur, GrainEffect } from "./style/lensblur";
+import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./style/grade";
+import type { Kit } from "./style/build";
+import { layersAt, flashAlpha, type ShotSpec, type VideoSpec } from "./spec";
 
 /** A/B switches for test stills; everything but grain is on. Grain is OFF: the reference has none and it quadruples the file size. */
 const POST = { ink: true, lens: true, pre: true, bloom: true, grade: true, grain: false };
@@ -27,20 +27,22 @@ const makeBloom = () => {
   return b;
 };
 
-const fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
+const fwd = new THREE.Vector3();
+const spec = JSON.parse(document.getElementById("video-spec")!.textContent!) as VideoSpec;
 
-/** One canvas with its own world, camera and post chain; returns draw(shotId, frame). */
+/** One canvas with its own stage, camera and post chain; returns draw(shot, t). */
 const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => {
   // preserveDrawingBuffer: HyperFrames captures the page after the seek, not inside the draw
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, stencil: false, powerPreference: "high-performance", preserveDrawingBuffer: true });
   renderer.setPixelRatio(window.devicePixelRatio); // --resolution supersampling goes through devicePixelRatio
   renderer.setSize(W, H, false);
-  renderer.shadowMap.enabled = true; // what R3F's `shadows` prop set
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap; // r187: PCFSoft was removed (it fell back to this anyway)
   const scene = new THREE.Scene();
   const cam = new THREE.PerspectiveCamera(40, W / H, 0.2, 1500);
-  const world = new World(kit);
-  scene.add(world.root);
+  const stage = new Stage(kit, spec);
+  scene.add(stage.root);
+  scene.fog = stage.fog; scene.background = null;
   const fx = {
     ink: new InkPass(scene, cam),
     lens: new LensBlur({ maxCoC: 24, nearScale: 1.2 }),
@@ -62,17 +64,15 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
   composer.addPass(new EffectPass(cam, ...last));
   composer.setSize(W, H, false);
 
-  return (id: number, f: number) => {
-    const target = world.update(id, f, cam, scene);
-    noInkFallback(world.root);
-    // thin-lens focus: distance along the view axis to the shot's focus point (default: the camera's look target)
-    const d = dofAt(f);
+  return (shot: ShotSpec, t: number) => {
+    const target = stage.update(shot, t, cam);
+    noInkFallback(stage.root);
+    // thin-lens focus: distance along the view axis to the shot's focus point (Stage: shot.focus, else the look point)
     cam.getWorldDirection(fwd);
-    if (d.focus) fpt.set(...d.focus(f)); else fpt.copy(target);
-    fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
-    fx.lens.cInf = d.cInf;
-    gradeFor(fx.grade, SHOTS[id - 1].light);
-    fx.grain.seed = f; // deterministic per frame
+    fx.lens.focus = Math.max(0.3, target.sub(cam.position).dot(fwd));
+    fx.lens.cInf = shot.dof ?? 0; // blur-disc radius in px at 1080x1920 for things at infinity; 0 = all sharp
+    gradeFor(fx.grade, shot.light);
+    fx.grain.seed = Math.round(t * spec.fps); // deterministic per frame
     composer.render(0); // fixed delta: frames are seeked out of order
   };
 };
@@ -85,21 +85,21 @@ const W = Number(root.dataset.width), H = Number(root.dataset.height);
 const canvases = [document.getElementById("base") as HTMLCanvasElement, document.getElementById("over") as HTMLCanvasElement];
 const flash = document.getElementById("flash")!;
 
-const renderAt = (views: Draw[], t: number) => {
-  const f = Math.min(TOTAL - 1, Math.max(0, Math.round(t * FPS)));
-  const layers = layersAt(f);
+const renderAt = (views: Draw[], time: number) => {
+  // snap to the frame grid, inside the video
+  const t = Math.min(spec.duration - 1 / spec.fps, Math.max(0, Math.round(time * spec.fps) / spec.fps));
+  const layers = layersAt(spec, t);
   views.forEach((draw, i) => {
     const l = layers[i];
     canvases[i].style.opacity = l ? String(l.alpha) : "0";
-    if (l) draw(l.id, f);
+    if (l) draw(l.shot, t);
   });
-  const k = f - FLASH_AT;
-  flash.style.opacity = String(k >= 0 && k < 4 ? [1, 0.75, 0.45, 0.2][k] : 0);
+  flash.style.opacity = String(flashAlpha(spec, t));
 };
 
 const ready = loadKit().then((kit) => canvases.map((c) => makeView(c, kit, W, H)));
 const hf = ((window as any).__hf ??= {});
-(hf.buildReady ??= {}).bridge = ready; // HyperFrames waits for this before the first capture
+(hf.buildReady ??= {}).engine = ready; // HyperFrames waits for this before the first capture
 
 let views: Draw[] | null = null, lastT = 0;
 window.addEventListener("hf-seek", (e) => {

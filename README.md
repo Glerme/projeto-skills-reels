@@ -24,7 +24,8 @@ O design completo está em [`docs/design.md`](docs/design.md). Ele ainda está a
 | Pasta | O quê |
 |---|---|
 | `docs/design.md` | documento do projeto: intenção, objetivos, restrições, fluxo, kit |
-| `prototipo-hyperframes/` | o motor 3D da ponte rodando no HyperFrames, já testado. `npm install`, `npm run build`, `npm run check` |
+| `engine/`, `template/` | o motor 3D genérico (`npm run build` gera `lib/engine.js`) e a página HyperFrames que recebe o `video.json` |
+| `scripts/mk-test-video.sh`, `scripts/snap.sh` | monta um projeto de teste a partir de um spec e tira stills dele |
 | `scripts/tts_pt.py` | gera a narração com Kokoro: `python tts_pt.py "<texto>" saida.wav [voz]` |
 | `assets/voz/` | amostras das três vozes pt-BR do Kokoro. A escolhida foi `pm_alex` |
 | `assets/stills-motor/` | frames renderizados pelo protótipo (3 s, 40 s, 67 s) |
@@ -38,10 +39,11 @@ O design completo está em [`docs/design.md`](docs/design.md). Ele ainda está a
 - Os modelos ficam em `~/.cache/hyperframes/tts/`. O `hyperframes tts` baixa os dois na primeira vez que roda, mesmo
   que depois falhe.
 
-**Protótipo:**
-- Os modelos Kenney (CC0) vão em `prototipo-hyperframes/assets/kenney/`: baixe de kenney.nl. Sem eles, a cena roda, só
-  que sem árvores e barracas.
-- A trilha vai em `prototipo-hyperframes/assets/mix.wav`.
+**Motor:**
+- Os modelos Kenney (CC0, Nature Kit e Fantasy Town Kit) vão em `kit/kenney/` (os `.glb` da lista `KENNEY` de
+  `engine/kit.ts`, mais `Textures/colormap.png` do Fantasy Town Kit): baixe de kenney.nl. Sem eles, a cena roda, só que
+  sem árvores e barracas.
+- `npm run build && scripts/mk-test-video.sh engine/fixtures/two-shots.json videos/_teste-palco && scripts/snap.sh videos/_teste-palco 0.5,2.5`.
 
 ## Origem
 

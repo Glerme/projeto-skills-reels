@@ -9,5 +9,4 @@ videos/*/lib/
 videos/*/assets/kenney
 .superpowers/
 __pycache__/
-prototipo-hyperframes/node_modules/
-prototipo-hyperframes/lib/
+videos/_teste*/
