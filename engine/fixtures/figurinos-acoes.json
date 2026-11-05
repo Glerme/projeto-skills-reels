@@ -1,0 +1,296 @@
+{
+ "version": 1,
+ "slug": "teste-figurinos",
+ "format": "historia",
+ "fiction": false,
+ "fps": 30,
+ "duration": 13.5,
+ "cast": {
+  "davi": {
+   "id": "davi",
+   "label": "Davi, jovem pastor",
+   "build": "slim",
+   "skin": 2,
+   "scale": 0.9,
+   "outfit": {
+    "jacket": "#d8c39a",
+    "pants": "#c9a97a",
+    "boots": "#7a5a3a",
+    "hat": "hair",
+    "hair": "#9a4a2a",
+    "tunic": "#ddc9a0",
+    "girdle": "#8f5d3b",
+    "sandals": true,
+    "bag": "#8a5a34"
+   }
+  },
+  "davi_armado": {
+   "id": "davi_armado",
+   "label": "Davi com a armadura de Saul",
+   "build": "slim",
+   "skin": 2,
+   "scale": 0.9,
+   "outfit": {
+    "jacket": "#d8c39a",
+    "pants": "#c9a97a",
+    "boots": "#7a5a3a",
+    "hat": "helmet",
+    "cap": "#b08a4a",
+    "tunic": "#ddc9a0",
+    "armor": "#a8875a",
+    "girdle": "#8f5d3b",
+    "sandals": true,
+    "greaves": "#a8875a"
+   }
+  },
+  "golias": {
+   "id": "golias",
+   "label": "Golias",
+   "build": "stout",
+   "skin": 1,
+   "scale": 1.6,
+   "outfit": {
+    "jacket": "#b5843f",
+    "pants": "#6a4a2a",
+    "boots": "#4a3426",
+    "hat": "helmet",
+    "cap": "#b5843f",
+    "crest": "#b83a2e",
+    "tunic": "#7a4a2e",
+    "armor": "#c08e48",
+    "girdle": "#4a3426",
+    "sandals": true,
+    "greaves": "#b5843f",
+    "shield": "#a87a3a",
+    "beard": "#2e2018"
+   }
+  },
+  "saul": {
+   "id": "saul",
+   "label": "Rei Saul",
+   "build": "adult",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#7a2f3a",
+    "pants": "#3a2a20",
+    "boots": "#5a3b2a",
+    "hat": "crown",
+    "hair": "#2a1e18",
+    "tunic": "#d9c39a",
+    "mantle": "#7a2f3a",
+    "girdle": "#d9b84a",
+    "sandals": true,
+    "beard": "#2a1e18"
+   }
+  },
+  "soldado1": {
+   "id": "soldado1",
+   "label": "Soldado de Israel",
+   "build": "adult",
+   "skin": 0,
+   "outfit": {
+    "jacket": "#8f6a45",
+    "pants": "#5a4a3a",
+    "boots": "#5a3b2a",
+    "hat": "helmet",
+    "cap": "#8a6440",
+    "tunic": "#9c7a52",
+    "girdle": "#4a3426",
+    "sandals": true,
+    "beard": "#4a3426"
+   }
+  },
+  "soldado2": {
+   "id": "soldado2",
+   "label": "Soldado de Israel",
+   "build": "slim",
+   "skin": 3,
+   "outfit": {
+    "jacket": "#7d5c3c",
+    "pants": "#4a3d30",
+    "boots": "#5a3b2a",
+    "hat": "helmet",
+    "cap": "#7a5638",
+    "tunic": "#b08a5e",
+    "girdle": "#3a2a20",
+    "sandals": true
+   }
+  },
+  "davi_rei": {
+   "id": "davi_rei",
+   "label": "Davi, rei",
+   "build": "adult",
+   "skin": 2,
+   "outfit": {
+    "jacket": "#7a2f3a",
+    "pants": "#3a2a20",
+    "boots": "#5a3b2a",
+    "hat": "crown",
+    "hair": "#9a4a2a",
+    "tunic": "#e2cfa6",
+    "mantle": "#6a2a4a",
+    "girdle": "#d9b84a",
+    "sandals": true,
+    "beard": "#9a4a2a"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 1.5,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "soldado1",
+     "at": "esquerda",
+     "action": "walk",
+     "to": "centro"
+    },
+    {
+     "who": "saul",
+     "at": "direita",
+     "action": "gesture"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 1.5,
+   "end": 3,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "aberto"
+   },
+   "actors": [
+    {
+     "who": "davi",
+     "at": "esquerda",
+     "action": "talk"
+    },
+    {
+     "who": "davi_rei",
+     "at": "direita",
+     "action": "cheer"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "start": 3,
+   "end": 4.5,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "davi_armado",
+     "at": "centro",
+     "action": "struggle"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "start": 4.5,
+   "end": 6.5,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "davi",
+     "at": "centro",
+     "action": "unhelm"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "start": 6.5,
+   "end": 9,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "riacho"
+   },
+   "actors": [
+    {
+     "who": "davi",
+     "at": "riacho",
+     "action": "pick"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "start": 9,
+   "end": 10.5,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "baixo"
+   },
+   "actors": [
+    {
+     "who": "golias",
+     "at": "centro",
+     "action": "taunt"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "start": 10.5,
+   "end": 13.5,
+   "set": "vale",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "duelo"
+   },
+   "actors": [
+    {
+     "who": "davi",
+     "at": "duelo_a",
+     "action": "whirl",
+     "cue": 11.6
+    },
+    {
+     "who": "golias",
+     "at": "duelo_b",
+     "action": "topple",
+     "cue": 12.15
+    }
+   ],
+   "throws": [
+    {
+     "from": "davi",
+     "to": "golias",
+     "start": 11.6,
+     "end": 12.15
+    }
+   ]
+  }
+ ],
+ "sfx": [],
+ "music": {
+  "mood": "tenso"
+ }
+}

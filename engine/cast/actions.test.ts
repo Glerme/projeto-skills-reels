@@ -41,3 +41,47 @@ test("every kit character validates", () => {
   const r = validateSpec(fx);
   assert.ok(r.ok, r.ok ? "" : r.errors.join("\n"));
 });
+
+const NEW = ["gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple"] as const;
+const sig = (o: object) => JSON.stringify(o);
+
+test("new actions are deterministic", () => {
+  for (const a of NEW) assert.equal(sig(poseAt(a, 0.83, 4, 0.5)), sig(poseAt(a, 0.83, 4, 0.5)), a);
+});
+
+test("no action holds a frozen pose for half a second", () => {
+  for (const a of ["stand", "walk", "talk", "gesture", "laugh", "taunt", "struggle", "pick", "whirl"] as const)
+    for (let t = 0; t < 3; t += 0.5) {
+      const frames = Array.from({ length: 15 }, (_, f) => sig(poseAt(a, t + f / 30, 2, 9)));
+      assert.ok(new Set(frames).size > 1, `${a} frozen at ${t}`);
+    }
+});
+
+test("walk swings the arms against the legs", () => {
+  const l = (t: number) => poseAt("walk", t, 1).rig!.armL![0];
+  assert.ok(Math.abs(l(1 / 3) - l(1)) > 20); // phase .25 vs .75: the two extremes of the swing
+});
+
+test("whirl spins the sling until the release cue, then lets go", () => {
+  const a = poseAt("whirl", 0.2, 1, 1.0), b = poseAt("whirl", 0.3, 1, 1.0);
+  assert.equal(a.hand?.L, "sling");
+  assert.notEqual(a.sling, b.sling);
+  assert.equal(a.slingReleased, false);
+  assert.equal(poseAt("whirl", 1.1, 1, 1.0).slingReleased, true);
+  assert.ok(poseAt("whirl", 1.25, 1, 1.0).rig!.armL![0] < poseAt("whirl", 0.9, 1, 1.0).rig!.armL![0]); // the sling arm comes forward/down
+});
+
+test("topple stands until the hit, then rolls to the ground and lands", () => {
+  assert.equal(poseAt("topple", 0.5, 1, 1.0).roll ?? 0, 0);
+  const rolls = [1.0, 1.3, 1.5, 1.7, 1.9].map((t) => poseAt("topple", t, 1, 1.0).roll ?? 0);
+  for (let i = 1; i < rolls.length; i++) assert.ok(rolls[i] >= rolls[i - 1]);
+  const down = poseAt("topple", 2.5, 1, 1.0);
+  assert.equal(down.roll, 90);
+  assert.ok((down.impact ?? -1) > 0);
+});
+
+test("pick crouches down to the ground and comes up with a stone", () => {
+  const c = Array.from({ length: 42 }, (_, f) => poseAt("pick", f / 30, 1));
+  assert.ok(Math.max(...c.map((p) => p.rig?.crouch ?? 0)) >= 0.8);
+  assert.ok(c.some((p) => p.hand?.R === "stone"));
+});

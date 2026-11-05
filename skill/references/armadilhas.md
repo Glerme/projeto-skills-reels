@@ -22,5 +22,10 @@ Vieram das revisões do short da ponte e da montagem deste kit.
   `centro` e `direita`.
 - **Parede ou teto lavanda-acinzentado:** é contraluz. Os cômodos usam `sunAz: 130` e teto sem luz.
 - **Flores e tufos Kenney pequenos:** viram caixinhas roxas. Não use.
+- **Gigante que tomba:** o corpo deitado ocupa cerca de 2,2 m × escala para a esquerda. Use um plano onde ele caiba
+  inteiro (`vale`: `queda` com o gigante em `duelo_b`).
+- **Braços nus (túnica):** têm contorno automático. Objetos finos como a funda precisam ser grandes para ler a
+  distância.
+- **Barba:** cobre só o queixo, nunca os olhos.
 - **Nada de terceiros no vídeo:** os frames de referência do outro canal servem só para comparar, e música e efeitos
   são sintetizados. Conteúdo reaproveitado corta a monetização.

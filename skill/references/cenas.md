@@ -36,7 +36,11 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
   - `who`, `at` (spot), `to` (spot, só para `walk`), `action`, `expr` (lista de [tempo, expressão], com tempos
     **absolutos do vídeo**, dentro da cena; o primeiro costuma ser o `start` da cena) e
     `facing` (−1, 0 ou 1);
+  - `cue`: o tempo absoluto do momento-chave da ação (`whirl`, `topple`).
+  - `hold`: objeto na mão, independente da ação: `{"L": "staff"}`. Valores: `stone staff spear helmet sling`.
   - até 3 atores por cena: o quadro vertical é estreito.
+- `throws`: `[{from, to, start, end}]`. É uma pedra visível, com rastro, da mão de quem lança (mão levantada do lado
+  esquerdo) até a testa do alvo, com brilho no acerto. Combine com `whirl` (`cue` = `start`) e `topple` (`cue` = `end`).
 - `dof`: desfoque de fundo em px (lens blur).
 - `focus`: spot ou papel em foco.
 - `xfade`: crossfade em segundos, na entrada desta cena.
@@ -56,13 +60,21 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 | rua | centro esquerda direita fundo esquina | aberto medio close baixo aereo |
 | casa, escritorio, laboratorio | centro esquerda direita fundo | aberto medio close baixo |
 | natureza | centro esquerda direita fundo | aberto medio close baixo |
+| vale (seco, rochoso, riacho, tendas; histórias antigas) | centro esquerda direita fundo riacho duelo_a duelo_b | aberto medio close baixo duelo riacho queda |
 
 - **palco:** fundo colorido neutro, para listas e curiosidades sem lugar.
 - **Cômodos:** os spots laterais ficam a ±0,95 m; no `aberto` cabem 2 a 3 pessoas.
 
 ## Ações e expressões
 
-**Ações:** `stand talk walk point wave cheer shock fall sit`.
+**Ações (todas animadas, com esqueleto articulado; nenhuma fica parada):**
+`stand talk walk point wave cheer shock fall sit gesture laugh taunt struggle unhelm pick whirl topple`.
+- `talk` mexe a boca e uma mão; `gesture` gesticula com as duas mãos; `laugh` gargalha com o corpo; `taunt` ameaça com a
+  lança erguida.
+- `struggle`: cambaleia dentro de uma armadura grande. `unhelm`: levanta o capacete e tira (1 s).
+- `pick`: agacha, apanha uma pedra e levanta (1,4 s por pedra).
+- `whirl`: gira a funda na mão do lado esquerdo da tela, mira com a outra e solta no `cue` (tempo absoluto).
+- `topple`: no `cue`, reage ao golpe, tomba para a esquerda da tela e fica deitado, com poeira e estrelas.
 - `talk` mexe a boca: use em quem está falando.
 - `walk` precisa de `to`.
 

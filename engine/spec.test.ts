@@ -74,3 +74,31 @@ test("character scale is optional and must be 0.5–2", () => {
     if (!r.ok) assert.ok(r.errors.some((e) => e.includes("personagem homem") && e.includes("scale")), String(bad));
   }
 });
+
+test("rejects unknown actions and cues outside the shot", () => {
+  const s = fx(); s.shots[0].actors[0].action = "dancar";
+  assert.equal(validateSpec(s).ok, false);
+  const c = fx(); c.shots[0].actors[0].cue = c.shots[0].end + 1;
+  const r = validateSpec(c);
+  assert.equal(r.ok, false);
+  if (!r.ok) assert.ok(r.errors.some((e) => e.includes("cue")));
+});
+
+test("throws need two actors of the shot and times inside it", () => {
+  const ok = fx(); const sh = ok.shots[0];
+  ok.cast.mulher = ok.cast.mulher ?? ok.cast.homem;
+  sh.actors = [{ who: "homem", at: "esquerda", action: "whirl" }, { who: "mulher", at: "direita", action: "topple" }];
+  sh.throws = [{ from: "homem", to: "mulher", start: sh.start + 0.2, end: sh.start + 0.6 }];
+  assert.equal(validateSpec(ok).ok, true, JSON.stringify(validateSpec(ok)));
+  const bad = JSON.parse(JSON.stringify(ok)); bad.shots[0].throws[0].to = "ninguem";
+  assert.equal(validateSpec(bad).ok, false);
+  const late = JSON.parse(JSON.stringify(ok)); late.shots[0].throws[0].end = sh.end + 2;
+  assert.equal(validateSpec(late).ok, false);
+});
+
+test("hold puts a known prop in a hand", () => {
+  const s = fx(); s.shots[0].actors[0].hold = { L: "staff" };
+  assert.equal(validateSpec(s).ok, true);
+  const b = fx(); b.shots[0].actors[0].hold = { L: "guarda-chuva" };
+  assert.equal(validateSpec(b).ok, false);
+});

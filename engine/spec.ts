@@ -3,14 +3,22 @@ import { ANCHORS, SET_IDS, type SetId } from "./sets/anchors";
 
 export type { SetId };
 export type Light = "day" | "golden";
-export type ActionId = "stand" | "walk" | "talk" | "point" | "shock" | "cheer" | "fall" | "sit" | "wave";
+export const ACTION_IDS = ["stand", "walk", "talk", "point", "shock", "cheer", "fall", "sit", "wave",
+  "gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple"] as const;
+export type ActionId = (typeof ACTION_IDS)[number];
 export type Mood = "curioso" | "animado" | "tenso" | "calmo";
 /** scale: optional size multiplier (0.5–2), e.g. a giant; default 1 */
 export type CharDef = { id: string; label: string; build: "adult" | "stout" | "kid" | "elder" | "slim"; outfit: Outfit; skin: number; scale?: number };
-export type ActorSpec = { who: string; at: string; to?: string; action: ActionId; expr?: [number, Expr][]; facing?: -1 | 0 | 1 };
+/** cue: absolute time of the action's key moment (whirl: sling release; topple: the hit) */
+export const HAND_PROPS = ["stone", "staff", "spear", "helmet", "sling"] as const;
+/** hold: props kept in the screen-left / screen-right hand whatever the action (the action's own props win) */
+export type ActorSpec = { who: string; at: string; to?: string; action: ActionId; expr?: [number, Expr][]; facing?: -1 | 0 | 1; cue?: number;
+  hold?: { L?: (typeof HAND_PROPS)[number]; R?: (typeof HAND_PROPS)[number] } };
+/** a visible thrown stone: from the thrower's hand to the target's forehead, between start and end (absolute s) */
+export type ThrowSpec = { from: string; to: string; start: number; end: number };
 export type CamSpec = { recipe: "hold" | "push" | "glide"; from: string; to?: string; punch?: number[] };
 export type ShotSpec = { id: number; start: number; end: number; set: SetId; light: Light; cam: CamSpec; actors: ActorSpec[];
-  dof?: number; focus?: string; xfade?: number; kicks?: number[] };
+  dof?: number; focus?: string; xfade?: number; kicks?: number[]; throws?: ThrowSpec[] };
 export type SfxCue = { t: number; name: string; gainDb?: number };
 export type VideoSpec = { version: 1; slug: string; format: "historia" | "curiosidade" | "lista"; fiction: boolean; fps: 30;
   duration: number; cast: Record<string, CharDef>; shots: ShotSpec[]; flash?: number[]; sfx: SfxCue[]; music: { mood: Mood } };
@@ -73,10 +81,24 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
       if (!isObj(x.cast) || typeof ac.who !== "string" || !Object.hasOwn(x.cast, ac.who)) errors.push(`${c}: personagem "${ac.who}" não existe em cast`);
       spot(ac.at, "at");
       if (ac.to !== undefined) spot(ac.to, "to");
+      if (!(ACTION_IDS as readonly string[]).includes(ac.action)) errors.push(`${c}: ação "${ac.action}" não existe (use: ${ACTION_IDS.join(", ")})`);
+      if (ac.cue !== undefined) inside(ac.cue, "cue");
+      if (ac.hold !== undefined) {
+        if (!isObj(ac.hold)) errors.push(`${c}: hold deve ser um objeto {L?, R?}`);
+        else for (const [k, v] of Object.entries(ac.hold))
+          if (!["L", "R"].includes(k) || !(HAND_PROPS as readonly string[]).includes(v as string)) errors.push(`${c}: hold.${k} "${v}" inválido (use: ${HAND_PROPS.join(", ")})`);
+      }
       list(ac.expr, "expr").forEach((e) => {
         if (!Array.isArray(e) || e.length !== 2) errors.push(`${c}: expr deve ser uma lista de [tempo, expressão]`);
         else inside(e[0], "expr");
       });
+    });
+    list(s.throws, "throws").forEach((th) => {
+      const who = list(s.actors, "actors").filter(isObj).map((a) => a.who);
+      if (!isObj(th)) { errors.push(`${c}: throw não é um objeto`); return; }
+      for (const k of ["from", "to"]) if (!who.includes(th[k])) errors.push(`${c}: throw.${k} "${th[k]}" não é ator da cena`);
+      inside(th.start, "throw.start"); inside(th.end, "throw.end");
+      if (!(typeof th.start === "number" && typeof th.end === "number" && th.end > th.start)) errors.push(`${c}: throw precisa de start < end`);
     });
     if (s.xfade !== undefined) {
       const prev = shots[i - 1];

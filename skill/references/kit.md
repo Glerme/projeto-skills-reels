@@ -7,9 +7,8 @@ O acervo atual tem 8 personagens: `homem`, `mulher`, `crianca`, `idoso`, `cienti
 
 Formato: `{ "id", "label", "build": "adult|stout|kid|elder|slim", "outfit": {...}, "skin": 0-3 }`.
 
-O `outfit` usa os campos de `engine/style/toon.ts` (`Outfit`):
-- roupa: `jacket`, `pants`, `boots`, `belt`, `buttons`, `sash`, `dress`;
-- cabeça: `hat` (`cap`, `hair`, `shako`…), `cap`, `hair`, `moustache`.
+O `outfit` usa os campos de `engine/style/toon.ts` (`Outfit`). A lista completa, incluindo as peças de época, está
+em `briefing-visual.md`. `scale` (0,5–2) muda o tamanho, por exemplo de um gigante.
 
 **Antes de montar o elenco:** o visual de cada personagem vem do briefing visual confirmado (`briefing-visual.md`).
 Não escolha roupa, cabelo ou acessório sem essa confirmação.

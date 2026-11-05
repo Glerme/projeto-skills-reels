@@ -10,7 +10,7 @@ import type { SetDef } from "./sets/types";
 import { poseAt, blinkAt } from "./cast/actions";
 import { drawChar } from "./cast/chars";
 import { Pool, Actor, Fx, type Place, type FxPlace } from "./style/cards";
-import { fxShadow, fxContact, type FrontOpts } from "./style/toon";
+import { fxShadow, fxContact, fxPuff, fxStars, fxBurst, type FrontOpts, type Pen } from "./style/toon";
 import { LIGHTS, LOOK, type WorldLook } from "./style/lights";
 import { TONE, CHAR, untone } from "./style/shade";
 import { NOINK } from "./style/ink";
@@ -233,19 +233,46 @@ export class Stage {
     const places: Place[] = [], fxp: FxPlace[] = [];
     const ids = Object.keys(this.spec.cast);
     let focus = look;
+    const hands: Record<string, { feet: THREE.Vector3; sc: number; head: THREE.Vector3 }> = {};
     for (const a of shot.actors) {
       const ch = this.spec.cast[a.who], seed = ids.indexOf(a.who) + 1, ts = t - shot.start;
       const { p, dir } = this.feet(shot, def, a, t);
       const moving = dir.lengthSq() > 1e-6, mirror = moving && dir.dot(right) < 0;
-      const pose = poseAt(a.action, ts, seed);
+      const pose = poseAt(a.action, ts, seed, a.cue !== undefined ? a.cue - shot.start : Infinity);
+      if (a.hold) pose.hand = { ...a.hold, ...pose.hand }; // held props, unless the action holds something there
       const ex = (a.expr ?? []).filter(([te]) => te <= t).pop();
       const fo: FrontOpts = { ...pose, expr: ex ? ex[1] : pose.expr, blink: blinkAt(seed, t, this.spec.fps),
         facing: a.facing ?? (moving ? 1 : 0), light: light2D(sunDir, right, mirror), seed };
-      const sc = ch.scale ?? 1;
+      const sc = ch.scale ?? 1, roll = pose.roll ?? 0;
       const [w, h, k] = tier(cam.position.distanceTo(this.v.set(p.x, p.y + 1.2 * sc, p.z)) / sc);
-      places.push({ key: `F|${ch.id}|${fkey(fo)}`, draw: (pen) => drawChar(pen, ch, fo), x: p.x, y: p.y, z: p.z, mirror, scale: sc, size: [w, h, k] });
+      const { roll: _r, impact: _i, ...drawn } = fo;
+      places.push({ key: `F|${ch.id}|${fkey(drawn)}`, draw: (pen) => drawChar(pen, ch, drawn), x: p.x, y: p.y, z: p.z, mirror, scale: sc, roll, size: [w, h, k] });
+      hands[a.who] = { feet: p.clone(), sc, head: p.clone().addScaledVector(right, -Math.sin(THREE.MathUtils.degToRad(roll)) * 1.7 * sc).setY(p.y + Math.cos(THREE.MathUtils.degToRad(roll)) * 1.7 * sc) };
+      if (pose.impact !== undefined) { // a fall lands: a dust puff along the body, then stars circling the head
+        const im = pose.impact, mid = p.clone().addScaledVector(right, -0.9 * sc);
+        if (im < 0.7) fxp.push({ key: `puff|${q(im / 0.7, 20)}`, cw: 300, ch: 300, draw: (pen) => fxPuff(pen, im / 0.7), x: mid.x, y: p.y + 0.35 * sc, z: mid.z, w: 2.2 * sc, h: 2.2 * sc, soft: true });
+        if (im > 0.2) fxp.push({ key: `stars|${q((im * 0.8) % 1, 24)}`, cw: 420, ch: 210, draw: (pen) => fxStars(pen, (im * 0.8) % 1), x: hands[a.who].head.x, y: hands[a.who].head.y + 0.55 * sc, z: hands[a.who].head.z, w: 1.1 * sc, h: 0.55 * sc });
+      }
       if (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march") blob(fxp, sunDir, shot.light, p.x, p.y, p.z);
       if (shot.focus === a.who) focus = p.clone().setY(p.y + EYE * sc);
+    }
+    for (const th of shot.throws ?? []) { // a visible stone: hand -> forehead on an arc, with a trail; a burst on the hit
+      const A = hands[th.from], B = hands[th.to];
+      if (!A || !B || t < th.start || t > th.end + 0.4) continue;
+      const from = A.feet.clone().addScaledVector(right, -0.4 * A.sc).setY(A.feet.y + 2.1 * A.sc)  /* the sling hand (screen-left, raised) */, to = B.head.clone().setY(B.head.y - 0.05 * B.sc);
+      const at = (u: number) => from.clone().lerp(to, u).setY(from.y + (to.y - from.y) * u + 0.6 * 4 * u * (1 - u));
+      const u = (t - th.start) / (th.end - th.start);
+      if (u <= 1) {
+        for (let k2 = 3; k2 >= 1; k2--) {
+          const pk = at(Math.max(0, u - 0.07 * k2)), al = (0.45 - 0.12 * k2).toFixed(2);
+          fxp.push({ key: `trail|${al}`, cw: 128, ch: 128, draw: (pen: Pen) => pen.ell(64, 64, 40, 34, `rgba(120,116,110,${al})`, 0), x: pk.x, y: pk.y, z: pk.z, w: 0.24, h: 0.24, soft: true });
+        }
+        const ps = at(u);
+        fxp.push({ key: "stone", cw: 128, ch: 128, draw: (pen: Pen) => { pen.ell(64, 64, 40, 34, "#8f8b84", 9); pen.ell(52, 54, 12, 9, "#b9b5ae", 0); }, x: ps.x, y: ps.y, z: ps.z, w: 0.3, h: 0.3 });
+      } else {
+        const hb = (t - th.end) / 0.4;
+        fxp.push({ key: `hit|${q(hb, 20)}`, cw: 500, ch: 500, draw: (pen: Pen) => fxBurst(pen, hb), x: to.x, y: to.y, z: to.z, w: 1.2 * B.sc, h: 1.2 * B.sc });
+      }
     }
     if (shot.focus && shot.focus in def.spots) focus = V(def.spots[shot.focus]).setY(def.spots[shot.focus][1] + EYE);
     // ---- placement (frustum-culled), then one pool flush ----
@@ -258,8 +285,9 @@ export class Stage {
       const a = this.actor(ai++), [w, h, k] = p.size!;
       a.r = this.pool.req(p.key, w, h, k, p.draw);
       a.mesh.visible = true;
-      a.mesh.position.set(p.x, p.y, p.z);
-      a.mesh.rotation.set(0, Math.atan2(cam.position.x - p.x, cam.position.z - p.z), 0);
+      // roll: a fall about the feet; lift the card by its half-thickness as it tips, so a body lying down rests on the ground
+      a.mesh.position.set(p.x, p.y + Math.sin(THREE.MathUtils.degToRad(p.roll ?? 0)) * 0.32 * sc, p.z);
+      a.mesh.rotation.set(0, Math.atan2(cam.position.x - p.x, cam.position.z - p.z), THREE.MathUtils.degToRad(p.roll ?? 0));
       a.mesh.scale.set(p.mirror ? -sc : sc, sc, sc);
       a.mesh.castShadow = L.actorShadow; // day: soft contact blobs instead
       used.push(a);
