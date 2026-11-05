@@ -63,3 +63,14 @@ test("who: constructor is not a cast member", () => {
   const r = validateSpec(g);
   assert.ok(!r.ok && r.errors.some((e) => e.includes('personagem "constructor" não existe')), JSON.stringify(r));
 });
+
+test("character scale is optional and must be 0.5–2", () => {
+  const withScale = (v: unknown) => { const s = fx(); s.cast.homem.scale = v; return validateSpec(s); };
+  assert.equal(validateSpec(fx()).ok, true);
+  assert.equal(withScale(1.6).ok, true);
+  for (const bad of [0.2, 3, "grande", null]) {
+    const r = withScale(bad);
+    assert.equal(r.ok, false, String(bad));
+    if (!r.ok) assert.ok(r.errors.some((e) => e.includes("personagem homem") && e.includes("scale")), String(bad));
+  }
+});

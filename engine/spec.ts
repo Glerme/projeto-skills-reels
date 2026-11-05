@@ -5,7 +5,8 @@ export type { SetId };
 export type Light = "day" | "golden";
 export type ActionId = "stand" | "walk" | "talk" | "point" | "shock" | "cheer" | "fall" | "sit" | "wave";
 export type Mood = "curioso" | "animado" | "tenso" | "calmo";
-export type CharDef = { id: string; label: string; build: "adult" | "stout" | "kid" | "elder" | "slim"; outfit: Outfit; skin: number };
+/** scale: optional size multiplier (0.5–2), e.g. a giant; default 1 */
+export type CharDef = { id: string; label: string; build: "adult" | "stout" | "kid" | "elder" | "slim"; outfit: Outfit; skin: number; scale?: number };
 export type ActorSpec = { who: string; at: string; to?: string; action: ActionId; expr?: [number, Expr][]; facing?: -1 | 0 | 1 };
 export type CamSpec = { recipe: "hold" | "push" | "glide"; from: string; to?: string; punch?: number[] };
 export type ShotSpec = { id: number; start: number; end: number; set: SetId; light: Light; cam: CamSpec; actors: ActorSpec[];
@@ -33,6 +34,7 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
   else for (const [k, c] of Object.entries(x.cast)) {
     if (!isObj(c) || typeof c.id !== "string" || typeof c.label !== "string" || !BUILDS.includes(c.build) || !isObj(c.outfit)
       || !Number.isInteger(c.skin) || c.skin < 0) errors.push(`personagem ${k}: id, label, build, outfit ou skin inválido`);
+    else if (c.scale !== undefined && !(typeof c.scale === "number" && c.scale >= 0.5 && c.scale <= 2)) errors.push(`personagem ${k}: scale deve ser um número de 0,5 a 2`);
   }
   if (!Array.isArray(x.shots) || !x.shots.length) { errors.push("shots deve ser uma lista não vazia"); return { ok: false, errors }; }
 

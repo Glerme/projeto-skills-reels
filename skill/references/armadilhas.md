@@ -14,6 +14,10 @@ Vieram das revisões do short da ponte e da montagem deste kit.
 - **Corrimão ou mesa no peito dos personagens:** suba a lente para os objetos cruzarem as pernas.
 - **Plano parado sem avanço:** o QA reprova como congelado. Use `hold` ou `push`.
 - **Legenda sobre o rosto:** proibida. Não suba o look dos closes.
+- **Close de personagem baixo** (`kid`, ou escala < 1): o rosto cai na altura da legenda. Use `medio` + `push`; o
+  close é só para altura adulta.
+- **Ponto lateral + `push` no aberto:** o avanço estreita o quadro e tira quem está na borda. Com gente nos lados, use
+  `hold`.
 - **Personagem fora do quadro:** o quadro vertical é estreito. Nos abertos, até 3 pessoas, nos spots `esquerda`,
   `centro` e `direita`.
 - **Parede ou teto lavanda-acinzentado:** é contraluz. Os cômodos usam `sunAz: 130` e teto sem luz.

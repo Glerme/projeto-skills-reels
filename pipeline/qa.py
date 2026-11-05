@@ -22,7 +22,7 @@ TARGET, TOL = -14.0, 1.5
 
 
 def planned_frames(spec: dict, groups: list | None = None) -> set[int]:
-    """frames where a big change is expected: cuts, crossfade windows, the 4 flash frames, caption swaps"""
+    """frames where a big change is expected: cuts, crossfade windows, kicks, the 4 flash frames, caption swaps"""
     fps, out = spec.get("fps", 30), set()
     for g in groups or []:
         for t in (g["start"], g["end"]):
@@ -31,6 +31,9 @@ def planned_frames(spec: dict, groups: list | None = None) -> set[int]:
     for s in spec.get("shots", []):
         a = round(s["start"] * fps)
         out.update((a - 1, a, a + 1))
+        for k in s.get("kicks") or []:  # impact shakes flip every frame for 7 frames
+            f = round(k * fps)
+            out.update(range(f - 1, f + 9))
         xf = s.get("xfade") or 0
         if xf > 0:
             out.update(range(round((s["start"] - xf / 2) * fps) - 1, round((s["start"] + xf / 2) * fps) + 2))

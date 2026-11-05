@@ -57,3 +57,27 @@ O p5 fora do contorno fica entre 0,18 e 0,50, ou seja, sem pretos esmagados.
 2. **Cor.** A referência usa cores mais profundas e saturadas, com contraste de luz. Os interiores ainda estão claros
    demais (mediana 0,70–0,73).
 3. **Texturas.** Paredes lisas, sem pintura à mão como na referência.
+
+## Primeiro vídeo: Davi e Golias (Tarefa 16)
+
+Roteiro aprovado. Render de 63,7 s em cerca de 58 s; QA limpo (−14,3 LUFS).
+
+O que o fluxo deixou a desejar e foi corrigido no caminho:
+
+- **Escala de personagem.** Não existia, e um gigante não tinha como ser maior. Entrou `scale` (0,5–2) no CharDef.
+  `kit/characters/gigante.json` é a peça nova do acervo.
+- **Tempos de `expr`.** São absolutos do vídeo, e a skill não dizia isso (eu usei 0 como início da cena). O
+  `cenas.md` foi corrigido.
+- **Spots laterais da natureza.** Em ±1,6 eles saíam do quadro vertical, principalmente com `push`. Agora estão em
+  ±1,1.
+- **Personagem baixo no close.** Davi como `kid` ficava com o rosto embaixo da legenda. A saída foi usar `slim` com
+  escala 0,9 e trocar os closes de Davi por `medio` + `push`.
+  - Regra para a skill: close só para personagem de altura adulta.
+- **QA.** Ele apontava as tremidas (kicks) como "pulos". Agora as tremidas contam como mudança planejada.
+
+Limites que ficam:
+
+- Não há cenário nem figurino de época: o vale é o cenário de natureza, e as túnicas são roupas do kit.
+- Não há animação da pedra voando: o corte, o som e a tremida fazem esse papel.
+- O close da armadura (cena 5) fica abstrato.
+- A luz de fim de tarde na natureza fica azulada.

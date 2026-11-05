@@ -241,10 +241,11 @@ export class Stage {
       const ex = (a.expr ?? []).filter(([te]) => te <= t).pop();
       const fo: FrontOpts = { ...pose, expr: ex ? ex[1] : pose.expr, blink: blinkAt(seed, t, this.spec.fps),
         facing: a.facing ?? (moving ? 1 : 0), light: light2D(sunDir, right, mirror), seed };
-      const [w, h, k] = tier(cam.position.distanceTo(this.v.set(p.x, p.y + 1.2, p.z)));
-      places.push({ key: `F|${ch.id}|${fkey(fo)}`, draw: (pen) => drawChar(pen, ch, fo), x: p.x, y: p.y, z: p.z, mirror, size: [w, h, k] });
+      const sc = ch.scale ?? 1;
+      const [w, h, k] = tier(cam.position.distanceTo(this.v.set(p.x, p.y + 1.2 * sc, p.z)) / sc);
+      places.push({ key: `F|${ch.id}|${fkey(fo)}`, draw: (pen) => drawChar(pen, ch, fo), x: p.x, y: p.y, z: p.z, mirror, scale: sc, size: [w, h, k] });
       if (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march") blob(fxp, sunDir, shot.light, p.x, p.y, p.z);
-      if (shot.focus === a.who) focus = p.clone().setY(p.y + EYE);
+      if (shot.focus === a.who) focus = p.clone().setY(p.y + EYE * sc);
     }
     if (shot.focus && shot.focus in def.spots) focus = V(def.spots[shot.focus]).setY(def.spots[shot.focus][1] + EYE);
     // ---- placement (frustum-culled), then one pool flush ----
@@ -252,13 +253,14 @@ export class Stage {
     let ai = 0;
     const used: Actor[] = [];
     for (const p of places) {
-      if (!this.frustum.intersectsSphere(this.sph.set(this.v.set(p.x, p.y + 1.1, p.z), 3.5))) continue;
+      const sc = p.scale ?? 1;
+      if (!this.frustum.intersectsSphere(this.sph.set(this.v.set(p.x, p.y + 1.1 * sc, p.z), 3.5 * sc))) continue;
       const a = this.actor(ai++), [w, h, k] = p.size!;
       a.r = this.pool.req(p.key, w, h, k, p.draw);
       a.mesh.visible = true;
       a.mesh.position.set(p.x, p.y, p.z);
       a.mesh.rotation.set(0, Math.atan2(cam.position.x - p.x, cam.position.z - p.z), 0);
-      a.mesh.scale.set(p.mirror ? -1 : 1, 1, 1);
+      a.mesh.scale.set(p.mirror ? -sc : sc, sc, sc);
       a.mesh.castShadow = L.actorShadow; // day: soft contact blobs instead
       used.push(a);
     }

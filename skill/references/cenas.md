@@ -33,7 +33,8 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
     - `glide`: desliza de `from` até `to` em 18–40 frames;
   - `punch`: tempos de avanço extra, nas palavras de impacto.
 - `actors[]`:
-  - `who`, `at` (spot), `to` (spot, só para `walk`), `action`, `expr` (lista de [tempo, expressão]) e
+  - `who`, `at` (spot), `to` (spot, só para `walk`), `action`, `expr` (lista de [tempo, expressão], com tempos
+    **absolutos do vídeo**, dentro da cena; o primeiro costuma ser o `start` da cena) e
     `facing` (−1, 0 ou 1);
   - até 3 atores por cena: o quadro vertical é estreito.
 - `dof`: desfoque de fundo em px (lens blur).

@@ -53,7 +53,7 @@ const build = (root: THREE.Group, kit: Kit) => {
 export const natureza: SetDef = {
   id: "natureza",
   sky: true,
-  spots: { centro: [0, 0, 0], esquerda: [-1.6, 0, 0.3], direita: [1.6, 0, -0.2], fundo: [0, 0, -5] },
+  spots: { centro: [0, 0, 0], esquerda: [-1.1, 0, 0.3], direita: [1.1, 0, -0.2], fundo: [0, 0, -5] },
   views: {
     aberto: { pos: [0, 1.6, 7], look: [0, 1.2, -4], fov: 60, roll: 0 },
     medio: { pos: [0, 1.5, 3.6], look: [0, 1.15, 0], fov: 45, roll: 0 },

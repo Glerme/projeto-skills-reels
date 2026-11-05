@@ -33,6 +33,10 @@ class QaTest(unittest.TestCase):
         p = planned_frames(spec, [{"text": "A", "start": 0.1, "end": 1.2}, {"text": "B", "start": 1.2, "end": 2.0}])
         self.assertTrue({3, 36, 60} <= p)
 
+    def test_kicks_are_planned(self):
+        spec = {"fps": 30, "shots": [{"id": 1, "start": 0, "end": 3, "kicks": [1.0]}]}
+        self.assertTrue(set(range(30, 38)) <= planned_frames(spec))
+
 
 if __name__ == "__main__":
     unittest.main()
