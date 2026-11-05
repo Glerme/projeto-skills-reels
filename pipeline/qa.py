@@ -74,6 +74,25 @@ def analyze(F: np.ndarray, planned: set[int]) -> tuple[list[str], dict]:
     return probs, {"mean": mean, "diff": diff}
 
 
+RANGES = {"historia": (50, 70), "curiosidade": (30, 45), "lista": (45, 60), "e-se": (15, 25)}  # formatos.md
+
+
+def metrics(spec: dict, words: list[dict]) -> list[str]:
+    """retention numbers for the score in skill/references/nota.md (informative, never a QA failure)"""
+    shots, dur = spec.get("shots", []), spec.get("duration") or 0
+    out = [f"duração {dur:.1f} s (faixa de {spec.get('format')}: {RANGES.get(spec.get('format'), '?')})"]
+    if shots and dur:
+        longest = max(shots, key=lambda s: s["end"] - s["start"])
+        out.append(f"cortes por 10 s: {(len(shots) - 1) / dur * 10:.1f}; maior plano: cena {longest['id']}, "
+                   f"{longest['end'] - longest['start']:.1f} s")
+    if words:
+        a, b = words[0]["start"], words[-1]["end"]
+        out.append(f"ritmo: {len(words) / max(b - a, 0.1) * 60:.0f} palavras/min")
+        out.append("gancho (primeiros 3 s): " + " ".join(w["text"] for w in words if w["start"] < a + 3))
+        out.append("fecho (últimos 6 s): " + " ".join(w["text"] for w in words if w["start"] >= b - 6))
+    return out
+
+
 def _loudness(vid: Path) -> float | None:
     e = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(vid), "-map", "0:a:0", "-af", "ebur128=peak=true",
                         "-f", "null", "-"], capture_output=True, text=True).stderr
@@ -107,7 +126,8 @@ def run(video_dir: Path) -> list[str]:
                           "-pix_fmt", "rgb24", "-"], capture_output=True).stdout
     F = np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3)
     words = d / "words.json"
-    groups = captions.group(json.loads(words.read_text(encoding="utf-8"))) if words.exists() else []
+    wl = json.loads(words.read_text(encoding="utf-8")) if words.exists() else []
+    groups = captions.group(wl) if wl else []
     probs, _ = analyze(F, planned_frames(spec, groups))
     lufs = None
     if not any(s["codec_type"] == "audio" for s in streams):
@@ -118,8 +138,9 @@ def run(video_dir: Path) -> list[str]:
             probs.append(f"loudness {lufs} LUFS fora de {TARGET} ± {TOL}")
     _sheets(F, out)
     head = f"{v['width']}x{v['height']} {v['r_frame_rate']} fps, {len(F)} frames, loudness {lufs} LUFS"
-    (out / "report.md").write_text("# QA\n\n" + head + "\n\n" + ("\n".join(f"- {p}" for p in probs) or "- nenhum problema") + "\n",
-                                   encoding="utf-8")
+    (out / "report.md").write_text("# QA\n\n" + head + "\n\n" + ("\n".join(f"- {p}" for p in probs) or "- nenhum problema")
+                                   + "\n\n## Métricas (para skill/references/nota.md)\n\n"
+                                   + "\n".join(f"- {m}" for m in metrics(spec, wl)) + "\n", encoding="utf-8")
     return probs
 
 

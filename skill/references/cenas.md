@@ -80,9 +80,12 @@ só fora do quadro; em percurso fechado, retorna ao mesmo ponto sem salto. `ida`
 
 **`flash`:** tempos de flash branco (4 frames). Um só, logo depois do gancho.
 
-**`sfx`:** `[{t, name, gainDb?}]`, com nomes `pop whoosh boing thud ding splash creak crash steps sparkle tick`.
+**`sfx`:** `[{t, name, gainDb?}]`, com nomes `pop whoosh boing thud ding splash creak crash steps sparkle tick sting`.
+`sting` é o golpe de metais do twist: use junto com `music.stop`, no mesmo tempo.
 
-**`music.mood`:** `curioso`, `animado`, `tenso` ou `calmo`.
+**`music`:** `mood` é `curioso`, `animado`, `tenso` ou `calmo`. `stop` (opcional) corta a trilha nesse tempo e
+deixa só voz e efeitos até o fim. Use no twist ou na virada final: `start` da palavra do twist − 0,05.
+Exemplo: `"music": {"mood": "curioso", "stop": 31.15}`, com `{"t": 31.15, "name": "sting"}` em `sfx`.
 
 ## Cenários (spots e views)
 

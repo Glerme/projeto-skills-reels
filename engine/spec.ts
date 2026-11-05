@@ -28,8 +28,8 @@ export type SkySpec = { sun?: boolean; clouds?: number };
 export type ShotSpec = { id: number; start: number; end: number; set: SetId; light: Light; cam: CamSpec; actors: ActorSpec[];
   dof?: number; focus?: string; xfade?: number; kicks?: number[]; throws?: ThrowSpec[]; sky?: SkySpec };
 export type SfxCue = { t: number; name: string; gainDb?: number };
-export type VideoSpec = { version: 1; slug: string; format: "historia" | "curiosidade" | "lista"; fiction: boolean; fps: 30;
-  duration: number; cast: Record<string, CharDef>; shots: ShotSpec[]; dressing?: Partial<Record<SetId, PropSpec[]>>; flash?: number[]; sfx: SfxCue[]; music: { mood: Mood } };
+export type VideoSpec = { version: 1; slug: string; format: "historia" | "curiosidade" | "lista" | "e-se"; fiction: boolean; fps: 30;
+  duration: number; cast: Record<string, CharDef>; shots: ShotSpec[]; dressing?: Partial<Record<SetId, PropSpec[]>>; flash?: number[]; sfx: SfxCue[]; music: { mood: Mood; stop?: number } };
 
 const EPS = 1e-6;
 const BUILDS = ["adult", "stout", "kid", "elder", "slim"];
@@ -40,11 +40,13 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
   if (!isObj(x)) return { ok: false, errors: ["o vídeo não é um objeto"] };
   if (x.version !== 1) errors.push("version deve ser 1");
   if (typeof x.slug !== "string" || !x.slug) errors.push("slug ausente");
-  if (!["historia", "curiosidade", "lista"].includes(x.format)) errors.push(`format inválido: ${x.format}`);
+  if (!["historia", "curiosidade", "lista", "e-se"].includes(x.format)) errors.push(`format inválido: ${x.format}`);
   if (typeof x.fiction !== "boolean") errors.push("fiction deve ser booleano");
   if (x.fps !== 30) errors.push("fps deve ser 30");
   if (typeof x.duration !== "number" || !(x.duration > 0)) errors.push("duration inválida");
   if (!isObj(x.music) || !["curioso", "animado", "tenso", "calmo"].includes(x.music.mood)) errors.push("music.mood inválido");
+  if (isObj(x.music) && x.music.stop !== undefined && !(typeof x.music.stop === "number" && x.music.stop > 0 && x.music.stop < x.duration))
+    errors.push(`music.stop deve ficar entre 0 e duration: ${x.music.stop}`);
   if (!Array.isArray(x.sfx)) errors.push("sfx deve ser uma lista");
   if (!isObj(x.cast)) errors.push("cast deve ser um objeto");
   else for (const [k, c] of Object.entries(x.cast)) {

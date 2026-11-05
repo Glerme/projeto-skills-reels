@@ -33,8 +33,14 @@ class MixTest(unittest.TestCase):
     def tearDown(self):
         self.d.cleanup()
 
-    def run_mix(self, sfx=()):
-        return mix(self.dir / "voice.wav", WORDS, list(sfx), "curioso", 4.0, self.dir / "mix.wav")
+    def run_mix(self, sfx=(), stop=None):
+        return mix(self.dir / "voice.wav", WORDS, list(sfx), "curioso", 4.0, self.dir / "mix.wav", stop=stop)
+
+    def test_music_stops(self):
+        self.run_mix(stop=2.0)
+        m, _ = read_wav(str(self.dir / "stem_music.wav"))
+        self.assertGreater(np.abs(m[:, :int(1.9 * SR)]).max(), 1e-3)
+        self.assertEqual(np.abs(m[:, int(2.0 * SR):]).max(), 0.0)
 
     def test_mix_exact_length(self):
         self.run_mix([{"t": 1.0, "name": "pop"}])

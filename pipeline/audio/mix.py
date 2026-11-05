@@ -68,7 +68,8 @@ def _limit(x: np.ndarray, ceil_db: float = CEIL_DBTP, look: float = 0.003, rel: 
     return x * g[None, :]
 
 
-def mix(voice: Path, words: list[Word], sfx: list[SfxCue], mood: Mood, dur: float, out: Path, seed: int = 0) -> dict:
+def mix(voice: Path, words: list[Word], sfx: list[SfxCue], mood: Mood, dur: float, out: Path, seed: int = 0,
+        stop: float | None = None) -> dict:
     n = round(dur * SR)
     v, sr = read_wav(str(voice))
     if sr != SR:
@@ -82,6 +83,10 @@ def mix(voice: Path, words: list[Word], sfx: list[SfxCue], mood: Mood, dur: floa
     if np.isfinite(lm):
         m = m * dbg(lv - MUSIC_BELOW - lm)
     m = m * dbg(duck_curve(words, n))[None, :]
+    if stop is not None:  # music cuts at the twist: 60 ms fade, silence after
+        a, b = ns(max(stop - 0.06, 0)), min(ns(stop), n)
+        m[:, a:b] *= np.linspace(1, 0, b - a)[None, :]
+        m[:, b:] = 0
     s = np.zeros((2, n))
     vpk = momentary_max(v) if np.isfinite(momentary_max(v)) else lv
     for i, cue in enumerate(sfx):
@@ -114,7 +119,8 @@ def main(argv: list[str]) -> int:
     d = Path(argv[0])
     spec = json.loads((d / "video.json").read_text(encoding="utf-8"))
     words = json.loads((d / "words.json").read_text(encoding="utf-8"))
-    rep = mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], spec["duration"], d / "assets/mix.wav")
+    rep = mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], spec["duration"], d / "assets/mix.wav",
+              stop=spec["music"].get("stop"))
     print(f"mix: {rep['lufs']:.1f} LUFS, pico {rep['true_peak']:.1f} dBTP")
     return 0
 

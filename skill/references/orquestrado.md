@@ -18,6 +18,7 @@ Em conflito, essas skills mandam; o motor só limita o que existe tecnicamente.
 | 7 render | script | `bash scripts/render.sh videos/<slug> > videos/<slug>/agentes/render.log 2>&1` |
 | 7b se o render falhar | Codex (corretor) | `worker.sh corretor videos/<slug>` e renderize de novo (no máximo 3 voltas) |
 | 8 revisão | Claude Haiku (revisor) | `worker.sh revisor videos/<slug>`; se "RESULTADO: corrigir", mande a lista ao diretor como nota |
+| 8b nota de retenção | coordenador | `references/nota.md`, lendo só `qa/report.md`, `roteiro.txt` e `SCRIPT.md` |
 | 9 aprovação final | coordenador + usuário | `final.mp4` |
 
 O coordenador não lê `engine/`, não abre stills e não reescreve o que o worker fez: lê só o `.txt` de saída.

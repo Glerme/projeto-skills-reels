@@ -70,7 +70,7 @@ def assemble(video_dir: Path) -> Path:
     words = json.loads((d / "words.json").read_text(encoding="utf-8"))
     dur = spec["duration"]
     # sound and captions
-    mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], dur, d / "assets/mix.wav")
+    mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], dur, d / "assets/mix.wav", stop=spec["music"].get("stop"))
     captions.render_html(captions.group(words), d / "compositions/captions.html")
     # page
     spec_json = json.dumps(spec, ensure_ascii=False).replace("</", "<\\/")

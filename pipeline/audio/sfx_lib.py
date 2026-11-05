@@ -56,6 +56,15 @@ def sparkle(r):
     return _norm(buf)
 
 
+def sting(r):
+    """sting do twist: dois golpes de metal (sol e dó maior), o segundo segurado"""
+    buf = np.zeros((2, ns(1.3)))
+    for t0, root, dur in ((0.0, 55, 0.09), (0.16, 60, 0.7)):
+        for m in (root, root + 4, root + 7, root + 12):
+            place(buf, I.brass(I.m2f(m), dur, 0.9, r, kind="stab"), t0)
+    return _norm(buf)
+
+
 def crash(r):
     """quebra: estalo de madeira + chocalho de pedaços"""
     buf = np.zeros((2, ns(1.2)))
@@ -76,4 +85,5 @@ SFX: dict[str, Callable[[np.random.Generator], np.ndarray]] = {
     "steps": steps,
     "sparkle": sparkle,
     "tick": lambda r: _norm(G.clink(r, dur=0.08)),
+    "sting": sting,
 }

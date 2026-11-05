@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.qa import planned_frames, run
+from pipeline.qa import metrics, planned_frames, run
 
 
 class QaTest(unittest.TestCase):
@@ -32,6 +32,15 @@ class QaTest(unittest.TestCase):
         spec = {"fps": 30, "shots": [{"id": 1, "start": 0, "end": 3}]}
         p = planned_frames(spec, [{"text": "A", "start": 0.1, "end": 1.2}, {"text": "B", "start": 1.2, "end": 2.0}])
         self.assertTrue({3, 36, 60} <= p)
+
+    def test_metrics(self):
+        spec = {"format": "e-se", "duration": 20, "shots": [{"id": 1, "start": 0, "end": 4}, {"id": 2, "start": 4, "end": 20}]}
+        words = [{"text": f"w{i}", "start": i, "end": i + 0.5} for i in range(19)]
+        m = "\n".join(metrics(spec, words))
+        self.assertIn("(15, 25)", m)
+        self.assertIn("cortes por 10 s: 0.5; maior plano: cena 2, 16.0 s", m)
+        self.assertIn("gancho (primeiros 3 s): w0 w1 w2", m)
+        self.assertIn("fecho (últimos 6 s): w13 w14", m)
 
     def test_kicks_are_planned(self):
         spec = {"fps": 30, "shots": [{"id": 1, "start": 0, "end": 3, "kicks": [1.0]}]}

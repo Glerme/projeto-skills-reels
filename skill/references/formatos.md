@@ -1,6 +1,6 @@
 # Formatos de roteiro
 
-Valem para os três formatos:
+Valem para todos os formatos:
 - **Ritmo:** cerca de 3,2 palavras/s (a voz do Alex), ou seja, cerca de 190 palavras por minuto.
 - **Gancho:** a primeira frase é o gancho. Sem intro, sem "olá", sem logo, sem pedir para seguir no início.
 - **Tom:** frases faladas, curtas, sem jargão sem explicação. Nunca descreva o que o espectador já está vendo.
@@ -39,3 +39,30 @@ Valem para os três formatos:
 2. **Itens do menos para o mais surpreendente.** O melhor fica para o fim. Cada item tem 1–2 frases e uma cena
    própria, e o número do item é dito ("Número três:").
 3. **Fecho:** uma frase sobre o último item, sem resumo da lista.
+
+## E se (15–25 s, cerca de 50–80 palavras). `"format": "e-se"`
+
+Um "e se" (um poder, um mundo diferente), narrado em **segunda pessoa, no presente**. Adaptado da fórmula do
+what-if-animation (kelano86).
+1. **Gancho:** a premissa numa frase ("E se você pudesse copiar e colar qualquer coisa?").
+2. **Demonstrações em escada:** 2 ou 3, cada uma numa cena só e legível sem texto: pequena e egoísta, depois útil,
+   depois um pouco estranha ("Um biscoito. O dever de casa. O seu melhor amigo.").
+3. **A virada:** um fato real, com número e fonte, que mostra o custo ou o problema.
+4. **Fecho:** uma pergunta ou uma ameaça, nunca uma solução ("Então, de onde vêm os seus?").
+
+- Frases de 3 a 8 palavras. Cada frase é uma imagem.
+- A premissa é hipotética, mas o fato da virada é real e tem fonte. Não leva selo FICÇÃO.
+
+## Série em partes (variação da história, 50–70 s por parte)
+
+A história contada em partes, para puxar a próxima parte e os comentários. Use `"format": "historia"` e
+`"slug": "<tema>-parte-<n>"`.
+- **Gancho:** um momento acontecendo agora, não uma apresentação ("Uma mão gelada no seu tornozelo."). Da parte 2
+  em diante, responde a pergunta da parte anterior com uma virada nos primeiros 10 s.
+- **Meio:** um dilema em que toda escolha custa algo, e uma virada (o que achávamos se inverte).
+- **Perda:** algo se perde e continua perdido.
+- **Fim:** um alívio falso e depois um cliffhanger numa imagem ou fala. Sem resolver, sem "tchau" ou "segue".
+- **Pergunta final:** uma escolha que divide os comentários meio a meio, com custo dos dois lados ("Você abre a porta
+  ou deixa ele bater?"). A última fala anuncia a próxima parte ("Parte dois amanhã.").
+- O `SCRIPT.md` da parte guarda o que já foi revelado e a pergunta que ficou em aberto. A parte seguinte parte daí,
+  com o mesmo elenco e o mesmo briefing visual.

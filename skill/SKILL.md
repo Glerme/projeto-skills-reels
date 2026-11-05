@@ -17,7 +17,7 @@ Todo vídeo usa também as skills `diretor-de-edicao` (roteiro, retenção, ritm
 o motor só limita o que existe tecnicamente (ações, peças, cenários).
 
 1. **Tema e formato.**
-   - Formatos: história, curiosidade ou lista.
+   - Formatos: história (ou série em partes), curiosidade, lista ou "e se".
    - Sem tema, proponha 3 em uma linha cada.
    - Regras de cada formato, durações e o limite real/ficção: `references/formatos.md`.
 2. **Pesquisa e roteiro.**
@@ -37,6 +37,11 @@ o motor só limita o que existe tecnicamente (ações, peças, cenários).
 5. **Voz e palavras.**
    - `python3 -m pipeline.voice videos/<slug>/roteiro.txt videos/<slug>/assets/voice.wav` (Kokoro, voz Alex). Ele
      recusa dígitos e símbolos.
+   - **Voz gravada (opcional):** se o usuário mandar a própria voz ou uma do ElevenLabs (velocidade 1,05–1,1, sem
+     música), não rode o `pipeline.voice`. Converta com
+     `ffmpeg -i <arquivo> -ac 1 -ar 48000 -c:a pcm_s16le videos/<slug>/assets/voice.wav` e não mexa em mais nada
+     da voz. Ela precisa falar o `roteiro.txt` palavra por palavra; se o texto mudou, corrija o `roteiro.txt`
+     antes. O ritmo de 3,2 palavras/s não vale: os tempos vêm do `words.json`.
    - `~/.venvs/shorts/bin/python -m pipeline.words videos/<slug>/assets/voice.wav videos/<slug>/roteiro.txt videos/<slug>/words.json`
 6. **Plano de cenas.** Escreva `videos/<slug>/video.json` com os tempos de `words.json` e os figurinos do briefing.
    - Formato, cenários, câmeras e ações: `references/cenas.md`.
@@ -54,7 +59,8 @@ o motor só limita o que existe tecnicamente (ações, peças, cenários).
    - Tire stills com `bash scripts/snap.sh videos/<slug> <t1,t2,…>`, um por cena.
    - Confira cada um contra `references/armadilhas.md` e contra o briefing visual confirmado.
    - Use no máximo um agente revisor de stills por vídeo.
-9. **Aprovação 2.** Entregue o caminho de `videos/<slug>/final.mp4` e ofereça o preview do HyperFrames
+   - Dê a nota de retenção de `references/nota.md`, com as métricas de `qa/report.md`.
+9. **Aprovação 2.** Entregue o caminho de `videos/<slug>/final.mp4` e a nota de retenção, e ofereça o preview do HyperFrames
    (`npx hyperframes preview` dentro da pasta) para ajustes.
 
 ## Modo orquestrado
