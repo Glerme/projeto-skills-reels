@@ -99,3 +99,7 @@ Task 15: Ruling: a skill não passou pelos testes de pressão com subagente que 
 Task 15: Ruling: novo `python -m pipeline.assemble --check videos/<slug>`, porque o validador direto rejeita elenco citado por id (só a montagem resolve o acervo); o exemplo de video.json em cenas.md foi validado. Custo se errado: nenhum.
 Task 15: Ruling: o passo 2 do plano ("abra sessão nova e confira a skill na lista") foi checado nesta sessão: a skill shorts-cartoon apareceu na lista de skills disponíveis logo depois da criação do link. Custo se errado: nenhum.
 Task 15: complete (commits 8a4c3dc..21646d6, tests: /home/gui/.venvs/shorts/bin/python -m unittest discover pipeline/tests → OK)
+Task 16: Ruling: o usuário trocou o tema do primeiro vídeo de "curiosidade" para "história bíblica" (Davi e Golias, 1 Samuel 17): história narrada, fiction false, nenhuma citação literal (só narração e paráfrases marcadas no SCRIPT.md com o versículo).
+Task 16: Ruling: CharDef.scale (0,5–2) no spec e no stage; o gigante (scale 1,6) entra no acervo como peça nova, a única do vídeo. Custo se errado: nenhum (opcional).
+Task 16: Ruling: os spots esquerda/direita da natureza vão de ±1,6 para ±1,1 (saíam do quadro vertical). Davi virou slim com escala 0,9, e os closes dele viraram medio+push (rosto sob a legenda). O QA passa a tratar kicks como planejados. Custo se errado: reenquadrar.
+Task 16: render 63,7 s, QA limpo (−14,3 LUFS); vídeo final aguardando a aprovação 2 do usuário. Nada publicado.
