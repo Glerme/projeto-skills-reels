@@ -1,0 +1,63 @@
+{
+ "version": 1,
+ "slug": "mini",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 3.4,
+ "cast": {
+  "homem": "homem",
+  "cientista": "cientista"
+ },
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 1.7,
+   "set": "palco",
+   "light": "day",
+   "cam": {
+    "recipe": "hold",
+    "from": "medio"
+   },
+   "actors": [
+    {
+     "who": "cientista",
+     "at": "centro",
+     "action": "talk"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "start": 1.7,
+   "end": 3.4,
+   "set": "palco",
+   "light": "day",
+   "cam": {
+    "recipe": "push",
+    "from": "close"
+   },
+   "actors": [
+    {
+     "who": "homem",
+     "at": "centro",
+     "action": "shock"
+    }
+   ],
+   "xfade": 0.3
+  }
+ ],
+ "flash": [
+  1.7
+ ],
+ "sfx": [
+  {
+   "t": 1.7,
+   "name": "pop"
+  }
+ ],
+ "music": {
+  "mood": "curioso"
+ }
+}

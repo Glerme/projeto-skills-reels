@@ -29,13 +29,18 @@ def _norm(w: str) -> str:
 
 def transcribe(wav: Path) -> list[Word]:
     """Palavras ouvidas com tempo (Whisper small, pt). Nunca use modelo .en: ele traduz para inglês."""
+    leftover = wav.resolve().parent / "transcript.json"
+    existed = leftover.exists()
     with tempfile.TemporaryDirectory() as d:
         r = subprocess.run([*HF, "transcribe", str(wav.resolve()), "--model", "small", "--language", "pt",
                             "--engine", "whisper", "--json"], cwd=d, capture_output=True, text=True)
         if r.returncode != 0:
             raise RuntimeError("transcrição falhou: " + (r.stderr.strip().splitlines() or ["?"])[-1])
         info = json.loads(r.stdout)
-        words = json.loads(Path(info["transcriptPath"]).read_text(encoding="utf-8"))
+        tp = Path(info["transcriptPath"])
+        words = json.loads(tp.read_text(encoding="utf-8"))
+        if tp.resolve() == leftover and not existed:  # the CLI writes it next to the audio: don't leave it behind
+            tp.unlink()
     return [{"id": f"h{i}", "text": w["text"], "start": float(w["start"]), "end": float(w["end"])} for i, w in enumerate(words)]
 
 
