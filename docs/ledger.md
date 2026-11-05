@@ -109,3 +109,13 @@ Task 16: Ruling: em vez de disfarçar com câmera, o motor ganhou um esqueleto a
 Task 16: Ruling: briefing de Davi e Golias perguntado ao usuário (4 perguntas, todas com o default aceito) e gravado no SCRIPT.md da v2. O cenário vale é a peça nova do vídeo.
 Task 16: Ruling: o validador não checava os nomes das ações (lacuna desde a T2); agora checa ACTION_IDS e HAND_PROPS.
 Task 16: v2 renderizada (63,7 s, QA limpo, −14,3 LUFS) em videos/davi-golias-v2/final.mp4; v1 preservada em videos/davi-golias-v1/final.mp4; trechos em movimento inspecionados (arremesso, queda, armadura, pedras, ameaça, caminhada). Aguardando a aprovação do usuário. Nada publicado.
+Task 16: v2 aprovada pelo usuário (aprovação 2). Nada publicado.
+Task 16: complete (commits f60d3ec^..8ee3d49, tests: npm test + unittest pipeline → ver final review)
+Final review: self-review (no subagent tool)
+Final: fixed validador aceitava cam.recipe desconhecido (renderizava como hold, sem aviso) — "rejects an unknown camera recipe" RED→GREEN, suite 31/31 + pipeline OK
+Final: fixed whirl/topple sem cue nunca soltavam a pedra nem caíam (sem aviso) — "whirl and topple need a cue" RED→GREEN; o teste de throws ganhou os cues; suite 31/31
+Final: minor (deferred): render.sh e pipeline/words.py fixam o caminho do plugin HyperFrames 0.9.9; quebra quando o plugin atualizar
+Final: minor (deferred): a sombra de contato (blob) não usa a escala do personagem; o gigante tem sombra de tamanho normal
+Final: minor (deferred): o validador não checa nomes de expr, a ordem dos tempos de expr, facing, sfx/flash nem ids de cena repetidos (o sol é cacheado por id)
+Final: minor (deferred): a pedra do throw sempre sai da mão erguida do lado esquerdo da tela (só bate com whirl)
+Final: minor (deferred): toon.ts (desenho) revisado pelos renders e stills, não linha a linha
