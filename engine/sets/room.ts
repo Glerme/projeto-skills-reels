@@ -1,3 +1,4 @@
+import { rect } from "../space";
 // Interior shell shared by casa, escritorio and laboratorio: a closed box room (floor, four walls, ceiling) centred on
 // the origin, x -w/2..w/2, z -d/2..d/2, floor at y = 0. The shell lives on the NOINK layer and casts no shadow:
 // - no ink on the wall/floor/ceiling joins (the ink rules), while furniture on the world layer keeps full outlines,
@@ -96,9 +97,17 @@ export const pendant = (b: Batch, x: number, z: number, h: number, shade = "#2f5
 
 /** views and spots shared by the 8 x 10 m rooms (cameras on the open middle, spots clear of the furniture) */
 export const ROOM_VIEWS = {
-  aberto: { pos: [0, 1.6, 4.85], look: [0, 1.2, -1.5], fov: 54, roll: 0 },
-  medio: { pos: [0, 1.5, 3.2], look: [0, 1.15, 0.3], fov: 45, roll: 0 },
-  close: { pos: [0.1, 1.55, 2.0], look: [0, 1.25, 0.5], fov: 38, roll: 0 },
-  baixo: { pos: [0.3, 0.6, 3.4], look: [0, 1.7, -1.5], fov: 55, roll: 0 },
+  aberto: { pos: [0, 0.8, 11.5], look: [0, 0.8, 0.5], fov: 50, roll: 0 },
+  medio: { pos: [0, 0.62, 7.7], look: [0, 0.62, 0.5], fov: 45, roll: 0 },
+  close: { pos: [0, 0.8, 3.9], look: [0, 0.8, 0.5], fov: 50, roll: 0 },
+  baixo: { pos: [0, 0.45, 8.5], look: [0, 0.62, 0.5], fov: 50, roll: 0 },
 } satisfies Record<string, { pos: [number, number, number]; look: [number, number, number]; fov: number; roll: number }>;
 export const ROOM_SPOTS = { centro: [0, 0, 0.5], esquerda: [-0.95, 0, 0.6], direita: [0.95, 0, 0.4], fundo: [0, 0, -2] } satisfies Record<string, [number, number, number]>;
+
+/** Walls lie on the room boundary; their footprints exclude the usable interior. */
+export const roomBlocked = (w: number, d: number) => [
+  rect("parede esquerda", -w / 2 - 0.01, 0, 0.02, d),
+  rect("parede direita", w / 2 + 0.01, 0, 0.02, d),
+  rect("parede fundo", 0, -d / 2 - 0.01, w, 0.02),
+  rect("parede frente", 0, d / 2 + 0.01, w, 0.02),
+];

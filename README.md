@@ -41,9 +41,13 @@ O design completo está em [`docs/design.md`](docs/design.md). Ele ainda está a
   que depois falhe.
 
 **Motor:**
-- Os modelos Kenney (CC0, Nature Kit e Fantasy Town Kit) vão em `kit/kenney/` (os `.glb` da lista `KENNEY` de
-  `engine/kit.ts`, mais `Textures/colormap.png` do Fantasy Town Kit): baixe de kenney.nl. Sem eles, a cena roda, só que
-  sem árvores e barracas.
+- Modelos em `kit/kenney/` (fora do git), registrados em `kit/models.json` (versionado e incluído no build).
+  Use só pacotes **CC0** (Kenney, Quaternius), low-poly de cor chapada.
+- Importe com `scripts/import-assets.sh <pacote.zip> <prefixo> [modelo ...]`; sem modelos, importa todos.
+  Exemplo: `scripts/import-assets.sh ~/Downloads/kenney_car-kit.zip car sedan taxi`.
+  Os nomes viram `car-sedan`, `car-taxi`; texturas externas ganham o prefixo. O script recusa sobrescrever modelos
+  e texturas diferentes. Rode `npm run build` e `npm run validate:build` depois de importar.
+  Sem os arquivos locais, o motor omite os modelos ausentes.
 - `npm run build && scripts/mk-test-video.sh engine/fixtures/two-shots.json videos/_teste-palco && scripts/snap.sh videos/_teste-palco 0.5,2.5`.
 
 ## Origem
@@ -52,3 +56,5 @@ O motor e as referências de estilo vêm do fork `~/Documentos/projetos/claude-a
 - Os frames de referência de lá (`references/frames`, `references/sheets`) são de outro canal: servem só para comparar
   o visual e **nunca** aparecem nos vídeos.
 - Por isso, eles não foram copiados para cá.
+
+Catálogo visual: regenere com `bash scripts/catalogo.sh` e veja as folhas em `docs/kit/catalogo/*.jpg`.

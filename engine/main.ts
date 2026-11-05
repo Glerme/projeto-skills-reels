@@ -4,6 +4,7 @@
 // with what they belong to; bloom after the DOF so glows defocus with their source; the grade is display-referred,
 // so it comes after tone mapping. Every pixel-sized parameter is specified at 1080x1920 and scales with the
 // drawing-buffer height. Crossfades draw the incoming shot on a second canvas; spec.flash gives 4-frame white flashes.
+import { catalogSpec, catalogProp, fitCatalogProp, drawCatalogAnchors, type CatalogItem } from "./catalog";
 import * as THREE from "three";
 import { BlendFunction, BloomEffect, Effect, EffectComposer, EffectPass, RenderPass, ToneMappingEffect, ToneMappingMode } from "postprocessing";
 import { Stage } from "./stage";
@@ -28,12 +29,9 @@ const makeBloom = () => {
 };
 
 const fwd = new THREE.Vector3();
-/** the spec, or the reason it can't be drawn (bad JSON included): both end up in the same rejected `ready` below */
-const checked = ((): ReturnType<typeof validateSpec> => {
-  try { return validateSpec(JSON.parse(document.getElementById("video-spec")?.textContent ?? "")); }
-  catch (e) { return { ok: false, errors: [`JSON do spec ilegível: ${(e as Error).message}`] }; }
-})();
-const spec = (checked.ok ? checked.spec : null) as VideoSpec;
+let spec: VideoSpec;
+const catalogNode = document.getElementById("catalog-spec");
+let catalog: CatalogItem[] | null = null;
 
 /** One canvas with its own stage, camera and post chain; returns draw(shot, t). */
 const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => {
@@ -47,6 +45,10 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
   const cam = new THREE.PerspectiveCamera(40, W / H, 0.2, 1500);
   const stage = new Stage(kit, spec);
   scene.add(stage.root);
+  const props = catalog?.map(item => item.model ? catalogProp(item.model, kit) : null) ?? [];
+  props.forEach(group => { if (group) scene.add(group); });
+  const overlay = catalog ? document.createElement("canvas") : null;
+  if (overlay) { overlay.width = W; overlay.height = H; canvas.after(overlay); }
   scene.fog = stage.fog; scene.background = null;
   const fx = {
     ink: new InkPass(scene, cam),
@@ -72,6 +74,9 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
   return (shot: ShotSpec, t: number) => {
     const target = stage.update(shot, t, cam);
     noInkFallback(stage.root);
+    props.forEach((group, i) => { if (group) group.visible = i === shot.id - 1; });
+    const group = props[shot.id - 1];
+    if (group) fitCatalogProp(group, cam);
     // thin-lens focus: distance along the view axis to the shot's focus point (Stage: shot.focus, else the look point)
     cam.getWorldDirection(fwd);
     fx.lens.focus = Math.max(0.3, target.sub(cam.position).dot(fwd));
@@ -79,6 +84,11 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
     gradeFor(fx.grade, shot.light);
     fx.grain.seed = Math.round(t * spec.fps); // deterministic per frame
     composer.render(0); // fixed delta: frames are seeked out of order
+    if (overlay) {
+      overlay.style.opacity = canvas.style.opacity;
+      const ctx = overlay.getContext("2d")!; ctx.clearRect(0, 0, W, H);
+      if (catalog?.[shot.id - 1].anchors) drawCatalogAnchors(ctx, shot, cam);
+    }
   };
 };
 
@@ -103,8 +113,16 @@ const renderAt = (views: Draw[], time: number) => {
 };
 
 // an invalid spec rejects buildReady (with the validator's pt-BR messages) instead of drawing a stale or blank frame
-const ready = (checked.ok ? loadKit() : Promise.reject(new Error("spec inválido:\n" + checked.errors.join("\n"))))
-  .then((kit) => canvases.map((c) => makeView(c, kit, W, H)));
+const ready = loadKit().then((kit) => {
+  catalog = catalogNode ? JSON.parse(catalogNode.textContent ?? "") : null;
+  if (catalog) spec = catalogSpec(catalog, kit);
+  else {
+    const result = validateSpec(JSON.parse(document.getElementById("video-spec")?.textContent ?? ""), kit);
+    if (!result.ok) throw new Error("spec inválido:\n" + result.errors.join("\n"));
+    spec = result.spec;
+  }
+  return canvases.map((c) => makeView(c, kit, W, H));
+});
 ready.catch((e: Error) => { console.error(e); document.title = "ERRO: " + e.message; });
 const hf = ((window as any).__hf ??= {});
 (hf.buildReady ??= {}).engine = ready; // HyperFrames waits for this before the first capture

@@ -1,3 +1,5 @@
+import { rect } from "../space";
+import { roomBlocked } from "./room";
 // Living room: warm cream walls, plank floor, two windows on the back wall; a terracotta sofa against the back wall
 // with a coffee table and a rug in front, a bookshelf on the left wall, a cabinet with a plant and a floor lamp on the
 // right. Everything stays against the walls, so the spots in the middle and the cameras' sight lines are clear.
@@ -51,4 +53,11 @@ const build = (root: THREE.Group, kit: Kit) => {
   b.build(root);
 };
 
-export const casa: SetDef = { id: "casa", sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };
+export const casa: SetDef = { id: "casa", walkways: {}, blocked: () => [...roomBlocked(8, 10),
+    rect("sofá", 0, -4.4, 2.72, 1),
+    rect("mesa de centro", 0, -3.2, 1.2, 0.62),
+    rect("estante", -3.78, -1.6, 0.42, 1.7),
+    rect("armário", 3.72, -1.2, 0.5, 1.3),
+    rect("luminária", 3.3, -4.4, 0.45, 0.45),
+    rect("planta", -3.4, -4.4, 1.2, 1.2),
+    rect("mesa lateral", -1.7, -4.4, 0.5, 0.5)], sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };

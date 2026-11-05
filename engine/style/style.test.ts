@@ -8,3 +8,10 @@ test("style modules import without the bridge", () => {
   assert.ok(LIGHTS.day);
   assert.ok(LIGHTS.golden);
 });
+
+import { isExpr } from "./toon";
+
+test("expression lookup accepts new expressions and rejects inherited keys", () => {
+  for (const name of ["neutral", "thoughtful", "skeptical", "excited"]) assert.equal(isExpr(name), true);
+  for (const name of ["toString", "unknown", null, 2]) assert.equal(isExpr(name), false);
+});

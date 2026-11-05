@@ -18,6 +18,7 @@ export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
   build?: Build;
+  hairStyle?: "messy"; glasses?: string; labCoat?: string; shirt?: string; gloves?: string; ink?: string;
   // ancient costume pieces (all optional; a stylised cartoon look, not an archaeological reconstruction)
   tunic?: string; girdle?: string; mantle?: string; sandals?: boolean; greaves?: string; armor?: string; shield?: string;
   beard?: string; crest?: string; headcloth?: string; bag?: string;
@@ -80,6 +81,7 @@ export const townsfolk = (v = 0): Outfit => {
 export class Pen {
   g: CanvasRenderingContext2D;
   ol = 12;
+  ink = INK;
   /** [angle, cx, cy] rotation about (cx, cy), optional post-translation [.., dx, dy] */
   rot: number[] | null = null;
   constructor(g: CanvasRenderingContext2D) { this.g = g; }
@@ -99,7 +101,7 @@ export class Pen {
     const g = this.g, w = ol ?? this.ol;
     this.path(pts, true);
     if (fill) { g.fillStyle = fill; g.fill(); }
-    if (w) { g.lineWidth = w; g.strokeStyle = INK; g.lineJoin = "round"; g.stroke(); }
+    if (w) { g.lineWidth = w; g.strokeStyle = this.ink; g.lineJoin = "round"; g.stroke(); }
   }
   ell(cx: number, cy: number, rx: number, ry: number, fill: string | null, ol?: number, a0 = 0, a1 = 360, rot = 0) {
     this.poly(ellPts(cx, cy, rx, ry, a0, a1, rot), fill, ol);
@@ -108,20 +110,20 @@ export class Pen {
   line(pts: P2[], fill: string, w: number, ink = true) {
     const g = this.g;
     g.lineCap = "round"; g.lineJoin = "round";
-    if (ink) { this.path(pts, false); g.strokeStyle = INK; g.lineWidth = w + 2 * this.ol * 0.9; g.stroke(); }
+    if (ink) { this.path(pts, false); g.strokeStyle = this.ink; g.lineWidth = w + 2 * this.ol * 0.9; g.stroke(); }
     this.path(pts, false); g.strokeStyle = fill; g.lineWidth = w; g.stroke();
   }
-  stroke(pts: P2[], w: number, fill = INK) {
+  stroke(pts: P2[], w: number, fill = this.ink) {
     const g = this.g;
     g.lineCap = "round"; g.lineJoin = "round";
     this.path(pts, false); g.strokeStyle = fill; g.lineWidth = w; g.stroke();
   }
-  arc(cx: number, cy: number, rx: number, ry: number, a0: number, a1: number, w: number, fill = INK) {
+  arc(cx: number, cy: number, rx: number, ry: number, a0: number, a1: number, w: number, fill = this.ink) {
     const pts: P2[] = [];
     for (let i = 0; i <= 24; i++) pts.push([cx + rx * Math.cos(rad(a0 + ((a1 - a0) * i) / 24)), cy + ry * Math.sin(rad(a0 + ((a1 - a0) * i) / 24))]);
     this.stroke(pts, w, fill);
   }
-  dot(cx: number, cy: number, r: number, fill = INK) {
+  dot(cx: number, cy: number, r: number, fill = this.ink) {
     const [x, y] = this.P(cx, cy);
     this.g.beginPath(); this.g.arc(x, y, r, 0, Math.PI * 2); this.g.fillStyle = fill; this.g.fill();
   }
@@ -150,7 +152,7 @@ export class Pen {
     this.path(pts, true); g.fillStyle = gr; g.fill();
   }
   /** thick-thin ink ring: w(θ) = w0 (1 + k cos(θ − thick)), θ from the contour centroid (canvas angles) */
-  inkRing(pts: P2[], w0: number, thick: number, k = 0.45, col = INK) {
+  inkRing(pts: P2[], w0: number, thick: number, k = 0.45, col = this.ink) {
     const n = pts.length;
     let cx = 0, cy = 0;
     for (const [x, y] of pts) { cx += x / n; cy += y / n; }
@@ -170,7 +172,7 @@ export class Pen {
   /** flat strap with a thin ink rim (cross belts, sash, rifle, handles) */
   band(pts: P2[], fill: string, w: number, rim: number, cap: CanvasLineCap = "butt") {
     const g = this.g; g.lineCap = cap; g.lineJoin = "round";
-    this.path(pts, false); g.strokeStyle = INK; g.lineWidth = w + 2 * rim; g.stroke();
+    this.path(pts, false); g.strokeStyle = this.ink; g.lineWidth = w + 2 * rim; g.stroke();
     this.path(pts, false); g.strokeStyle = fill; g.lineWidth = w; g.stroke();
     g.lineCap = "round";
   }
@@ -235,11 +237,14 @@ const DEF_LIGHT = rad(-120);
 
 // ---------------- faces ----------------
 export type Expr = "neutral" | "stern" | "grin" | "laugh" | "whistle" | "nervous" | "shock" | "relief" | "relief_open" | "dazed"
-  | "pained" | "smile" | "smile_closed" | "lick";
-type EyeK = "dot" | "small" | "lid" | "slit" | "happy" | "dash" | "squeeze" | "shock" | "shockHalf" | "spiral";
+  | "pained" | "smile" | "smile_closed" | "lick" | "thoughtful" | "skeptical" | "excited";
+type EyeK = "dot" | "small" | "lid" | "slit" | "happy" | "dash" | "squeeze" | "shock" | "shockHalf" | "spiral" | "star";
 type MouthK = "dash" | "frown" | "smirk" | "smile" | "smileWide" | "grin" | "laugh" | "o" | "O" | "wave" | "teeth" | "lick";
 /** eyes [back, front], brows [inner, outer] offsets in u (+ = down), mouth kind */
 const FACE: Record<Expr, { eye: [EyeK, EyeK]; brow: [number, number]; mouth: MouthK }> = {
+  thoughtful: { eye: ["lid", "lid"], brow: [-2, -1], mouth: "dash" },
+  skeptical: { eye: ["lid", "slit"], brow: [0, -1], mouth: "dash" },
+  excited: { eye: ["star", "star"], brow: [-4, -4], mouth: "laugh" },
   neutral: { eye: ["lid", "lid"], brow: [0, -1], mouth: "dash" },
   stern: { eye: ["lid", "lid"], brow: [3, -2], mouth: "frown" },
   grin: { eye: ["happy", "happy"], brow: [-3, -3], mouth: "grin" },
@@ -255,6 +260,8 @@ const FACE: Record<Expr, { eye: [EyeK, EyeK]; brow: [number, number]; mouth: Mou
   smile_closed: { eye: ["happy", "happy"], brow: [0, -1], mouth: "smile" },
   lick: { eye: ["dot", "dot"], brow: [0, -1], mouth: "lick" },
 };
+export const EXPR_IDS = Object.keys(FACE) as Expr[];
+export const isExpr = (x: unknown): x is Expr => typeof x === "string" && Object.hasOwn(FACE, x);
 const halfLid = (k: EyeK): EyeK => (k === "dot" || k === "small" ? "lid" : k === "lid" ? "slit" : k === "shock" ? "shockHalf" : k);
 const eyeKind = (k: EyeK, lid: number): EyeK =>
   lid >= 1 && k !== "happy" && k !== "squeeze" && k !== "spiral" ? "dash" : lid > 0 ? halfLid(k) : k;
@@ -263,6 +270,14 @@ const lidOf = (b: boolean | number | undefined) => (b === true ? 1 : Number(b) |
 const eye = (p: Pen, kind: EyeK, x: number, ey: number, u: number, side: number, look: number, skin: string) => {
   const lx = x + look * 3 * u, lw = 3.8 * u;
   switch (kind) {
+    case "star": {
+      const pts: P2[] = [];
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI / 2 + i * Math.PI / 5, r = (i % 2 ? 4 : 10) * u;
+        pts.push([x + Math.cos(a) * r, ey + Math.sin(a) * r]);
+      }
+      p.poly(pts, "#fbbf24", 1.5 * u); break;
+    }
     case "dot": p.ell(lx, ey, 3.8 * u, 5.5 * u, INK, 0); break;
     case "small": p.ell(lx, ey, 3 * u, 4.4 * u, INK, 0); break;
     case "lid": p.ell(lx, ey - u, 7 * u, 6 * u, INK, 0, 0, 180); p.stroke([[x - 9 * u, ey - u], [x + 9 * u, ey - u]], lw); break;
@@ -320,8 +335,8 @@ const faceFront = (p: Pen, cx: number, cy: number, W: number, expr: Expr, facing
   for (const side of [-1, 1]) {
     const x = fx + side * ex;
     const kind = eyeKind(F.eye[(facing ? side === facing : side > 0) ? 1 : 0], lid);
-    eye(p, kind, x, ey, u, side, look, skin);
-    const [dI, dO] = F.brow, by = ey - (brim ? 17 : 20) * u;
+    eye(p, kind, x, ey, u, side, expr === "thoughtful" ? 1 : look, skin);
+    const [dI, dO] = F.brow, by = ey - (brim ? 17 : 20) * u - (expr === "skeptical" && side < 0 ? 8 * u : 0);
     if (kind === "shock" || kind === "shockHalf") p.arc(x, by - 6 * u, 9 * u, 3 * u, 200, 340, 4 * u);
     else taper(p, [x - side * 8.5 * u, by + dI * u], [x + side * 8.5 * u, by + dO * u], 5 * u, 2.5 * u);
   }
@@ -635,7 +650,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const drawArm = (a: Arm) => {
     const c = curve(a.pts[0], a.pts[1], a.pts[2]);
     if (o.tunic) p.stroke(c, 7.8 * u); // bare arms get an ink outline (skin on sky / sand is low contrast)
-    p.stroke(c, 5.2 * u, armCol); p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u);
+    p.stroke(c, 5.2 * u, armCol); p.dot(a.pts[2][0], a.pts[2][1], 5.5 * u, o.gloves ?? INK);
   };
   // behind the body: rifle, sword, arms
   if (rifle) {
@@ -663,6 +678,21 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     const sp = blobPts(300, chin + 0.12 * HH, Sw);
     p.gradFill(sp, o.jacket, mul(o.jacket, SH_CLOTH), light);
     p.inkRing(sp, ow * 0.9, thick);
+  } else if (o.labCoat) {
+    const top = chin - 0.12 * HH, bottom = torsoBot + 0.35 * HH;
+    p.poly(rrect(tcx - T.a, top, tcx + T.a, bottom, 8 * u), o.labCoat, ow);
+    p.poly([[tcx - 10 * u, top], [tcx + 10 * u, top], [tcx + 8 * u, bottom], [tcx - 8 * u, bottom]], o.shirt ?? o.jacket, 2 * u);
+    for (const side of [-1, 1]) {
+      p.poly([[tcx, top + 10 * u], [tcx + side * 9 * u, top], [tcx + side * 16 * u, top + 12 * u], [tcx + side * 10 * u, top + 16 * u], [tcx + side * 16 * u, top + 21 * u], [tcx + side * 7 * u, top + 35 * u]], o.labCoat, 2 * u);
+      p.poly([[tcx, top + 8 * u], [tcx + side * 8 * u, top + 2 * u], [tcx + side * 5 * u, top + 13 * u]], o.shirt ?? o.jacket, 1.5 * u);
+      p.poly(rrect(tcx + side * 23 * u - 7 * u, bottom - 24 * u, tcx + side * 23 * u + 7 * u, bottom - 7 * u, 3 * u), null, 1.5 * u);
+    }
+    const px = tcx + 23 * u, py = top + 28 * u;
+    for (const [i, col] of ["#2563eb", "#ef4444", "#f97316"].entries()) p.line([[px + (i - 1) * 6 * u, py], [px + (i - 1) * 6 * u, py - (8 + i * 2) * u]], col, 3 * u, false);
+    p.poly(rrect(px - 10 * u, py, px + 10 * u, py + 14 * u, 2 * u), o.labCoat, 1.5 * u);
+    for (const angle of [0, 60, 120]) p.ell(px, py + 7 * u, 6 * u, 2.5 * u, null, u, 0, 360, angle);
+    p.dot(px, py + 7 * u, 1.3 * u, "#8B5CF6");
+    p.stroke([[tcx - 6 * u, bottom], [tcx - 6 * u, bottom - 35 * u]], 1.5 * u, "#E5E7EB");
   } else if (o.tunic) {
     // knee-length tunic over the torso and thighs; scale armour over the chest; cloth girdle at the waist
     const Tn: Blob = { a: T.a * 1.06, b: 0.5 * ((hipY + 0.5 * legLen) - (chin - 0.22 * HH)), nTop: 2.1, nBot: 3.4, egg: 0.22,
@@ -770,7 +800,11 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const hp = blobPts(300, hc, H);
   p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
   p.inkRing(hp, ow, thick);
-  hatOn(p, o, hp, H, 300, hc, light, seed, facing, false);
+  if (o.hairStyle === "messy") {
+    const pts: P2[] = [[300 - 49 * u, hc + 10 * u], [300 - 57 * u, hc - 16 * u], [300 - 46 * u, hc - 14 * u], [300 - 58 * u, hc - 34 * u], [300 - 39 * u, hc - 31 * u], [300 - 45 * u, hc - 54 * u], [300 - 20 * u, hc - 45 * u], [300 + 3 * u, hc - 58 * u], [300 + 28 * u, hc - 48 * u], [300 + 23 * u, hc - 59 * u], [300 + 44 * u, hc - 41 * u], [300 + 57 * u, hc - 43 * u], [300 + 50 * u, hc - 26 * u], [300 + 57 * u, hc - 14 * u], [300 + 47 * u, hc + 12 * u], [300 + 39 * u, hc - 17 * u], [300 + 20 * u, hc - 30 * u], [300 + 9 * u, hc - 10 * u], [300 - 8 * u, hc - 6 * u], [300, hc - 29 * u], [300 - 27 * u, hc - 12 * u], [300 - 40 * u, hc - 17 * u]];
+    p.shadedFill(pts, o.hair ?? INK, mul(o.hair ?? INK, SH_FELT), light, H.a);
+    p.poly(pts, null, ow);
+  } else hatOn(p, o, hp, H, 300, hc, light, seed, facing, false);
   if (o.beard) { // full beard over the jaw, under the mouth
     const bp = blobPts(300, hc + 0.72 * H.b, { ...H, a: H.a * 0.66, b: H.b * 0.42, egg: -0.2, asym: 0, seed: H.seed + 13 }); // jaw only, below the eyes
     p.clip(hp, () => p.shadedFill(bp, o.beard!, mul(o.beard!, SH_FELT), light, H.a, 0.35));
@@ -778,6 +812,13 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   }
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap" && o.hat !== "crown" && o.hat !== "headcloth";
   faceFront(p, 300, hc, W, expr, facing, look, lid, brim, skin, o.moustache, o.build === "stout", talk);
+  if (o.glasses) {
+    const fx = 300 + 7 * u * facing, ink = p.ink;
+    p.ink = o.glasses;
+    for (const side of [-1, 1]) p.poly(rrect(fx + side * 13 * u - 11 * u, hc - 7 * u, fx + side * 13 * u + 11 * u, hc + 10 * u, 3 * u), null, 3 * u);
+    p.stroke([[fx - 2 * u, hc - 3 * u], [fx + 2 * u, hc - 3 * u]], 3 * u, o.glasses);
+    p.ink = ink;
+  }
   p.rot = null;
 };
 

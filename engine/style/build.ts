@@ -325,13 +325,13 @@ const yawQ = (a: number) => new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), 
 /** half-width of a cartoon plant of kind k and height h (for the sight-line test) */
 const vegRad = (k: VegKind, h: number) => (k === "hedge" ? 1.7 : k === "bush" ? 0.85 * h : k === "tall" ? 0.2 * h : k === "cone" ? 0.27 * h : k === "fat" ? 0.44 * h : 0.39 * h);
 /** add one cartoon plant to a batch: base at (x, y, z), height h, q = lobe detail (0 near .. 2 far) */
-const addVeg = (b: Batch, k: VegKind, x: number, y: number, z: number, h: number, seed: number, q = 0) => {
+const vegParts = (k: VegKind, x: number, y: number, z: number, h: number, seed: number, q: number, emit: (g: THREE.BufferGeometry, m: THREE.Matrix4, leaf: number | null) => void) => {
   const r = rng(Math.abs(Math.floor(seed)) % 200000 + 7), U = (a: number, c: number) => a + (c - a) * r();
-  const leaf = leafMat(k === "cone" ? 4 : k === "hedge" ? 1 : Math.floor(r() * 4)), lobe = lobeGeo(q), yaw = r() * 6.28;
+  const leaf = k === "cone" ? 4 : k === "hedge" ? 1 : Math.floor(r() * 4), lobe = lobeGeo(q), yaw = r() * 6.28;
   const put = (px: number, py: number, pz: number, rad: number, sy = 0.9) =>
-    b.add(lobe, leaf, new THREE.Matrix4().compose(V(x + px, y + py, z + pz), yawQ(r() * 6.28), V(rad, rad * sy, rad)));
+    emit(lobe, new THREE.Matrix4().compose(V(x + px, y + py, z + pz), yawQ(r() * 6.28), V(rad, rad * sy, rad)), leaf);
   const trunk = (th: number, tr: number) =>
-    b.add(trunkGeo(), barkMat(), new THREE.Matrix4().compose(V(x, y - 0.15, z), yawQ(yaw), V(tr, th + 0.15, tr)));
+    emit(trunkGeo(), new THREE.Matrix4().compose(V(x, y - 0.15, z), yawQ(yaw), V(tr, th + 0.15, tr)), null);
   const ring = (n: number, dist: number, r0: number, r1: number, cy: number, dy: number) => {
     const a0 = r() * 6.28;
     for (let i = 0; i < n; i++) {
@@ -362,9 +362,30 @@ const addVeg = (b: Batch, k: VegKind, x: number, y: number, z: number, h: number
     put(0, 0.46 * h, 0, 0.5 * h);
     ring(3, 0.42 * h, 0.32 * h, 0.38 * h, 0.32 * h, 0.04 * h);
   } else { // hedge segment, 3.3 m along local x
-    b.add(hedgeGeo(), leaf, new THREE.Matrix4().compose(V(x, y - 0.06, z), new THREE.Quaternion(), V(3.3, h + 0.06, Math.max(0.9, h * 0.78))));
+    emit(hedgeGeo(), new THREE.Matrix4().compose(V(x, y - 0.06, z), new THREE.Quaternion(), V(3.3, h + 0.06, Math.max(0.9, h * 0.78))), leaf);
   }
 };
+
+const addVeg = (b: Batch, k: VegKind, x: number, y: number, z: number, h: number, seed: number, q = 0) =>
+  vegParts(k, x, y, z, h, seed, q, (geo, matrix, leaf) => b.add(geo, leaf === null ? barkMat() : leafMat(leaf), matrix));
+
+/** The footprint of the very geometry prop() draws, without creating textures or a renderer. */
+export function propBounds(kit: Kit, name: string, x: number, y: number, z: number, h: number, yaw = 0) {
+  const vk = VEG[name], bounds = new THREE.Box3();
+  if (vk) {
+    const d = Math.hypot(x, z);
+    vegParts(vk, x, y, z, h, x * 92.7 + z * 31.3 + yaw * 1000, d > 200 ? 2 : Math.abs(z) > 45 && d > 60 ? 1 : 0,
+      (geo, matrix) => {
+        geo.computeBoundingBox();
+        bounds.union(geo.boundingBox!.clone().applyMatrix4(matrix));
+      });
+  } else if (kit[name]) {
+    const box = new THREE.Box3().setFromObject(kit[name]);
+    const s = h / Math.max(0.01, box.max.y - box.min.y);
+    bounds.copy(box).applyMatrix4(new THREE.Matrix4().compose(V(x, y - box.min.y * s, z), yawQ(yaw), V(s, s, s)));
+  }
+  return bounds;
+}
 
 // ---------------- painted cloth banner (MAT round 3) ----------------
 // The Kenney banner is one flat face of the saturated colour atlas: in golden light it kept a uniform, hot red and

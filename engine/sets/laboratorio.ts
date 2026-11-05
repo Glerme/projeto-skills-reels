@@ -1,3 +1,5 @@
+import { rect } from "../space";
+import { roomBlocked } from "./room";
 // Lab: mint walls, tiled floor, two windows; white bench cabinets with dark slate tops along the back and side walls,
 // glassware with softly glowing liquids (the only bloom sources: emissive over 1), a chalkboard of scribbled formulas
 // (no legible text) and a shelf of jars. The middle of the room stays clear for the spots and the cameras.
@@ -36,7 +38,7 @@ const build = (root: THREE.Group, _kit: Kit) => {
   buildRoom(root, { w: 8, d: 10, h: 3.2, wall: "#9fc0ad", floor: "tiles", windows: 2 });
   const b = new Batch();
   // benches: back wall (two runs either side of the board) and both side walls
-  for (const [x, z, sx, sz] of [[-2.6, -4.55, 2.6, 0.8], [2.6, -4.55, 2.6, 0.8], [-3.6, -1.4, 0.8, 2.6], [3.6, -1.4, 0.8, 2.6]] as const) {
+  for (const [x, z, sx, sz] of [[-2.6, -4.55, 2.6, 0.8], [2.6, -4.55, 2.6, 0.8], [-3.55, -1.4, 0.8, 2.6], [3.55, -1.4, 0.8, 2.6]] as const) {
     block(b, CAB, x, 0, z, sx, 0.86, sz);
     block(b, TOP, x, 0.86, z, sx + 0.06, 0.05, sz + 0.06);
   }
@@ -60,4 +62,8 @@ const build = (root: THREE.Group, _kit: Kit) => {
   b.build(root);
 };
 
-export const laboratorio: SetDef = { id: "laboratorio", sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };
+export const laboratorio: SetDef = { id: "laboratorio", walkways: {}, blocked: () => [...roomBlocked(8, 10),
+    rect("bancada esquerda", -2.6, -4.55, 2.66, 0.86),
+    rect("bancada direita", 2.6, -4.55, 2.66, 0.86),
+    rect("bancada lateral esquerda", -3.55, -1.4, 0.86, 2.66),
+    rect("bancada lateral direita", 3.55, -1.4, 0.86, 2.66)], sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };

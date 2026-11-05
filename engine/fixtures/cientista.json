@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "slug": "teste-cientista",
+  "format": "curiosidade",
+  "fiction": false,
+  "fps": 30,
+  "duration": 12,
+  "cast": {
+    "cientista": {
+      "id": "cientista",
+      "label": "Cientista",
+      "build": "adult",
+      "skin": 2,
+      "outfit": {
+        "jacket": "#FFFFFF",
+        "pants": "#1A0F2F",
+        "boots": "#5a3423",
+        "hat": "hair",
+        "hair": "#1A0F2F",
+        "hairStyle": "messy",
+        "glasses": "#1A0F2F",
+        "labCoat": "#FFFFFF",
+        "shirt": "#1A0F2F",
+        "skin": "#F7E4D6",
+        "gloves": "#1A0F2F",
+        "ink": "#1A0F2F"
+      }
+    }
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 6,
+      "set": "laboratorio",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "centro",
+          "action": "stand",
+          "expr": [
+            [
+              0,
+              "neutral"
+            ],
+            [
+              1,
+              "shock"
+            ],
+            [
+              2,
+              "thoughtful"
+            ],
+            [
+              3,
+              "smile_closed"
+            ],
+            [
+              4,
+              "skeptical"
+            ],
+            [
+              5,
+              "excited"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "start": 6,
+      "end": 12,
+      "set": "laboratorio",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "close"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "centro",
+          "action": "stand",
+          "expr": [
+            [
+              6,
+              "neutral"
+            ],
+            [
+              7,
+              "shock"
+            ],
+            [
+              8,
+              "thoughtful"
+            ],
+            [
+              9,
+              "smile_closed"
+            ],
+            [
+              10,
+              "skeptical"
+            ],
+            [
+              11,
+              "excited"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "sfx": [],
+  "music": {
+    "mood": "curioso"
+  }
+}

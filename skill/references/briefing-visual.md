@@ -53,7 +53,9 @@ ou renderizar.
 - atuais: `jacket`, `pants`, `boots`, `belt`, `buttons`, `sash`, `dress`;
 - de época: `tunic`, `girdle` (cinto de pano), `mantle` (manto), `sandals`, `greaves` (caneleiras), `armor` (armadura
   de escamas), `shield` (escudo redondo), `bag` (bolsa de pastor);
-- rosto: `beard`, `moustache`.
+- rosto: `beard`, `moustache`, `glasses` (aro retangular, cor);
+- cientista: `hairStyle: "messy"` (mechas pontudas), `labCoat` (cor; longo, aberto, lapelas, bolso com canetas e átomo),
+  `shirt` (cor da camisa com gola), `gloves` (cor das mãos), `skin` e `ink` (cores próprias opcionais).
 
 **Cabeça (`hat`):** `hair`, `cap`, `helmet` (com `crest`), `crown`, `headcloth`, `tophat`, `bonnet`, `shako`.
 

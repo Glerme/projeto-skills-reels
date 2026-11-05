@@ -1,3 +1,4 @@
+import { actorPosition } from "./space";
 // One three.js world for a whole video: shared sky (5 stops), sun disc + halo, clouds, fog = horizon colour,
 // hemi/sun/fill lights, the cast as lit cards from the Pool, plus one group per set used by the spec (only the shot's
 // set is shown). update(shot, t, cam) is a pure function of (shot, t): frames are seeked out of order.
@@ -17,10 +18,10 @@ import { NOINK } from "./style/ink";
 import { ctex, cloudHD } from "./style/paint";
 import { setSight, type Kit, type Ray } from "./style/build";
 
+import { setDressing, shotSky } from "./shot-extras";
+
 const V = (v: V3) => new THREE.Vector3(v[0], v[1], v[2]);
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const smooth = (x: number) => { const k = clamp01(x); return k * k * (3 - 2 * k); };
-const SPREAD = 0.9; // m between actors sharing a spot
 const EYE = 1.5;    // focus height over a spot / an actor's feet
 
 // ---------------- sun sprites ----------------
@@ -73,7 +74,7 @@ const blob = (out: FxPlace[], sun: THREE.Vector3, light: "day" | "golden", x: nu
 const sightLines = (spec: VideoSpec, def: SetDef): Ray[] => {
   const out: Ray[] = [];
   for (const s of spec.shots) if (s.set === def.id) for (let t = s.start; t < s.end; t += 2 / spec.fps) {
-    const c = camAt(s, t, def.views, spec.fps), o = V(c.pos), fw = V(c.look).sub(o), len = fw.length();
+    const c = camAt(s, t, def.views, spec.fps, def.spots), o = V(c.pos), fw = V(c.look).sub(o), len = fw.length();
     fw.normalize();
     const rt = fw.clone().cross(new THREE.Vector3(0, 1, 0)).normalize(), up = rt.clone().cross(fw);
     const ty = Math.tan((c.fov * Math.PI) / 360), tx = ty * (9 / 16);
@@ -88,6 +89,8 @@ export class Stage {
   fog = new THREE.Fog("#bccbec", 25, 420); // main.ts puts it on the scene
   private spec: VideoSpec;
   private sets = new Map<SetId, THREE.Group>();
+  private dressing = new Map<SetId, THREE.Group>();
+  private extraClouds: THREE.Mesh[] = [];
   private pool = new Pool();
   private actors: Actor[] = [];
   private fxs: Fx[] = [];
@@ -140,6 +143,18 @@ export class Stage {
       m.layers.set(NOINK);
       this.clouds.push(m); R.add(m);
     }
+    for (let i = 0; i < 8; i++) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({
+        map: this.cloudMaps.day[i % 4], transparent: true, depthWrite: false, fog: false,
+        color: new THREE.Color(1.1, 1.1, 1.1) }));
+      m.layers.set(NOINK); m.visible = false;
+      this.extraClouds.push(m); R.add(m);
+    }
+    setSight([]);
+    for (const id of new Set(spec.shots.map((s) => s.set))) {
+      const group = setDressing(spec.dressing?.[id] ?? [], SETS[id], kit);
+      group.visible = false; this.dressing.set(id, group); R.add(group);
+    }
     // one group per set the video uses, built with that set's sight lines kept clear
     for (const id of new Set(spec.shots.map((s) => s.set))) {
       const g = new THREE.Group(), def = SETS[id];
@@ -158,7 +173,7 @@ export class Stage {
     const L = LIGHTS[s.light];
     let fx = 0, fz = 0;
     for (let t = s.start; t < s.end; t += 3 / this.spec.fps) {
-      const c = camAt(s, t, def.views, this.spec.fps), x = c.look[0] - c.pos[0], z = c.look[2] - c.pos[2], n = Math.hypot(x, z) || 1;
+      const c = camAt(s, t, def.views, this.spec.fps, def.spots), x = c.look[0] - c.pos[0], z = c.look[2] - c.pos[2], n = Math.hypot(x, z) || 1;
       fx += x / n; fz += z / n;
     }
     const n = Math.hypot(fx, fz) || 1; fx /= n; fz /= n;
@@ -172,25 +187,22 @@ export class Stage {
   private actor(i: number) { while (this.actors.length <= i) this.actors.push(new Actor(this.root)); return this.actors[i]; }
   private fx(i: number) { while (this.fxs.length <= i) this.fxs.push(new Fx(this.root)); return this.fxs[i]; }
 
-  /** feet position of an actor at t: walk from `at` to `to` (smoothstep over the shot), spread when sharing `at` */
+  /** Paths follow absolute video time; named spots keep the existing scene movement and spread. */
   private feet(shot: ShotSpec, def: SetDef, a: ActorSpec, t: number) {
-    const mates = shot.actors.filter((b) => b.at === a.at), off = (mates.indexOf(a) - (mates.length - 1) / 2) * SPREAD;
-    const A = V(def.spots[a.at]), B = a.to ? V(def.spots[a.to]) : A.clone();
-    const p = A.clone().lerp(B, smooth((t - shot.start) / (shot.end - shot.start)));
-    p.x += off;
-    return { p, dir: B.sub(A) };
+    return actorPosition(shot, def.spots, def.walkways, a, t);
   }
 
   update(shot: ShotSpec, t: number, cam: THREE.PerspectiveCamera): THREE.Vector3 {
     const def = SETS[shot.set], L = LIGHTS[shot.light];
     const K: WorldLook = { ...LOOK[shot.light], ...def.look };
     // ---- camera ----
-    const c = camAt(shot, t, def.views, this.spec.fps);
+    const c = camAt(shot, t, def.views, this.spec.fps, def.spots);
     cam.position.set(...c.pos); cam.up.set(0, 1, 0); cam.lookAt(...c.look); cam.rotateZ(THREE.MathUtils.degToRad(c.roll));
     cam.fov = c.fov; cam.near = 0.2; cam.far = 1500; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
     const look = V(c.look), dist = cam.position.distanceTo(look);
     cam.layers.enable(NOINK); // sky, clouds and sun sprites live on the no-ink layer but are still rendered
     for (const [id, g] of this.sets) g.visible = id === shot.set;
+    for (const [s, g] of this.dressing) g.visible = s === shot.set;
     // ---- light rig: camera-relative sun frozen per shot, two-tone uniforms, shadow fit ----
     const sunDir = this.shotSun(shot, def);
     this.hemi.color.set(L.sky); this.hemi.groundColor.set(L.ground); this.hemi.intensity = L.hemiI;
@@ -214,10 +226,13 @@ export class Stage {
     this.sky.position.copy(cam.position);
     this.sky.visible = def.sky;
     untone(L.fog, this.fog.color); this.fog.near = L.fogNear; this.fog.far = L.fogFar;
-    const showSun = def.sky && shot.light === "golden";
-    this.sunDisc.visible = this.sunHalo.visible = showSun;
+    const layout = shotSky(shot, cam, sunDir);
+    const showSun = def.sky && (shot.sky?.sun ?? (shot.light === "golden"));
+    this.sunDisc.visible = showSun;
+    this.sunHalo.visible = showSun && shot.light === "golden";
     if (showSun) {
-      this.sunDisc.position.copy(cam.position).addScaledVector(sunDir, 900);
+      if (shot.sky?.sun) this.sunDisc.position.copy(layout.sun);
+      else this.sunDisc.position.copy(cam.position).addScaledVector(sunDir, 900);
       this.sunDisc.scale.setScalar(2 * 900 * Math.tan(THREE.MathUtils.degToRad(1.7)));
       this.sunHalo.position.copy(this.sunDisc.position); this.sunHalo.scale.setScalar(2 * 900 * Math.tan(THREE.MathUtils.degToRad(24)));
       (this.sunHalo.material as THREE.SpriteMaterial).color.set(L.sunDisc).multiplyScalar(1.3);
@@ -228,6 +243,14 @@ export class Stage {
       m.lookAt(cam.position.x, m.position.y, cam.position.z);
       mat.map = this.cloudMaps[shot.light][i % 4];
     }
+    this.extraClouds.forEach((m, i) => {
+      const cloud = layout.clouds[i];
+      m.visible = def.sky && !!cloud;
+      if (!cloud) return;
+      m.position.copy(cloud.position); m.quaternion.copy(cam.quaternion);
+      m.scale.set(cloud.width, cloud.height, 1);
+      (m.material as THREE.MeshBasicMaterial).map = this.cloudMaps[shot.light][i % 4];
+    });
     // ---- cast: one card per actor, posed by its action, plus contact blobs ----
     const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0);
     const places: Place[] = [], fxp: FxPlace[] = [];

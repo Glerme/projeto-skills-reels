@@ -13,6 +13,10 @@ em `briefing-visual.md`. `scale` (0,5–2) muda o tamanho, por exemplo de um gig
 **Antes de montar o elenco:** o visual de cada personagem vem do briefing visual confirmado (`briefing-visual.md`).
 Não escolha roupa, cabelo ou acessório sem essa confirmação.
 
+O `cientista` segue o mockup confirmado: cabelo bagunçado, óculos, jaleco longo, camisa escura e três canetas visíveis no bolso (azul, vermelha e laranja).
+Use `neutral`, `shock`, `thoughtful` (olhar de lado), `smile_closed`, `skeptical` (uma sobrancelha) ou
+`excited` (olhos de estrela) em `actors[].expr`. As peças são opcionais; veja `briefing-visual.md`.
+
 **Personagem novo:**
 1. Copie o mais parecido.
 2. Mude as cores e os acessórios.
@@ -26,7 +30,7 @@ só deste vídeo, então use um chef do acervo no `cast` e mude só a expressão
 ## Cenários (`engine/sets/<id>.ts`)
 
 Cada cenário é um `SetDef`:
-- `{ id, sky, views, spots, build(root, kit), look?, sunAz? }`;
+- `{ id, sky, views, spots, blocked(kit), walkways, build(root, kit), look?, sunAz? }`;
 - registrado em `engine/sets/index.ts`;
 - com os nomes em `engine/sets/anchors.ts` (o validador usa essa lista).
 
@@ -37,6 +41,20 @@ Para começar um cenário novo:
   Kenney em `kit/kenney/`.
 
 Regras:
+- Declare `blocked(kit)`: retângulos `{name, x, z, width, depth, turn}` em metros/graus de todos os sólidos;
+  derive da geometria e do kit. Partes do mesmo móvel formam um bloco. Terreno não é obstáculo.
+- Declare `walkways`: nome → `{from: [x,y,z], to: [x,y,z], width}`; sem passagem, use `{}`.
+  Nas ruas, uma por calçada em cada sentido, pontas fora das views. Não cruze sólidos nem spots com sólidos.
+  Percurso fechado pode ter `via` (vértices entre `from` e `to`, que coincidem): anda a 1,2 m/s sem teleporte.
+  A reserva de espaço inclui todo o retângulo do percurso. Paris usa isso em `praca_perto`, atrás do apresentador;
+  o catálogo desenha todos os trechos. O percurso cabe em `aberto` e `medio`; close prioriza rosto e peito.
+- Reaproveite `Layout` (`engine/sets/layout.ts`): o mesmo plano mede e desenha props/prédios, descartando
+  peças opcionais que não cabem. `propBounds()` mede também a vegetação cartoon sem criar texturas.
+- Em Paris, a praça continua pavimentada até a neblina, no tom da calçada; fachadas, árvores e postes fecham as bordas.
+  A torre fica livre, com folga de 0,6 m dos sólidos.
+- Enquadre pelas posições/alvos em `views`: `medio` com 35–45% de altura, `aberto`/`baixo` ≥18%,
+  `close` ≥65% da silhueta antes do corte (rosto e peito). Pés ou queixo ficam acima de 676 px do fundo.
+  O motor desloca o eixo até o spot do apresentador; teste cada cenário/view nos três spots principais.
 - Não mude números de `engine/style/` (o visual do perfil mora ali).
 - Rode `npm test`: o teste de âncoras exige que spots e views batam com `anchors.ts`.
 - Monte um vídeo de teste com `bash scripts/mk-test-video.sh <spec> videos/_teste-x` e confira os stills contra
@@ -44,3 +62,14 @@ Regras:
 
 **Limite por vídeo:** no máximo uma peça nova (personagem ou cenário). Precisar de mais é sinal de que o kit está
 pequeno: anote isso para o usuário em vez de construir.
+
+## Modelos (`kit/models.json`)
+
+Só pacotes **CC0** (Kenney, Quaternius), low-poly de cor chapada.
+- `scripts/import-assets.sh <zip> <prefixo> [modelo ...]`: importa todos ou só os nomes escolhidos, sem `.glb`.
+- Exemplo: `scripts/import-assets.sh ~/Downloads/kenney_car-kit.zip car sedan taxi` registra `car-sedan` e `car-taxi`.
+- Os `.glb` ficam em `kit/kenney/` (fora do git); texturas externas viram `Textures/colormap-<prefixo>.png`.
+- Recusa sobrescrever `.glb` ou textura diferente; nomes no JSON não se repetem.
+- Depois, rode `npm run build` e `npm run validate:build`. Use o nome registrado em `dressing.<setId>[]`.
+
+Catálogo visual: regenere com `bash scripts/catalogo.sh` e veja as folhas em `docs/kit/catalogo/*.jpg`.

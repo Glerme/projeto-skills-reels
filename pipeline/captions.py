@@ -1,5 +1,5 @@
 """Legendas no estilo E: uma frase curta por vez, MAIÚSCULAS, branca, Archivo Black, contorno preto grosso, sem faixa
-e sem destacar a palavra falada, centralizada com a base a 640 px do fundo (acima dos 20 % de baixo).
+e sem destacar a palavra falada, centralizada com a base a 484 px do fundo (460 px de zona segura + folga para o contorno).
 
 Uso: python -m pipeline.captions <words.json> <projeto>   (escreve <projeto>/compositions/captions.html)
 
@@ -63,7 +63,7 @@ def _lines(text: str) -> list[str]:
 TEMPLATE = """<template>
   <style>
     #root {{ position: absolute; inset: 0; }}
-    #root .cap {{ position: absolute; left: 0; right: 0; bottom: 640px; text-align: center; overflow: visible; }}
+    #root .cap {{ position: absolute; left: 150px; right: 150px; bottom: 484px; text-align: center; overflow: visible; }}
     #root .cap span {{
       display: inline-block; font-family: "Archivo Black", sans-serif; font-weight: 400; line-height: 1.08;
       color: #ffffff; -webkit-text-stroke: 0.3em #000000; paint-order: stroke fill; letter-spacing: 0.01em;
@@ -74,7 +74,7 @@ TEMPLATE = """<template>
   </div>
   <script>
     const tl = gsap.timeline({{ paused: true }});
-    const fit = (t) => window.__hyperframes.fitTextFontSize(t, {{ fontFamily: "Archivo Black", fontWeight: 400, maxWidth: 900 }}).fontSize;
+    const fit = (t) => window.__hyperframes.fitTextFontSize(t, {{ fontFamily: "Archivo Black", fontWeight: 400, maxWidth: 730 }}).fontSize;
     document.querySelectorAll("#root .cap").forEach((g) => {{
       g.querySelector("span").style.fontSize = Math.max(42, Math.min(78, fit(g.dataset.longest))) + "px";
     }});

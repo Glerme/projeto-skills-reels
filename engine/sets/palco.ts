@@ -1,3 +1,4 @@
+import { rect } from "../space";
 // Neutral stage for lists and trivia: one warm floor running into a teal cyclorama (floor -> cove -> wall leaning back
 // 30 deg, one smooth surface, so the ink pass draws no line at the join), colour blended across the cove. The lean keeps
 // the wall facing the day sun (camera-relative, az 75 / el 48), so it falls off smoothly instead of a lit/shade edge.
@@ -36,14 +37,17 @@ const cyclorama = () => {
 };
 
 export const palco: SetDef = {
-  id: "palco",
+  id: "palco", walkways: {}, blocked: () => {
+    const end = Z0 - R * Math.sin(LEAN) - (TOP - R * (1 - Math.cos(LEAN))) / Math.tan(LEAN);
+    return [rect("ciclorama", 0, (Z0 + end) / 2, W * 2, Z0 - end)];
+  },
   sky: true,
   spots: { centro: [0, 0, 0], esquerda: [-1.6, 0, 0], direita: [1.6, 0, 0], fundo: [0, 0, -3] },
   views: {
-    aberto: { pos: [0, 1.6, 6], look: [0, 1.0, 0], fov: 65, roll: 0 },
-    medio: { pos: [0, 1.5, 3.5], look: [0, 1.1, 0], fov: 50, roll: 0 },
-    close: { pos: [0, 1.55, 1.8], look: [0, 1.25, 0], fov: 40, roll: 0 },
-    baixo: { pos: [0, 0.6, 4], look: [0, 1.4, 0], fov: 50, roll: 0 },
+    aberto: { pos: [0, 0.8, 11], look: [0, 0.8, 0], fov: 50, roll: 0 },
+    medio: { pos: [0, 0.62, 7.2], look: [0, 0.62, 0], fov: 45, roll: 0 },
+    close: { pos: [0, 0.8, 3.4], look: [0, 0.8, 0], fov: 50, roll: 0 },
+    baixo: { pos: [0, 0.45, 8], look: [0, 0.62, 0], fov: 50, roll: 0 },
   },
   look: { sky: { c: ["#7cc0bb", "#6bb3ae", "#5aa6a1", "#4c9a96", "#3f8e8a"], e: [0, 3, 8, 16, 40] } },
   build(root) {

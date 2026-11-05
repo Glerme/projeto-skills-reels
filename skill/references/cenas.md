@@ -28,12 +28,12 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 - `cam`:
   - `from`: a view inicial;
   - `recipe`:
-    - `hold`: avanço lento de 0,25 %/f;
-    - `push`: avanço mais rápido, 0,6 %/f;
-    - `glide`: desliza de `from` até `to` em 18–40 frames;
-  - `punch`: tempos de avanço extra, nas palavras de impacto.
+    - `hold`: avanço lento, limitado a 8% da distância;
+    - `push`: avanço lento mais forte, limitado a 12% da distância;
+    - `glide`: desliza suavemente de `from` até `to` durante a cena inteira;
+  - `punch`: tempos de avanço extra de 0,8 s, limitado a 3% no total, nas palavras de impacto.
 - `actors[]`:
-  - `who`, `at` (spot), `to` (spot, só para `walk`), `action`, `expr` (lista de [tempo, expressão], com tempos
+  - `who`, `at` (spot), `to` (spot, só para `walk`), `path` (walkway, substitui `at`/`to`), `action`, `expr` (lista de [tempo, expressão], com tempos
     **absolutos do vídeo**, dentro da cena; o primeiro costuma ser o `start` da cena) e
     `facing` (−1, 0 ou 1);
   - `cue`: o tempo absoluto do momento-chave da ação (`whirl`, `topple`); obrigatório nessas duas.
@@ -41,10 +41,42 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
   - até 3 atores por cena: o quadro vertical é estreito.
 - `throws`: `[{from, to, start, end}]`. É uma pedra visível, com rastro, da mão de quem lança (mão levantada do lado
   esquerdo) até a testa do alvo, com brilho no acerto. Combine com `whirl` (`cue` = `start`) e `topple` (`cue` = `end`).
+- `sky`: só em cenários com céu (`palco rua paris natureza vale`). Exemplo: `{"sun":true,"clouds":4}`.
+  `sun:true` põe o disco no terço superior, do lado da luz, inclusive em `day`; `false` oculta o sol.
+  `clouds` soma 0–8 nuvens (inteiro), no quadro da câmera, com posições determinísticas e sem cobrir o disco.
+  Campos omitidos mantêm o comportamento anterior (sol em `golden`, nenhuma nuvem extra).
 - `dof`: desfoque de fundo em px (lens blur).
 - `focus`: spot ou papel em foco.
 - `xfade`: crossfade em segundos, na entrada desta cena.
 - `kicks`: tempos de tremida de impacto.
+
+**`dressing`:** no topo do vídeo, cenário → lista de props de `kit/models.json`. Toda cena nesse cenário mostra
+os mesmos objetos, nas mesmas posições. `props` por cena foi removido.
+- `at` é um spot; `dx`/`dz` deslocam em metros; `turn` gira em graus; padrão 0.
+- `scale` multiplica o tamanho do modelo (0,3–3; padrão 1).
+- O validador mede o `.glb` local e exige 0,6 m de folga entre props e sólidos e entre props, e recusa sobreposição com spots ou calçadas:
+  `dressing paris: prop 1 (stall-red) sem folga de 0,6 m com car-sedan 20: distância 0.528 m`. Modelo ausente: `não foi possível medir`.
+
+```json
+{ "dressing": { "paris": [{ "model": "lantern", "at": "fundo", "dx": -1.8, "dz": -3 }] },
+  "shots": [{ "set": "paris", "actors": [
+    { "who": "turista", "action": "walk", "path": "esquerda_ida" }
+  ] }] }
+```
+
+**`path`:** em `rua` e `paris`, use `esquerda_ida`, `esquerda_volta`, `direita_ida` ou `direita_volta`.
+Transversal: `praca` (calçada junto à torre). Em Paris, `praca_perto` faz uma volta fechada na praça,
+atrás e à direita do apresentador; cabe em `aberto` e `medio` com o apresentador em `esquerda`. Todos usam tempo absoluto, sem reiniciar nos cortes.
+Figurante só em calçada/praça, a pelo menos 3 m do apresentador e 12% da largura do quadro da silhueta dele.
+O validador usa a câmera da cena e cita cena, figurante e instante; considera o cartão inteiro como margem segura.
+Use `praca` nos planos da praça. Calçada lateral só em planos curtos ou quando desloca pelo menos 15% do quadro
+em 2 s visíveis; o validador recusa `path x view` que pareça parado.
+Depois de entrar, o figurante continua em todas as cenas seguintes do cenário, na mesma path, inclusive ao voltar ao cenário; precisa ficar inteiro no quadro com altura ≥ 8% por pelo menos metade de cada cena.
+O figurante segue a calçada a 1,2 m/s, sem desacelerar, pelo tempo absoluto do vídeo; reaparece na outra ponta
+só fora do quadro; em percurso fechado, retorna ao mesmo ponto sem salto. `ida` vai para o fundo; `volta` vem para a câmera. Começa perto dos spots, já em movimento.
+- Nome errado: `path "..." não existe em paris`; combinar com `at`/`to` ou outra ação: `path exige walk e substitui at/to`.
+- `at`/`to` continuam para quem fala e para deslocamentos permitidos. Se `walk` atravessar a rua:
+  `walk de centro até esquina cruza a pista; figurante anda por path`.
 
 **`flash`:** tempos de flash branco (4 frames). Um só, logo depois do gancho.
 
@@ -57,7 +89,7 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 | set | spots | views |
 |---|---|---|
 | palco | centro esquerda direita fundo | aberto medio close baixo |
-| rua | centro esquerda direita fundo esquina | aberto medio close baixo aereo |
+| rua, paris | centro esquerda direita fundo esquina | aberto medio close baixo aereo |
 | casa, escritorio, laboratorio | centro esquerda direita fundo | aberto medio close baixo |
 | natureza | centro esquerda direita fundo | aberto medio close baixo |
 | vale (seco, rochoso, riacho, tendas; histórias antigas) | centro esquerda direita fundo riacho duelo_a duelo_b | aberto medio close baixo duelo riacho queda |
@@ -76,18 +108,25 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 - `whirl`: gira a funda na mão do lado esquerdo da tela, mira com a outra e solta no `cue` (tempo absoluto).
 - `topple`: no `cue`, reage ao golpe, tomba para a esquerda da tela e fica deitado, com poeira e estrelas.
 - `talk` mexe a boca: use em quem está falando.
-- `walk` precisa de `to`.
+- `walk` precisa de `to` ou `path`.
 
-**Expressões:** `neutral stern grin laugh whistle nervous shock relief relief_open dazed pained smile smile_closed lick`.
+**Expressões:** `neutral stern grin laugh whistle nervous shock relief relief_open dazed pained smile smile_closed lick thoughtful skeptical excited`.
 
 ## Gramática de câmera (o estilo do perfil)
 
 - **Planos:** o `medio` e o `close` dominam; o `aberto` e o `aereo` servem para estabelecer o lugar e para mudar de
-  lugar. Um plano a cada 2–4 s.
+  lugar. Prefira menos cortes e movimentos contínuos lentos no mesmo enquadramento geral.
 - **Reações:** a troca de expressão, o `shock` e os `kicks` caem **0–3 frames antes da palavra**, ou seja,
   `t = start da palavra − 0,05`.
 - **Câmera viva:** todo plano parado é `hold` (nunca fique parado: o QA reprova trechos congelados de 12 frames ou
   mais). `punch` vai nas palavras de impacto; `kicks` nos impactos físicos (queda, batida).
 - **Desfoque:** `dof` de 12–14 nos closes, 10–12 no medio, 0 nos abertos e aéreos.
 - **Crossfade:** só quando muda de lugar ou de tempo (`xfade` 0,2–0,3). Dentro do mesmo lugar, corte seco.
-- **Legenda:** fica na parte de baixo-centro. Os closes já enquadram o rosto acima dela; não mude o look dos closes.
+- **Continuidade:** cenas seguidas no mesmo cenário mantêm lado/eixo, direção até 15° e deslocamento transversal até 50% da menor distância, razão de distância até 2,5 e no máximo um degrau (`aberto↔medio↔close`); vale também para os extremos do glide. Em Paris, direção até 2° e deslocamento transversal até 0,2 m.
+- **Legenda:** base a 484 px do fundo; o contorno fica acima do limite seguro de 460 px (craft.md 5b).
+  Reserve a faixa até 676 px do fundo para duas linhas. Quem fala (`talk` ou `focus`) fica inteiro acima dela;
+  o validador recusa cruzamentos durante o movimento. Em `close` de rosto e peito, o queixo também fica acima da faixa; braços e pernas podem sair do quadro.
+  Altura da silhueta: `medio` 35–45%, `aberto`/`baixo` ≥18%, `close` ≥65% (antes do corte do corpo).
+  Nas quatro views, o eixo se desloca até o spot de `focus` (ator) ou do primeiro `talk`, sem mudar a direção.
+- Em Paris, use o apresentador em `esquerda` e o figurante em `praca_perto`. `aberto` e `medio`
+  compartilham o eixo da rua. O close prioriza rosto e peito; confira a continuidade ao cortar para ele.

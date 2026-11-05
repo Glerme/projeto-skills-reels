@@ -1,3 +1,5 @@
+import { rect } from "../space";
+import { roomBlocked } from "./room";
 // Office: pale sage walls, tiled floor, three windows; two desks with monitors and chairs along the back wall, a
 // whiteboard between them, side desks against the left and right walls, a filing cabinet and a potted plant in the
 // corners. The middle of the room (the spots) and the camera axis stay free.
@@ -48,4 +50,14 @@ const build = (root: THREE.Group, kit: Kit) => {
   b.build(root);
 };
 
-export const escritorio: SetDef = { id: "escritorio", sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };
+export const escritorio: SetDef = { id: "escritorio", walkways: {}, blocked: () => [...roomBlocked(8, 10),
+    rect("mesa esquerda", -2.3, -4.2, 1.4, 0.7),
+    rect("cadeira esquerda", -2.3, -3.55, 0.46, 0.5),
+    rect("mesa direita", 2.3, -4.2, 1.4, 0.7),
+    rect("cadeira direita", 2.3, -3.55, 0.46, 0.5),
+    rect("mesa lateral esquerda", -3.55, 0.8, 0.7, 1.4),
+    rect("cadeira lateral esquerda", -2.9, 0.8, 0.5, 0.46),
+    rect("mesa lateral direita", 3.55, -0.6, 0.7, 1.4),
+    rect("cadeira lateral direita", 2.9, -0.6, 0.5, 0.46),
+    rect("arquivo", -3.65, -2.4, 0.55, 0.6),
+    rect("planta", 3.55, -2.6, 0.9, 0.9)], sky: false, sunAz: 130, spots: ROOM_SPOTS, views: ROOM_VIEWS, build };

@@ -7,7 +7,7 @@
   "shots": [
     { "id": 1, "start": 0, "end": 2.0, "set": "palco", "light": "day",
       "cam": { "recipe": "hold", "from": "aberto" },
-      "actors": [{ "who": "homem", "at": "esquerda", "action": "talk" }] },
+      "actors": [{ "who": "homem", "at": "centro", "action": "talk" }] },
     { "id": 2, "start": 2.0, "end": 4.0, "set": "palco", "light": "day", "xfade": 0.4,
       "cam": { "recipe": "glide", "from": "medio", "to": "close" },
       "actors": [{ "who": "mulher", "at": "direita", "action": "point", "to": "centro" }] }
