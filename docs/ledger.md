@@ -103,3 +103,4 @@ Task 16: Ruling: o usuário trocou o tema do primeiro vídeo de "curiosidade" pa
 Task 16: Ruling: CharDef.scale (0,5–2) no spec e no stage; o gigante (scale 1,6) entra no acervo como peça nova, a única do vídeo. Custo se errado: nenhum (opcional).
 Task 16: Ruling: os spots esquerda/direita da natureza vão de ±1,6 para ±1,1 (saíam do quadro vertical). Davi virou slim com escala 0,9, e os closes dele viraram medio+push (rosto sob a legenda). O QA passa a tratar kicks como planejados. Custo se errado: reenquadrar.
 Task 16: render 63,7 s, QA limpo (−14,3 LUFS); vídeo final aguardando a aprovação 2 do usuário. Nada publicado.
+Task 16: corrigido o teste do acervo (8 → 9 personagens com o gigante); o commit f60d3ec tinha saído com esse teste vermelho.
