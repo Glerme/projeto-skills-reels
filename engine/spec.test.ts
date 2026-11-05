@@ -87,7 +87,7 @@ test("rejects unknown actions and cues outside the shot", () => {
 test("throws need two actors of the shot and times inside it", () => {
   const ok = fx(); const sh = ok.shots[0];
   ok.cast.mulher = ok.cast.mulher ?? ok.cast.homem;
-  sh.actors = [{ who: "homem", at: "esquerda", action: "whirl" }, { who: "mulher", at: "direita", action: "topple" }];
+  sh.actors = [{ who: "homem", at: "esquerda", action: "whirl", cue: sh.start + 0.2 }, { who: "mulher", at: "direita", action: "topple", cue: sh.start + 0.6 }];
   sh.throws = [{ from: "homem", to: "mulher", start: sh.start + 0.2, end: sh.start + 0.6 }];
   assert.equal(validateSpec(ok).ok, true, JSON.stringify(validateSpec(ok)));
   const bad = JSON.parse(JSON.stringify(ok)); bad.shots[0].throws[0].to = "ninguem";
@@ -101,4 +101,18 @@ test("hold puts a known prop in a hand", () => {
   assert.equal(validateSpec(s).ok, true);
   const b = fx(); b.shots[0].actors[0].hold = { L: "guarda-chuva" };
   assert.equal(validateSpec(b).ok, false);
+});
+
+test("rejects an unknown camera recipe", () => {
+  const a = fx(); a.shots[0].cam.recipe = "puhs";
+  assert.ok(errs(a).some((e) => e.includes("cena 1") && e.includes("recipe")), JSON.stringify(errs(a)));
+});
+
+test("whirl and topple need a cue (else the stone never leaves / the giant never falls)", () => {
+  for (const action of ["whirl", "topple"]) {
+    const a = fx(); a.shots[0].actors[0].action = action;
+    assert.ok(errs(a).some((e) => e.includes("cena 1") && e.includes("cue")), JSON.stringify(errs(a)));
+    const ok = fx(); ok.shots[0].actors[0].action = action; ok.shots[0].actors[0].cue = (ok.shots[0].start + ok.shots[0].end) / 2;
+    assert.deepEqual(errs(ok), []);
+  }
 });

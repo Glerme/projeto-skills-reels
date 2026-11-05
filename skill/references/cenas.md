@@ -36,7 +36,7 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
   - `who`, `at` (spot), `to` (spot, só para `walk`), `action`, `expr` (lista de [tempo, expressão], com tempos
     **absolutos do vídeo**, dentro da cena; o primeiro costuma ser o `start` da cena) e
     `facing` (−1, 0 ou 1);
-  - `cue`: o tempo absoluto do momento-chave da ação (`whirl`, `topple`).
+  - `cue`: o tempo absoluto do momento-chave da ação (`whirl`, `topple`); obrigatório nessas duas.
   - `hold`: objeto na mão, independente da ação: `{"L": "staff"}`. Valores: `stone staff spear helmet sling`.
   - até 3 atores por cena: o quadro vertical é estreito.
 - `throws`: `[{from, to, start, end}]`. É uma pedra visível, com rastro, da mão de quem lança (mão levantada do lado

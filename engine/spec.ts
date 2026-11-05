@@ -61,6 +61,7 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
     const view = (n: unknown, what: string) => { if (!a.views.includes(n as string)) errors.push(`${c}: ${what} "${n}" não existe em ${s.set}`); };
     if (!isObj(s.cam)) errors.push(`${c}: cam ausente`);
     else {
+      if (!["hold", "push", "glide"].includes(s.cam.recipe)) errors.push(`${c}: cam.recipe "${s.cam.recipe}" inválido (use hold, push ou glide)`);
       view(s.cam.from, "cam.from");
       if (s.cam.to !== undefined) view(s.cam.to, "cam.to");
       if (s.cam.recipe === "glide" && s.cam.to === undefined) errors.push(`${c}: cam.to é obrigatório em glide`);
@@ -83,6 +84,7 @@ export function validateSpec(x: unknown): { ok: true; spec: VideoSpec } | { ok: 
       if (ac.to !== undefined) spot(ac.to, "to");
       if (!(ACTION_IDS as readonly string[]).includes(ac.action)) errors.push(`${c}: ação "${ac.action}" não existe (use: ${ACTION_IDS.join(", ")})`);
       if (ac.cue !== undefined) inside(ac.cue, "cue");
+      else if (ac.action === "whirl" || ac.action === "topple") errors.push(`${c}: ${ac.action} precisa de cue (o tempo do arremesso ou do golpe)`);
       if (ac.hold !== undefined) {
         if (!isObj(ac.hold)) errors.push(`${c}: hold deve ser um objeto {L?, R?}`);
         else for (const [k, v] of Object.entries(ac.hold))
