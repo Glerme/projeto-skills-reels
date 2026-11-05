@@ -113,6 +113,24 @@
     "hat": "cap",
     "cap": "#d9822b"
    }
+  },
+  "gigante": {
+   "id": "gigante",
+   "label": "Gigante guerreiro",
+   "build": "stout",
+   "skin": 1,
+   "scale": 1.6,
+   "outfit": {
+    "jacket": "#b5843f",
+    "pants": "#6a4a2a",
+    "boots": "#4a3426",
+    "hat": "cap",
+    "cap": "#a67a3a",
+    "belt": "#5a3b2a",
+    "buttons": "#e0c07a",
+    "sword": true,
+    "moustache": "#3a2a20"
+   }
   }
  },
  "shots": [
