@@ -18,7 +18,15 @@ export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
   build?: Build;
+  // ancient costume pieces (all optional; a stylised cartoon look, not an archaeological reconstruction)
+  tunic?: string; girdle?: string; mantle?: string; sandals?: boolean; greaves?: string; armor?: string; shield?: string;
+  beard?: string; crest?: string; headcloth?: string; bag?: string;
 };
+/** something held in a hand: drawn at the hand, in front of the body */
+export type HandProp = "stone" | "staff" | "spear" | "helmet" | "sling";
+/** articulated pose, angles in degrees: arm [shoulder from hanging-down, outward positive (180 = straight up); elbow bend],
+ *  leg [hip outward from straight down; knee bend]; crouch 0..1 lowers the hips with the feet planted */
+export type Rig = { armL?: [number, number]; armR?: [number, number]; legL?: [number, number]; legR?: [number, number]; crouch?: number };
 type P2 = [number, number];
 
 const rad = (d: number) => (d * Math.PI) / 180;
@@ -342,6 +350,12 @@ const faceSide = (p: Pen, hx: number, hy: number, W: number, expr: Expr, lid: nu
 const BONNET = "#e9cf8f", BONNET_BRIM = "#d6b46a";
 /** parts of a hat that sit behind the head (bonnet) */
 const hatBehind = (p: Pen, o: Outfit, H: Blob, cx: number, hc: number, light: number, thick: number, ow: number, side: boolean) => {
+  if (o.hat === "headcloth" && o.headcloth) { // shepherd's head cloth: falls behind the head to the shoulders
+    const dp = blobPts(cx, hc + 0.28 * 2 * H.b, { ...H, a: H.a * 1.12, b: H.b * 1.08, asym: 0, egg: -0.2, seed: H.seed + 5 });
+    p.shadedFill(dp, o.headcloth, mul(o.headcloth, SH_CLOTH), light, H.a * 1.12);
+    p.inkRing(dp, ow * 0.85, thick);
+    return;
+  }
   if (o.hat !== "bonnet") return;
   const bb = blobPts(cx - (side ? 12 : 0) * (H.a / 50), hc - 0.07 * 2 * H.b, { ...H, a: H.a * 1.17, b: H.b * 1.13, asym: 0, egg: 0.04, seed: H.seed + 3 });
   p.shadedFill(bb, BONNET, mul(BONNET, SH_CLOTH), light, H.a * 1.17);
@@ -377,8 +391,8 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
       const [tx, ty] = R([[cx, yb - ht - 6 * u]])[0];
       p.ell(tx, ty, 7 * u, 7 * u, "#2b7a4b", 2.5 * u); // green tuft
     }
-  } else if (o.hat === "cap" || o.hat === "hair") {
-    const cut = crown + (o.hat === "cap" ? 0.3 : 0.42) * HH;
+  } else if (o.hat === "cap" || o.hat === "hair" || o.hat === "helmet" || o.hat === "headcloth") {
+    const cut = crown + ((({ cap: 0.3, helmet: 0.36, headcloth: 0.34 }) as Record<string, number>)[o.hat] ?? 0.42) * HH;
     const keep = (x: number, y: number) => y < cut || (side && o.hat === "hair" && x < cx - 6 * u && y < hc + 0.42 * H.b);
     // start the arc at the first kept point after a dropped one, so the kept run is contiguous and the cut closes it
     const n = hp.length, startIdx = Math.max(0, hp.findIndex(([x, y], i) => keep(x, y) && !keep(hp[(i + n - 1) % n][0], hp[(i + n - 1) % n][1])));
@@ -389,12 +403,25 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
       const [x0, y0] = arc[arc.length - 1], [x1, y1] = arc[0];
       for (let i = 1; i < 6; i++) arc.push([x0 + ((x1 - x0) * i) / 6, y0 + ((y1 - y0) * i) / 6 + (i % 2 ? 4 * u : 0)]);
     }
-    const col = o.hat === "cap" ? o.cap! : o.hair!;
+    const col = o.hat === "cap" ? o.cap! : o.hat === "helmet" ? o.cap ?? "#b08a4a" : o.hat === "headcloth" ? o.headcloth ?? "#d9c8a0" : o.hair!;
     p.shadedFill(arc, col, mul(col, SH_FELT), light, H.a, 0.35);
     p.poly(arc, null, ow);
     if (o.hat === "hair") {
       const s = side ? -1 : facing || 1;
       p.stroke([[cx + s * 10 * u, cut - 30 * u], [cx + s * 2 * u, cut - 12 * u]], 1.2 * u);
+    }
+    if (o.hat === "helmet") { // bronze helmet: rim band, cheek guard, a crest arching over the top
+      const deg = (a * 180) / Math.PI;
+      const [bx, by] = R([[cx, cut + 1 * u]])[0];
+      p.ell(bx, by, 0.5 * W * 1.04, 0.04 * HH, shade(col, 0.82), ow, 0, 360, deg);
+      if (o.crest) {
+        const [tx, ty] = R([[cx, crown - 0.02 * HH]])[0];
+        p.ell(tx, ty, 0.42 * W, 0.13 * HH, o.crest, ow, 180, 360, deg);
+        for (let k = -2; k <= 2; k++) p.stroke(R([[cx + k * 0.08 * W, crown - 0.02 * HH], [cx + k * 0.1 * W, crown - 0.12 * HH]]), 1.4 * u);
+      }
+    }
+    if (o.hat === "headcloth") { // a cord band across the forehead
+      p.band(R([[cx - 0.5 * W, cut + 1 * u], [cx + 0.5 * W, cut + 1 * u]]), o.girdle ?? shade(col, 0.6), 0.035 * HH, 1.4 * u);
     }
     if (o.hat === "cap") {
       const deg = (a * 180) / Math.PI;
@@ -412,6 +439,15 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
     p.poly(body, null, ow);
     const [bx, by] = R([[cx, yb + 1 * u]])[0];
     p.ell(bx, by, 0.45 * W, 0.05 * HH, "#1d1b22", ow, 0, 360, (a * 180) / Math.PI);
+  } else if (o.hat === "crown") { // a gold circlet with five points, over dark hair
+    const hairCut = crown + 0.4 * HH;
+    const top = hp.filter(([, y]) => y < hairCut).map(([x, y]) => [cx + (x - cx) * 1.03, hc + (y - hc) * 1.03] as P2);
+    if (top.length > 2) { p.shadedFill(top, o.hair ?? "#2a1e18", mul(o.hair ?? "#2a1e18", SH_FELT), light, H.a, 0.35); p.poly(top, null, ow); }
+    const yb = crown + 0.2 * HH, wb = 0.36 * W, pts: P2[] = [[cx - wb, yb + 0.07 * HH]];
+    for (let k = 0; k <= 8; k++) pts.push([cx - wb + (2 * wb * k) / 8, yb - (k % 2 ? 0 : 0.11 * HH)]);
+    pts.push([cx + wb, yb + 0.07 * HH]);
+    p.poly(R(pts), "#d9b84a", ow);
+    for (const k of [-0.6, 0, 0.6]) { const [gx, gy] = R([[cx + k * wb, yb + 0.02 * HH]])[0]; p.dot(gx, gy, 2.6 * u, "#8c3b4a"); }
   } else if (o.hat === "bonnet") {
     const [bx, by] = R([[cx + (side ? 6 * u : 0), crown + 0.16 * HH]])[0];
     p.arc(bx, by, 0.5 * W, 0.2 * HH, 200, 340, 7 * u, BONNET_BRIM);
@@ -441,6 +477,14 @@ export type FrontOpts = {
   arms?: "point" | "cheer";
   /** mouth drawn open ("o") whatever the expression says */
   talk?: boolean;
+  /** articulated arms / legs / crouch (overrides the arm poses above for the sides it sets) */
+  rig?: Rig;
+  /** props in the screen-left (L) and screen-right (R) hands */
+  hand?: { L?: HandProp; R?: HandProp };
+  /** sling: angle (rad) of the pouch circling the hand; released = empty cords hanging */
+  sling?: number; slingReleased?: boolean;
+  /** whole-card roll in degrees (applied by the Stage about the feet: a fall), and seconds since landing */
+  roll?: number; impact?: number;
   /** canvas angle the key light comes FROM (painted crescent + thick outline side) */
   light?: number; facing?: -1 | 0 | 1; seed?: number;
 };

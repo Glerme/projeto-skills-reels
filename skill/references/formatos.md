@@ -7,6 +7,8 @@ Valem para os três formatos:
 - **Números e siglas:** números por extenso ("mil oitocentos e trinta e um"). Siglas como se fala ("i-bê-gê-é") ou
   pelo nome completo. Nada de %, R$, /, + ou links: o `pipeline.voice` recusa.
 - **SCRIPT.md:** cada fato do roteiro tem fonte no `SCRIPT.md`.
+- **Briefing visual:** depois da aprovação do roteiro, o `SCRIPT.md` ganha a seção "Briefing visual" com o
+  cenário e o visual de cada personagem confirmados pelo usuário (`briefing-visual.md`).
 
 ## História narrada (50–70 s, cerca de 160–220 palavras)
 

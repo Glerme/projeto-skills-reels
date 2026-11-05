@@ -11,6 +11,9 @@ O `outfit` usa os campos de `engine/style/toon.ts` (`Outfit`):
 - roupa: `jacket`, `pants`, `boots`, `belt`, `buttons`, `sash`, `dress`;
 - cabeça: `hat` (`cap`, `hair`, `shako`…), `cap`, `hair`, `moustache`.
 
+**Antes de montar o elenco:** o visual de cada personagem vem do briefing visual confirmado (`briefing-visual.md`).
+Não escolha roupa, cabelo ou acessório sem essa confirmação.
+
 **Personagem novo:**
 1. Copie o mais parecido.
 2. Mude as cores e os acessórios.
