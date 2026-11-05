@@ -20,3 +20,4 @@ videos/*/hyperframes.json
 videos/*/index.html
 videos/*/assets/mix.wav
 videos/*/assets/stem_*.wav
+videos/*/agentes/render.log

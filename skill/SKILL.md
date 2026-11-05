@@ -12,6 +12,10 @@ Fora desses três, não pergunte nada: decida e anote.
 
 ## Fluxo de um vídeo
 
+Todo vídeo usa também as skills `diretor-de-edicao` (roteiro, retenção, ritmo de edição) e `motion-designer`
+(`references/craft.md`: composição, movimento, zonas seguras). Em ritmo, roteiro, edição e movimento, essas duas skills mandam;
+o motor só limita o que existe tecnicamente (ações, peças, cenários).
+
 1. **Tema e formato.**
    - Formatos: história, curiosidade ou lista.
    - Sem tema, proponha 3 em uma linha cada.
@@ -52,6 +56,11 @@ Fora desses três, não pergunte nada: decida e anote.
    - Use no máximo um agente revisor de stills por vídeo.
 9. **Aprovação 2.** Entregue o caminho de `videos/<slug>/final.mp4` e ofereça o preview do HyperFrames
    (`npx hyperframes preview` dentro da pasta) para ajustes.
+
+## Modo orquestrado
+
+Para gastar menos, delegue a escrita a workers (Codex e Claude Haiku) e fique só com as aprovações:
+`references/orquestrado.md`. Use esse modo por padrão quando estiver dentro do Orca.
 
 ## Quando o usuário pede mudança no vídeo final
 
