@@ -1,1 +1,1 @@
-{ "id": "cientista", "label": "Cientista", "build": "adult", "skin": 2, "outfit": { "jacket": "#f1efe6", "pants": "#3d4a5c", "boots": "#3a2a20", "buttons": "#d9dde0", "hat": "hair", "hair": "#2e2a2a" } }
+{ "id": "cientista", "label": "Cientista", "build": "adult", "skin": 2, "outfit": { "jacket": "#FFFFFF", "pants": "#1A0F2F", "boots": "#5a3423", "hat": "hair", "hair": "#1A0F2F", "hairStyle": "messy", "glasses": "#1A0F2F", "labCoat": "#FFFFFF", "shirt": "#1A0F2F", "skin": "#F7E4D6", "gloves": "#1A0F2F", "ink": "#1A0F2F" } }
