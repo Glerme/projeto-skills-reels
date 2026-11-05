@@ -1,6 +1,6 @@
 """Monta o projeto HyperFrames de um vídeo.
 
-Uso: python -m pipeline.assemble videos/<slug>
+Uso: python -m pipeline.assemble videos/<slug>   (ou --check videos/<slug>: só valida o video.json)
 
 Entrada em videos/<slug>/: video.json (o elenco pode citar personagens do acervo pelo id), words.json e
 assets/voice.wav. Saída na mesma pasta: index.html (template com o spec embutido, as legendas e o selo FICÇÃO quando
@@ -54,10 +54,16 @@ def _validate(spec: dict) -> None:
         raise SystemExit(1)
 
 
+def check(video_dir: Path) -> dict:
+    """só valida: resolve o elenco do acervo e roda o validador (não grava nada); devolve o spec resolvido"""
+    spec = resolve_cast(json.loads((Path(video_dir) / "video.json").read_text(encoding="utf-8")))
+    _validate(spec)
+    return spec
+
+
 def assemble(video_dir: Path) -> Path:
     d = Path(video_dir)
-    spec = resolve_cast(json.loads((d / "video.json").read_text(encoding="utf-8")))
-    _validate(spec)
+    spec = check(d)
     engine = ROOT / "lib/engine.js"
     if not engine.exists():
         raise SystemExit("falta lib/engine.js: rode `npm run build`")
@@ -86,6 +92,10 @@ def assemble(video_dir: Path) -> Path:
 
 
 def main(argv: list[str]) -> int:
+    if argv[:1] == ["--check"] and len(argv) == 2:
+        check(Path(argv[1]))
+        print("ok")
+        return 0
     if len(argv) != 1:
         print(__doc__.strip().splitlines()[2], file=sys.stderr)
         return 2

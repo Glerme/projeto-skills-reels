@@ -24,6 +24,7 @@ O design completo está em [`docs/design.md`](docs/design.md). Ele ainda está a
 | Pasta | O quê |
 |---|---|
 | `docs/design.md` | documento do projeto: intenção, objetivos, restrições, fluxo, kit |
+| `skill/` | a skill `shorts-cartoon` (link em `~/.claude/skills/shorts-cartoon`): fluxo + `references/` |
 | `engine/`, `template/` | o motor 3D genérico (`npm run build` gera `lib/engine.js`) e a página HyperFrames que recebe o `video.json` |
 | `scripts/mk-test-video.sh`, `scripts/snap.sh` | monta um projeto de teste a partir de um spec e tira stills dele |
 | `pipeline/` | voz (`python3 -m pipeline.voice roteiro.txt voz.wav`), palavras (`pipeline.words`) e o resto do pipeline; ambiente: `scripts/setup_venv.sh` |

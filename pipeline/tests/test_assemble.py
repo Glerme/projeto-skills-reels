@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.assemble import assemble, resolve_cast
+from pipeline.assemble import assemble, check, resolve_cast
 
 MINI = Path(__file__).parent / "fixtures/mini"
 
@@ -67,6 +67,15 @@ class AssembleTest(unittest.TestCase):
         self.assertEqual(e.exception.code, 1)
         self.assertIn("cena 2", err.getvalue())
         self.assertFalse((self.dir / "index.html").exists())
+
+    def test_check_only_validates(self):
+        check(self.dir)  # cast by id is resolved, valid spec passes, nothing is written
+        self.assertFalse((self.dir / "index.html").exists())
+        self.assertFalse((self.dir / "assets/mix.wav").exists())
+        self.edit(lambda s: s.update({"duration": s["duration"] + 5}))
+        with self.assertRaises(SystemExit) as e, contextlib.redirect_stderr(io.StringIO()):
+            check(self.dir)
+        self.assertEqual(e.exception.code, 1)
 
 
 if __name__ == "__main__":
