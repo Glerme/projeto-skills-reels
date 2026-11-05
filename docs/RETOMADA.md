@@ -2,7 +2,7 @@
 
 ## Estado
 
-O plano tem 16 tarefas (`docs/plano.md`). **As tarefas 1 a 12 estão prontas, testadas e com commit** no branch
+O plano tem 16 tarefas (`docs/plano.md`). **As tarefas 1 a 15 estão prontas, testadas e com commit** no branch
 `feat/shorts-cartoon`. A base em `main` é o commit `8878ffd`.
 
 - O registro detalhado (ledger) de cada tarefa, todas as decisões ("Ruling") e os pontos menores adiados estão em
@@ -25,30 +25,18 @@ O plano tem 16 tarefas (`docs/plano.md`). **As tarefas 1 a 12 estão prontas, te
 | 10 | `pipeline/voice.py` (Kokoro pm_alex) + `pipeline/words.py` (alinhamento) | b9d0c43 |
 | 11 | `pipeline/captions.py` (legenda E) | 5bad7a9 |
 | 12 | `pipeline/audio/` (efeitos, trilhas por clima, mix) | ec361b2 |
+| 13 | `pipeline/assemble.py` (+ `--check`) | 804071c |
+| 14 | `pipeline/qa.py` + `scripts/render.sh` (mini renderizada: `assets/exemplos/mini-polvo.mp4`) | 8a4c3dc |
+| 15 | a skill `skill/` (link em `~/.claude/skills/shorts-cartoon`) | 21646d6 |
 
 ## Próximos passos exatos
 
-Continue a partir da **Tarefa 13**. Leia o texto de cada tarefa em `docs/plano.md` (seções "### Task N").
-
-1. **Tarefa 13: `pipeline/assemble.py`.**
-   - Monta `videos/<slug>/` a partir de `video.json` + `words.json` + `assets/voice.wav`.
-   - Passos:
-     - resolve o `cast` por id em `kit/characters/`;
-     - valida com `node dist/validate.mjs` (gerado por `npm run validate:build`);
-     - roda `pipeline.audio.mix.mix(...)` → `assets/mix.wav`;
-     - roda `pipeline.captions.group/render_html` → `compositions/captions.html`;
-     - preenche `template/index.html`: `{{SPEC}}`, `{{DURATION}}`, `{{CAPTIONS_HOST}}` com
-       `pipeline.captions.host_html(dur)`, e `{{FICTION_BADGE}}` (selo "FICÇÃO" só se `fiction: true`);
-     - copia `lib/engine.js`, `template/hyperframes.json` e faz o link `assets/kenney`.
-   - Veja `scripts/mk-test-video.sh`: ele já faz a parte de template, link e cópia, e serve de modelo.
-   - Testes do plano: `test_missing_character`, `test_fiction_badge`, `test_spec_embedded`, `test_invalid_spec_exits_1`.
-2. **Tarefa 14:** `pipeline/qa.py`, a partir de `~/Documentos/projetos/claude-animated-shorts/templates/scripts/short_qa.py`,
-   e `scripts/render.sh`. Decisão do pre-flight: rodar o render.sh numa cópia montada da fixture `mini` da T13, que
-   tem voz.
-3. **Tarefa 15:** a skill em `skill/` (`SKILL.md` + `references/{formatos,cenas,kit,armadilhas}.md`) e o link
-   `~/.claude/skills/shorts-cartoon → projeto-reels/skill`.
-4. **Tarefa 16:** o primeiro vídeo de ponta a ponta, com o usuário (tema + duas aprovações).
-5. **Revisão final do branch.**
+1. **Tarefa 16:** o primeiro vídeo de ponta a ponta, seguindo só a skill `shorts-cartoon`.
+   - Formato: curiosidade.
+   - Tema: o usuário escolhe.
+   - Duas aprovações: o roteiro e o vídeo final.
+   - Anote em `docs/kit-review.md` o que o fluxo deixou a desejar.
+2. **Revisão final do branch.**
    - Sem subagente: faça a auto-revisão com `code-reviewer.md` do superpowers e registre no ledger
      "Final review: self-review (no subagent tool)".
    - Depois, `superpowers:finishing-a-development-branch`.

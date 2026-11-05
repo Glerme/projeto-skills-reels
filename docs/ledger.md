@@ -89,3 +89,13 @@ Task 12: Ruling: níveis do mix = voz sem alteração; trilha 9 dB abaixo da voz
 Task 12: minor (deferred): o release do limitador é um loop Python por amostra (~1 s por passada em 60 s de áudio, 3 passadas); as trilhas são simples (progressão de 4 acordes) e ninguém ouviu ainda: amostras em assets/som/mix-*.wav.
 Task 12: complete (commits 5bad7a9..ec361b2, tests: /home/gui/.venvs/shorts/bin/python -m unittest discover pipeline/tests → OK)
 Pausa (limite de uso): tarefas 1–12 completas; retomar na Task 13. Nota: docs/RETOMADA.md
+Task 13: Ruling: a montagem valida o spec antes de mixar (o mix é a parte lenta) e não escreve o index.html se o spec for inválido; o selo FICÇÃO é um clip (id fiction-badge) no canto superior direito, a 120 px do topo e 80 px da direita. Custo se errado: nenhum.
+Task 13: Ruling: words.transcribe agora apaga o transcript.json que o CLI do HF deixa ao lado do áudio (só se ele não existia antes). Era um efeito colateral da T10. Custo se errado: nenhum.
+Task 13: complete (commits ac56ffc..804071c, tests: /home/gui/.venvs/shorts/bin/python -m unittest discover pipeline/tests → OK)
+Task 14: Ruling: o QA trata as trocas de legenda como mudanças planejadas, além de cortes, crossfades e flashes. Motivo: na mini, os 2 "pulos" eram exatamente as trocas de legenda (frames 3 e 36). Custo se errado: um pulo real no mesmo frame de uma troca de legenda passaria sem aviso.
+Task 14: Ruling: render.sh usa `hyperframes render --quality delivery` e reprova se o check tiver qualquer finding de severidade error em lint/runtime/layout/audio. Mini renderizada em 9 s (GPU, beginframe) e QA limpo (−14,1 LUFS); cópia em assets/exemplos/mini-polvo.mp4.
+Task 14: complete (commits 804071c..8a4c3dc, tests: /home/gui/.venvs/shorts/bin/python -m unittest discover pipeline/tests → OK)
+Task 15: Ruling: a skill não passou pelos testes de pressão com subagente que a writing-skills pede (subagentes bloqueados). O teste real é a T16, um vídeo seguindo só a skill. Custo se errado: lacunas na skill só aparecem no primeiro uso.
+Task 15: Ruling: novo `python -m pipeline.assemble --check videos/<slug>`, porque o validador direto rejeita elenco citado por id (só a montagem resolve o acervo); o exemplo de video.json em cenas.md foi validado. Custo se errado: nenhum.
+Task 15: Ruling: o passo 2 do plano ("abra sessão nova e confira a skill na lista") foi checado nesta sessão: a skill shorts-cartoon apareceu na lista de skills disponíveis logo depois da criação do link. Custo se errado: nenhum.
+Task 15: complete (commits 8a4c3dc..21646d6, tests: /home/gui/.venvs/shorts/bin/python -m unittest discover pipeline/tests → OK)
