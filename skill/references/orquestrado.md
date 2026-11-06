@@ -8,7 +8,7 @@ Em conflito, essas skills mandam; o motor só limita o que existe tecnicamente.
 
 | Passo | Quem | Como |
 |---|---|---|
-| 1–2 roteiro | Codex (roteirista) | `worker.sh roteirista videos/<slug> "tema: …; formato: …"` |
+| 1–2 roteiro | Claude Opus 5.5 (roteirista) | `worker.sh roteirista videos/<slug> "tema: …; formato: …"` |
 | 3 aprovação do roteiro | coordenador + usuário | mostre `agentes/roteirista.txt` |
 | 4 briefing visual | coordenador + usuário | parta da "Briefing visual (sugestão)" do `SCRIPT.md`; grave a versão confirmada como "Briefing visual" |
 | peça nova (se o briefing pedir) | Codex (cenógrafo) e depois Claude Haiku (revisor) | `worker.sh cenografo videos/<slug> "id: …; descrição"`, depois `worker.sh revisor videos/_teste-<id> "revise o cenário novo; o plano está em spec.json"`; roda junto com a voz |
