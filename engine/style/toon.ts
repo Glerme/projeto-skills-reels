@@ -18,7 +18,7 @@ export type Outfit = {
   jacket: string; pants: string; boots: string; hat?: string | null; belt?: string | null; buttons?: string; rifle?: boolean;
   sash?: string; sword?: boolean; moustache?: string; skin?: string; head?: number; cap?: string; hair?: string; dress?: string;
   build?: Build;
-  hairStyle?: "messy"; glasses?: string; labCoat?: string; shirt?: string; gloves?: string; ink?: string;
+  hairStyle?: "messy" | "ponytail"; glasses?: string; /** square (default), round, or sun (dark lenses) */ glassesStyle?: "square" | "round" | "sun"; /** over-ear headphones colour */ headphones?: string; hoodie?: boolean; labCoat?: string; shirt?: string; gloves?: string; ink?: string;
   // ancient costume pieces (all optional; a stylised cartoon look, not an archaeological reconstruction)
   tunic?: string; girdle?: string; mantle?: string; sandals?: boolean; greaves?: string; armor?: string; shield?: string;
   beard?: string; crest?: string; headcloth?: string; bag?: string;
@@ -364,7 +364,30 @@ const faceSide = (p: Pen, hx: number, hy: number, W: number, expr: Expr, lid: nu
 // ---------------- hats ----------------
 const BONNET = "#e9cf8f", BONNET_BRIM = "#d6b46a";
 /** parts of a hat that sit behind the head (bonnet) */
+/** over-ear headphones: a band arching over the hair and a cup on each ear (front: both, side: the near one) */
+const headphonesOnHead = (p: Pen, col: string, H: Blob, cx: number, hc: number, side: boolean) => {
+  const u = H.a / 50, top = hc - 1.08 * H.b, ear = hc + 0.12 * H.b;
+  if (side) {
+    p.line(curve([cx - 6 * u, ear - 10 * u], [cx - 2 * u, top], [cx + 2 * u, ear - 10 * u]), col, 5 * u);
+    p.ell(cx - 6 * u, ear, 11 * u, 15 * u, col, 2.5 * u);
+    p.ell(cx - 6 * u, ear, 5 * u, 8 * u, "#3a3d45", 1.5 * u);
+    return;
+  }
+  const r = 1.02 * H.a;
+  p.line(curve([cx - r, ear - 12 * u], [cx, top], [cx + r, ear - 12 * u]), col, 5 * u);
+  for (const s of [-1, 1]) {
+    p.ell(cx + s * r, ear, 9 * u, 16 * u, col, 2.5 * u);
+    p.ell(cx + s * (r + 2 * u), ear, 3.5 * u, 9 * u, shade(col, 0.82), 1.2 * u);
+  }
+};
 const hatBehind = (p: Pen, o: Outfit, H: Blob, cx: number, hc: number, light: number, thick: number, ow: number, side: boolean) => {
+  if (o.hairStyle === "ponytail" && o.hair) { // high ponytail behind the head: peeks out on the right (front) or the back (side)
+    const u = H.a / 50, x = side ? cx - 1.1 * H.a : cx + 1.02 * H.a, y = hc + 0.02 * H.b;
+    const tail = blobPts(x, y, { ...H, a: 0.3 * H.a, b: 0.66 * H.b, nTop: 2.2, nBot: 1.8, egg: -0.3, asym: 0, rot: rad(side ? 28 : -24), seed: H.seed + 17 });
+    p.shadedFill(tail, o.hair, mul(o.hair, SH_FELT), light, 0.3 * H.a);
+    p.inkRing(tail, ow * 0.85, thick);
+    p.ell(x + (side ? 14 : -14) * u, y - 0.55 * H.b, 7 * u, 5 * u, o.headphones ?? shade(o.hair, 0.6), 2 * u, 0, 360, side ? 28 : -24); // hair tie
+  }
   if (o.hat === "headcloth" && o.headcloth) { // shepherd's head cloth: falls behind the head to the shoulders
     const dp = blobPts(cx, hc + 0.28 * 2 * H.b, { ...H, a: H.a * 1.12, b: H.b * 1.08, asym: 0, egg: -0.2, seed: H.seed + 5 });
     p.shadedFill(dp, o.headcloth, mul(o.headcloth, SH_CLOTH), light, H.a * 1.12);
@@ -724,7 +747,11 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
         p.poly([[xc - 3.5 * u, yc - 3.5 * u], [xc + 3.5 * u, yc - 3.5 * u], [xc + 3.5 * u, yc + 3.5 * u], [xc - 3.5 * u, yc + 3.5 * u]], "#d9dde0", 1.5 * u);
       }
       if (o.sash) p.band([[tcx - 1.3 * T.a, torsoBot - 0.32 * HH], [tcx + 1.3 * T.a, torsoBot - 0.32 * HH]], o.sash, 0.13 * HH, 1.8 * u);
-      for (let i = 0; i < 4; i++) {
+      if (o.hoodie) { // kangaroo pocket and two drawstrings instead of buttons
+        const py = torsoBot - 0.36 * HH;
+        p.poly([[tcx - 0.5 * T.a, py + 0.2 * HH], [tcx - 0.36 * T.a, py], [tcx + 0.36 * T.a, py], [tcx + 0.5 * T.a, py + 0.2 * HH]], shade(o.jacket, 0.9), 1.8 * u);
+        for (const k of [-1, 1]) p.stroke([[tcx + k * 7 * u, chin + 0.06 * HH], [tcx + k * 8 * u, chin + 0.3 * HH]], 2 * u, "#f1efe8");
+      } else for (let i = 0; i < 4; i++) {
         const y = chin + 0.12 * HH + i * 0.2 * HH;
         if (o.sash && Math.abs(y - (torsoBot - 0.32 * HH)) < 0.08 * HH) continue;
         p.dot(tcx + 2 * u * facing, y, 2.2 * u + 0.8 * u, INK); p.dot(tcx + 2 * u * facing, y, 2.2 * u, o.buttons ?? shade(o.jacket, 0.7));
@@ -805,6 +832,7 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     p.shadedFill(pts, o.hair ?? INK, mul(o.hair ?? INK, SH_FELT), light, H.a);
     p.poly(pts, null, ow);
   } else hatOn(p, o, hp, H, 300, hc, light, seed, facing, false);
+  if (o.headphones) headphonesOnHead(p, o.headphones, H, 300, hc, false);
   if (o.beard) { // full beard over the jaw, under the mouth
     const bp = blobPts(300, hc + 0.72 * H.b, { ...H, a: H.a * 0.66, b: H.b * 0.42, egg: -0.2, asym: 0, seed: H.seed + 13 }); // jaw only, below the eyes
     p.clip(hp, () => p.shadedFill(bp, o.beard!, mul(o.beard!, SH_FELT), light, H.a, 0.35));
@@ -815,7 +843,14 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   if (o.glasses) {
     const fx = 300 + 7 * u * facing, ink = p.ink;
     p.ink = o.glasses;
-    for (const side of [-1, 1]) p.poly(rrect(fx + side * 13 * u - 11 * u, hc - 7 * u, fx + side * 13 * u + 11 * u, hc + 10 * u, 3 * u), null, 3 * u);
+    const style = o.glassesStyle ?? "square";
+    for (const side of [-1, 1]) {
+      const lx = fx + side * 13 * u;
+      const lens = style === "round" ? ellPts(lx, hc + 1.5 * u, 10 * u, 10 * u)
+        : rrect(lx - 11 * u, hc - 7 * u, lx + 11 * u, hc + (style === "sun" ? 8 : 10) * u, style === "sun" ? 5 * u : 3 * u);
+      p.poly(lens, style === "sun" ? "#14161c" : null, 3 * u);
+      if (style === "sun") p.stroke([[lx - 6 * u, hc - 3 * u], [lx - 2 * u, hc - 5 * u]], 2 * u, "#5a6070"); // glint
+    }
     p.stroke([[fx - 2 * u, hc - 3 * u], [fx + 2 * u, hc - 3 * u]], 3 * u, o.glasses);
     p.ink = ink;
   }
@@ -925,7 +960,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   p.clip(tp, () => {
     if (o.belt) p.band([[tcx - 0.65 * T.a, chin - 0.05 * HH], [tcx + 0.75 * T.a, torsoBot - 0.1 * HH]], o.belt!, 5.5 * u, 1.8 * u);
     if (o.sash) p.band([[tcx - 1.3 * T.a, torsoBot - 0.32 * HH], [tcx + 1.3 * T.a, torsoBot - 0.32 * HH]], o.sash, 0.13 * HH, 1.8 * u);
-    if (!o.dress) for (let i = 0; i < 3; i++) { const y = chin + 0.16 * HH + i * 0.24 * HH; p.dot(tcx + 0.8 * T.a, y, 3 * u, INK); p.dot(tcx + 0.8 * T.a, y, 2.2 * u, o.buttons ?? shade(o.jacket, 0.7)); }
+    if (!o.dress && !o.hoodie) for (let i = 0; i < 3; i++) { const y = chin + 0.16 * HH + i * 0.24 * HH; p.dot(tcx + 0.8 * T.a, y, 3 * u, INK); p.dot(tcx + 0.8 * T.a, y, 2.2 * u, o.buttons ?? shade(o.jacket, 0.7)); }
   });
   p.inkRing(tp, ow, thick);
   if (rifle) {
@@ -940,6 +975,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   p.shadedFill(hp, skin, mul(skin, SH_SKIN), light, H.a);
   p.inkRing(hp, ow, thick);
   hatOn(p, o, hp, H, hx, hc, light, seed, 1, true);
+  if (o.headphones) headphonesOnHead(p, o.headphones, H, hx, hc, true);
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap";
   faceSide(p, hx, hc, W, expr, lid, brim, skin, o.moustache, o.build === "stout");
   p.rot = null;
@@ -1002,6 +1038,58 @@ export const fxSplash = (p: Pen, t: number) => {
     const a = rad(200 + i * 18), d = 120 + 380 * t, y = size - 160 + d * Math.sin(a) + 520 * t * t, r = 26 * (1 - t) + 6;
     if (t > 0.08 && y < size - 40) p.ell(c + d * Math.cos(a), y, r, r * 1.25, blue, 7);
   }
+};
+
+/** fire on a 300 x 420 canvas, base at the bottom: three tongues per layer (red, orange, yellow core), one ink outline
+ *  round the whole silhouette; k in 0..1 is the flicker phase (loops) */
+export const fxFire = (p: Pen, k: number) => {
+  const tongue = (cx: number, W: number, H: number, ph: number) => {
+    const pts: P2[] = [], n = 12;
+    for (const side of [-1, 1]) for (let i = 0; i <= n; i++) {
+      const s = side < 0 ? i / n : 1 - i / n; // up the left edge, down the right edge
+      const w = W * Math.sin(Math.PI * Math.min(1, s * 1.25) ** 0.7) * (1 - s) ** 0.6;
+      const sway = 16 * s * s * Math.sin(2 * Math.PI * (k + ph)) + 6 * s * Math.sin(2 * Math.PI * (2 * k + 1.7 * s + ph));
+      pts.push([cx + side * w + sway, 412 - H * s]);
+    }
+    return pts;
+  };
+  const h = (a: number, ph: number) => a * (0.84 + 0.16 * Math.sin(2 * Math.PI * (k + ph)));
+  const layer = (sc: number, col: string, outline: boolean) => {
+    const set = [tongue(150 - 62 * sc, 58 * sc, h(250 * sc, 0.5), 0.5), tongue(150 + 60 * sc, 60 * sc, h(280 * sc, 0.2), 0.2), tongue(150, 82 * sc, h(395 * sc, 0), 0)];
+    if (outline) for (const t of set) p.poly(t, INK, 18); // ink pass: the union silhouette gets one outline
+    for (const t of set) p.poly(t, col, 0);
+  };
+  layer(1, "#e2472b", true);
+  layer(0.68, "#f79a2c", false);
+  layer(0.38, "#ffe46b", false);
+  for (let i = 0; i < 3; i++) { // embers rising and fading
+    const u = (k + i / 3) % 1;
+    p.ell(150 + 80 * Math.sin(7 * i + 6 * u), 300 - 270 * u, 7 * (1 - u) + 2, 7 * (1 - u) + 2, "#ffb43a", 0);
+  }
+};
+
+/** warm glow behind a fire on a 256 x 256 canvas (soft) */
+export const fxGlow = (p: Pen) => {
+  const g = p.g, r = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  r.addColorStop(0, "rgba(255,170,70,0.55)"); r.addColorStop(1, "rgba(255,140,40,0)");
+  g.fillStyle = r; g.fillRect(0, 0, 256, 256);
+};
+
+/** a still pool seen from above on a 600 x 600 canvas (pair with fxRing on top) */
+export const fxPool = (p: Pen) => {
+  p.ell(300, 300, 280, 280, "#5a96ac", 10);
+  p.ell(300, 300, 240, 240, null, 0);
+  p.arc(300, 300, 250, 250, 200, 250, 10, "#94bcc0");
+};
+
+/** one sound-wave ring on a 256 x 256 canvas: line px (ink outside a pale core), alpha 0..1 */
+export const fxWave = (p: Pen, line: number, alpha: number) => {
+  const g = p.g;
+  g.globalAlpha = alpha;
+  g.beginPath(); g.ellipse(128, 128, 124 - line / 2, 124 - line / 2, 0, 0, Math.PI * 2);
+  g.strokeStyle = INK; g.lineWidth = line; g.stroke();
+  g.strokeStyle = "#8fdcff"; g.lineWidth = line * 0.55; g.stroke();
+  g.globalAlpha = 1;
 };
 
 /** dust puff on a 300 x 300 canvas; t in 0..1 */

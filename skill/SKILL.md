@@ -17,7 +17,8 @@ Todo vídeo usa também as skills `diretor-de-edicao` (roteiro, retenção, ritm
 o motor só limita o que existe tecnicamente (ações, peças, cenários).
 
 1. **Tema e formato.**
-   - Formatos: história (ou série em partes), curiosidade, lista ou "e se".
+   - Formatos: história (ou série em partes), curiosidade, lista, "e se" ou "e se — série" (o formato padrão para
+     poderes e hipóteses, com personagem fixo e partes).
    - Sem tema, proponha 3 em uma linha cada.
    - Regras de cada formato, durações e o limite real/ficção: `references/formatos.md`.
 2. **Pesquisa e roteiro.**
@@ -44,7 +45,11 @@ o motor só limita o que existe tecnicamente (ações, peças, cenários).
      antes. O ritmo de 3,2 palavras/s não vale: os tempos vêm do `words.json`.
    - `~/.venvs/shorts/bin/python -m pipeline.words videos/<slug>/assets/voice.wav videos/<slug>/roteiro.txt videos/<slug>/words.json`
 6. **Plano de cenas.** Escreva `videos/<slug>/video.json` com os tempos de `words.json` e os figurinos do briefing.
+   - **Direção primeiro:** `references/direcao.md` (câmera sempre em movimento, uma imagem por frase, ações em
+     sequência, pops). Sem isso o vídeo fica parado.
    - Formato, cenários, câmeras e ações: `references/cenas.md`.
+   - Stills rápidos de um `video.json`, sem voz: `bash scripts/preview.sh videos/<slug>/video.json <pasta> <t1,t2,…>`
+     (folha em `<pasta>/sheet.jpg`). Tire um still no meio de cada movimento de câmera antes do render.
    - Personagens e cenários do kit, e como criar uma peça nova: `references/kit.md`.
    - Crie no máximo uma peça nova por vídeo.
 7. **Render e checagem:** `bash scripts/render.sh videos/<slug>`. Esse único comando faz:

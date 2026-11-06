@@ -22,14 +22,18 @@ const tilesTex = () => ctex("tilesHD", 1024, 1024, (g, r) => {
   }
 });
 /** window: painted sky with a soft horizon, white mullion cross, dark wood frame */
-const windowTex = () => ctex("roomWindow", 256, 320, (g) => {
+const windowTex = (night = false) => ctex(night ? "roomWindowNight" : "roomWindow", 256, 320, (g) => {
   const gr = g.createLinearGradient(0, 0, 0, 320);
-  gr.addColorStop(0, "#6aa3e0"); gr.addColorStop(0.72, "#b8d0ec"); gr.addColorStop(0.73, "#8cc06a"); gr.addColorStop(1, "#78b257");
+  if (night) { gr.addColorStop(0, "#0d1733"); gr.addColorStop(0.72, "#2b3c68"); gr.addColorStop(0.73, "#1d2a3c"); gr.addColorStop(1, "#141e2c"); }
+  else { gr.addColorStop(0, "#6aa3e0"); gr.addColorStop(0.72, "#b8d0ec"); gr.addColorStop(0.73, "#8cc06a"); gr.addColorStop(1, "#78b257"); }
   g.fillStyle = gr; g.fillRect(0, 0, 256, 320);
+  if (night) { g.fillStyle = "#e8eeff"; for (const [x, y] of [[40, 40], [190, 70], [90, 110], [220, 30], [60, 190], [170, 200]]) g.fillRect(x, y, 3, 3); }
   g.fillStyle = "#f4efe4"; g.fillRect(122, 0, 12, 320); g.fillRect(0, 150, 256, 12);
   g.strokeStyle = "#5a3b2a"; g.lineWidth = 22; g.strokeRect(0, 0, 256, 320);
 });
 
+/** unlit room surfaces (painted windows, ceiling) that follow the shot's light: Stage swaps them per shot */
+export const ROOM_UNLIT: { mat: THREE.MeshBasicMaterial; day: { map?: THREE.Texture; color: THREE.Color }; night: { map?: THREE.Texture; color: THREE.Color } }[] = [];
 /** the room shell (NOINK, no shadow casting) plus windows on the back wall; furniture is built by the caller */
 export const buildRoom = (root: THREE.Object3D, o: RoomOpts) => {
   const b = new Batch(), x0 = -o.w / 2, x1 = o.w / 2, z0 = -o.d / 2, z1 = o.d / 2, h = o.h;
@@ -51,7 +55,10 @@ export const buildRoom = (root: THREE.Object3D, o: RoomOpts) => {
   const ceil = new THREE.Mesh(quad(V(x0, h, z0), V(x1, h, z0), V(x1, h, z1), V(x0, h, z1)),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(o.wall).multiplyScalar(0.82) }));
   shell.add(ceil);
+  const ceilMat = ceil.material as THREE.MeshBasicMaterial;
+  ROOM_UNLIT.push({ mat: ceilMat, day: { color: ceilMat.color.clone() }, night: { color: ceilMat.color.clone().multiplyScalar(0.32) } });
   const win = new THREE.MeshBasicMaterial({ map: windowTex() });
+  ROOM_UNLIT.push({ mat: win, day: { map: win.map!, color: win.color.clone() }, night: { map: windowTex(true), color: win.color.clone() } });
   for (let i = 0; i < o.windows; i++) {
     const cx = x0 + (o.w * (i + 0.5)) / o.windows, ww = Math.min(1.3, (o.w / o.windows) * 0.6), wh = Math.min(1.6, h - 1.4);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(ww, wh), win);

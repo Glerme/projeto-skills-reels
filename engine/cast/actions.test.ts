@@ -34,7 +34,7 @@ test("blinks every 0.5-2.3 s for 4 frames", () => {
 
 test("every kit character validates", () => {
   const cast = loadCharacters("kit/characters");
-  assert.equal(Object.keys(cast).length, 9); // the 8 starter characters + gigante (Davi e Golias)
+  assert.equal(Object.keys(cast).length, 10); // the 8 starter characters + gigante (Davi e Golias) + estudante (e se — série)
   const fx = JSON.parse(readFileSync("engine/fixtures/all-chars.json", "utf8"));
   assert.deepEqual(fx.cast, cast); // fixture must not drift from the kit
   fx.cast = cast;

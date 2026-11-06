@@ -1,4 +1,5 @@
 import type { ShotSpec } from "./spec";
+import { actorPosition, type Walkway } from "./space";
 
 export type V3 = [number, number, number];
 export type Cam = { pos: V3; look: V3; fov: number; roll: number };
@@ -8,9 +9,66 @@ const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 const mix3 = (a: V3, b: V3, k: number): V3 => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
 const KICK_M = 0.06, KICK_DEG = 0.6;
 
-export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps = 30, spots?: Record<string, V3>): Cam {
+const EASE = {
+  smooth: smootherstep,
+  out: (x: number) => 1 - (1 - x) ** 3,
+  in: (x: number) => x ** 3,
+  linear: (x: number) => x,
+  back: (x: number) => { const u = x - 1; return u * u * (2.7 * u + 1.7) + 1; },
+};
+export type Ease = keyof typeof EASE;
+export const EASES = Object.keys(EASE) as Ease[];
+/** One camera key, orbiting a target: `on` (spot or actor; actors are tracked while they move), `dist` metres from it,
+ *  lens at height `h` over the target's feet, looking at `aim` over them, `yaw` degrees around it (0 = the set's
+ *  aberto axis, + = camera swings to its right). `on` may also be a world point [x, y, z] (a far landmark). `ease` shapes the move that arrives at this key. */
+export type CamKey = { t: number; on?: string | V3; dist: number; h?: number; yaw?: number; aim?: number; fov?: number; roll?: number; ease?: Ease };
+const KEY_DEFAULTS = { aim: 1.35, fov: 34, yaw: 0, roll: 0 };
+/** Catmull-Rom through four values at u in [0, 1] (between b and c) */
+const cr = (a: number, b: number, c: number, d: number, u: number) =>
+  0.5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (-a + 3 * b - 3 * c + d) * u * u * u);
+
+/** Camera from keys: parameters (log distance, height, yaw, aim, fov, roll) follow a spline through the keys, timed by
+ *  each segment's ease; the target point blends between the two keys' targets, evaluated at t (so it tracks walkers). */
+function keyCam(shot: ShotSpec, t: number, views: Record<string, Cam>, target: (on: CamKey["on"], t: number) => V3, fps: number): Cam {
+  const K = shot.cam.keys!;
+  const base = views.aberto ?? Object.values(views)[0];
+  const yaw0 = Math.atan2(base.pos[0] - base.look[0], base.pos[2] - base.look[2]) * 180 / Math.PI;
+  const par = (k: CamKey) => {
+    const aim = k.aim ?? KEY_DEFAULTS.aim;
+    return [Math.log(k.dist), k.h ?? aim, k.yaw ?? KEY_DEFAULTS.yaw, aim, k.fov ?? KEY_DEFAULTS.fov, k.roll ?? KEY_DEFAULTS.roll];
+  };
+  const f = Math.round((t - shot.start) * fps) / fps + shot.start; // frame-exact, like the recipes
+  let i = 0;
+  while (i < K.length - 1 && f >= K[i + 1].t) i++;
+  const a = K[i], b = K[Math.min(K.length - 1, i + 1)];
+  const u = b === a ? 0 : EASE[b.ease ?? "smooth"](Math.max(0, Math.min(1, (f - a.t) / (b.t - a.t))));
+  const P = [K[Math.max(0, i - 1)], a, b, K[Math.min(K.length - 1, i + 2)]].map(par);
+  // clamped to the segment's ends: a very different next key must not swing the lens past this one (no overshoot)
+  const [ld, h, yaw, aim, fov, roll] = P[1].map((_, j) =>
+    Math.min(Math.max(P[1][j], P[2][j]), Math.max(Math.min(P[1][j], P[2][j]), cr(P[0][j], P[1][j], P[2][j], P[3][j], u))));
+  const A = target(a.on, f), B = target(b.on, f), c = mix3(A, B, u);
+  const y = (yaw0 + yaw) * Math.PI / 180, dist = Math.exp(ld);
+  // every hold creeps in a little (reference: fov *= 1 - .00012 per frame)
+  const creep = 1 - 0.00012 * Math.min(450, Math.round((t - shot.start) * fps));
+  return { pos: [c[0] + Math.sin(y) * dist, c[1] + h, c[2] + Math.cos(y) * dist], look: [c[0], c[1] + aim, c[2]], fov: fov * creep, roll };
+}
+
+export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps = 30, spots?: Record<string, V3>, walkways: Record<string, Walkway> = {}): Cam {
+  if (shot.cam.recipe === "keys") {
+    const target = (on: CamKey["on"], at: number): V3 => {
+      if (Array.isArray(on)) return on;
+      const who = on ?? shot.focus;
+      const actor = (shot.actors ?? []).find(a => a.who === who);
+      if (actor && spots && (actor.path ? walkways[actor.path] : spots[actor.at!])) {
+        const p = actorPosition(shot, spots, walkways, actor, at).p;
+        return [p.x, p.y, p.z];
+      }
+      return spots?.[who ?? "centro"] ?? spots?.centro ?? [0, 0, 0];
+    };
+    return kick(shot, t, fps, keyCam(shot, t, views, target, fps));
+  }
   const view = (n: string) => { const v = views[n]; if (!v) throw new Error(`view desconhecida: ${n}`); return v; };
-  const { recipe, from, to, punch = [] } = shot.cam;
+  const { recipe, from, to, punch = [] } = shot.cam as { recipe: string; from: string; to?: string; punch?: number[] };
   // A portrait cannot fit all lateral spots at medium size: translate the axis to its presenter.
   const actors = Array.isArray(shot.actors) ? shot.actors : [];
   const presenter = actors.find(a => a && a.who === shot.focus && a.at && !a.path)
@@ -37,8 +95,12 @@ export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps
   }
   const extra = Math.min(0.03, punch.reduce((sum, t) =>
     sum + 0.03 * smootherstep(Math.max(0, Math.min(1, (shot.start + f / fps - t) / 0.8))), 0));
-  c = { ...c, pos: mix3(c.pos, c.look, extra) };
+  return kick(shot, t, fps, { ...c, pos: mix3(c.pos, c.look, extra) });
+}
 
+/** impact kick: 7 frames of alternating sideways shake and roll after each time in shot.kicks */
+function kick(shot: ShotSpec, t: number, fps: number, c: Cam): Cam {
+  const f = Math.max(0, Math.round((t - shot.start) * fps));
   let a = 0;
   for (const p of shot.kicks ?? []) {
     const k = f - Math.round((p - shot.start) * fps);
@@ -53,9 +115,9 @@ export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps
 }
 
 /** Same-axis continuity, measured at the actual cut (including bounded push/punch). */
-export function cameraCut(previous: ShotSpec, next: ShotSpec, views: Record<string, Cam>, spots?: Record<string, V3>): string[] {
-  const a = camAt({ ...previous, kicks: [] }, previous.end, views, 30, spots);
-  const b = camAt({ ...next, kicks: [] }, next.start, views, 30, spots);
+export function cameraCut(previous: ShotSpec, next: ShotSpec, views: Record<string, Cam>, spots?: Record<string, V3>, walkways: Record<string, Walkway> = {}): string[] {
+  const a = camAt({ ...previous, kicks: [] }, previous.end, views, 30, spots, walkways);
+  const b = camAt({ ...next, kicks: [] }, next.start, views, 30, spots, walkways);
   const direction = (c: Cam) => c.look.map((v, i) => v - c.pos[i]);
   const u = direction(a), v = direction(b);
   const da = Math.hypot(...u), db = Math.hypot(...v);

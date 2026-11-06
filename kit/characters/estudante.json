@@ -1,0 +1,1 @@
+{ "id": "estudante", "label": "Estudante", "build": "slim", "skin": 0, "outfit": { "jacket": "#b8664a", "pants": "#4d6a8f", "boots": "#f1efe8", "hat": "hair", "hair": "#7a5236", "hairStyle": "ponytail", "headphones": "#e8e4dc", "hoodie": true } }

@@ -24,7 +24,8 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 **`cast`:** nome do papel → id do acervo (`kit/characters/<id>.json`) ou um CharDef completo.
 
 **`shots`:**
-- `set` + `light`: `day` ou `golden` (fim de tarde, quente, contraluz).
+- `set` + `light`: `day`, `golden` (fim de tarde, quente, contraluz) ou `night` (lua no lugar do sol, azul e escuro;
+  nas salas, janelas com céu estrelado e teto escuro). Outro nome é recusado.
 - `cam`:
   - `from`: a view inicial;
   - `recipe`:
@@ -32,13 +33,36 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
     - `push`: avanço lento mais forte, limitado a 12% da distância;
     - `glide`: desliza suavemente de `from` até `to` durante a cena inteira;
   - `punch`: tempos de avanço extra de 0,8 s, limitado a 3% no total, nas palavras de impacto.
+  - `keys` (**padrão para vídeos novos**, `"recipe": "keys"`, sem `from`): câmera livre por chaves, para afastar,
+    subir, orbitar e acompanhar dentro da mesma cena. Receitas e regras: `direcao.md`.
+    Cada chave: `{t, on, dist, h, yaw, aim, fov, roll, ease}`.
+    - `t`: tempo absoluto, crescente, dentro da cena. Antes da primeira chave, a câmera fica na primeira; depois da
+      última, na última (com um avanço lento de ~5% no fov, para nunca congelar).
+    - `on`: o alvo; é um spot, um ator da cena (seguido enquanto anda) ou um ponto `[x, y, z]`. Sem `on`, vale o
+      `focus` e depois o `centro`.
+    - `dist`: distância em metros (1,2–400). `h`: altura da lente sobre os pés do alvo (padrão = `aim`).
+    - `aim`: altura do ponto olhado (padrão 1,35). `yaw`: graus em volta do alvo (0 = eixo do `aberto`; + = a
+      câmera gira para a direita dela).
+    - `fov`: 12–75 (padrão 34). `roll`: −15 a 15.
+    - `ease` do movimento que chega nesta chave: `smooth` (padrão), `out` (revelação, chicote), `in`, `linear` ou
+      `back` (passa um pouco e volta).
+    - Os valores seguem uma curva suave, limitada às duas chaves de cada trecho (sem passar do ponto).
 - `actors[]`:
   - `who`, `at` (spot), `to` (spot, só para `walk`), `path` (walkway, substitui `at`/`to`), `action`, `expr` (lista de [tempo, expressão], com tempos
     **absolutos do vídeo**, dentro da cena; o primeiro costuma ser o `start` da cena) e
     `facing` (−1, 0 ou 1);
   - `cue`: o tempo absoluto do momento-chave da ação (`whirl`, `topple`); obrigatório nessas duas.
+  - `beats`: `[[tempo, ação], ...]` em tempo absoluto. A ação muda no meio da cena, misturada em 0,3 s com um
+    pequeno overshoot; `action` vale até o primeiro beat. Todas as ações servem, menos `walk`.
+  - `travel`: `[início, fim]` absolutos do deslocamento de `at` até `to` (padrão: a cena inteira). Dentro da janela o
+    personagem anda (ou corre, se `action`/beat for `run` ou passar de 2,2 m/s), com o passo pela velocidade real;
+    fora dela, faz a ação ou o beat atual.
+  - `dx`/`dz`: metros a partir do spot (−8 a 8). `toDx`/`toDz`: o mesmo para o destino; sem `to`, o destino é o
+    próprio `at` deslocado (para afastar ou juntar uma fila). Quem divide um spot já fica a 0,9 m um do outro.
+  - `enter`/`exit`: tempos absolutos de um pop de entrada (escala com overshoot em 0,35 s e poeira nos pés) e de
+    saída (encolhe em 0,25 s). Ponha um `pop` no `sfx` no mesmo tempo.
   - `hold`: objeto na mão, independente da ação: `{"L": "staff"}`. Valores: `stone staff spear helmet sling`.
-  - até 3 atores por cena: o quadro vertical é estreito.
+  - até 3 atores por cena nos planos médios; numa fila ou multidão, mais, com a câmera aberta ou em travelling.
 - `throws`: `[{from, to, start, end}]`. É uma pedra visível, com rastro, da mão de quem lança (mão levantada do lado
   esquerdo) até a testa do alvo, com brilho no acerto. Combine com `whirl` (`cue` = `start`) e `topple` (`cue` = `end`).
 - `sky`: só em cenários com céu (`palco rua paris natureza vale`). Exemplo: `{"sun":true,"clouds":4}`.
@@ -49,6 +73,19 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
 - `focus`: spot ou papel em foco.
 - `xfade`: crossfade em segundos, na entrada desta cena.
 - `kicks`: tempos de tremida de impacto.
+- `effects`: efeitos animados num spot ou num ator da cena: `[{kind, at, dx, dz, y, size, start, end, toDx, toDz}]`.
+  - `fire`: chamas tremulando com brilho; `size` = altura (padrão 1,2 m).
+  - `water`: poça vista de cima com ondulações; `size` = diâmetro (padrão 2,5 m).
+  - `splash`: um respingo em `start` (0,8 s); `size` padrão 1,6 m.
+  - `sound`: anéis de onda saindo da fonte a ~3 m/s, um a cada 0,45 s; `size` = raio máximo (padrão 4 m), `y` = altura
+    da fonte (padrão 1,5 m). Com `toDx`/`toDz` a fonte anda de `start` a `end` e os anéis se apertam na frente dela
+    (é o Doppler de verdade). `speed` (m/s, padrão 3) e `every` (s entre anéis, padrão 0,45): um avião precisa de
+    ondas mais rápidas que ele (`speed` 30, `size` 15); um coração, `every` 0,8 e `size` 0,8. Ponha um objeto como fonte (um `mover` com o mesmo caminho, ex.: `furniture-radio` ou um
+    carro).
+- `movers`: modelos do kit que se deslocam na cena, em velocidade constante: `[{model, at, dx, dz, y, toDx, toDz, toY,
+  start, end, turn, scale}]`. Carro na rua: ande ao longo de z dentro da pista (`dx` de −3 a 3). Avião: `y` 25–40 m
+  bem atrás (`dz` −60) e câmera mirando o céu (`aim` 5). O validador não checa colisão de quem se move: confira no
+  still que nada atravessa nada.
 
 **`dressing`:** no topo do vídeo, cenário → lista de props de `kit/models.json`. Toda cena nesse cenário mostra
 os mesmos objetos, nas mesmas posições. `props` por cena foi removido.
@@ -97,13 +134,15 @@ Exemplo: `"music": {"mood": "curioso", "stop": 31.15}`, com `{"t": 31.15, "name"
 | natureza | centro esquerda direita fundo | aberto medio close baixo |
 | vale (seco, rochoso, riacho, tendas; histórias antigas) | centro esquerda direita fundo riacho duelo_a duelo_b | aberto medio close baixo duelo riacho queda |
 
-- **palco:** fundo colorido neutro, para listas e curiosidades sem lugar.
+- **palco:** fundo de cor chapada. **Não use**: o usuário pediu sempre um ambiente de verdade. Explicação vai para o
+  laboratório, a rua, a natureza ou outro lugar real, com o fenômeno em si (`effects`, `movers`).
 - **Cômodos:** os spots laterais ficam a ±0,95 m; no `aberto` cabem 2 a 3 pessoas.
 
 ## Ações e expressões
 
 **Ações (todas animadas, com esqueleto articulado; nenhuma fica parada):**
-`stand talk walk point wave cheer shock fall sit gesture laugh taunt struggle unhelm pick whirl topple`.
+`stand talk walk point wave cheer shock fall sit gesture laugh taunt struggle unhelm pick whirl topple run`.
+- `run`: corre inclinado, com os punhos alternando; o passo segue a velocidade do `travel`.
 - `talk` mexe a boca e uma mão; `gesture` gesticula com as duas mãos; `laugh` gargalha com o corpo; `taunt` ameaça com a
   lança erguida.
 - `struggle`: cambaleia dentro de uma armadura grande. `unhelm`: levanta o capacete e tira (1 s).
@@ -117,11 +156,13 @@ Exemplo: `"music": {"mood": "curioso", "stop": 31.15}`, com `{"t": 31.15, "name"
 
 ## Gramática de câmera (o estilo do perfil)
 
-- **Planos:** o `medio` e o `close` dominam; o `aberto` e o `aereo` servem para estabelecer o lugar e para mudar de
-  lugar. Prefira menos cortes e movimentos contínuos lentos no mesmo enquadramento geral.
+A direção (o que mostrar, quando mexer, a ordem das cenas) está em `direcao.md`. Abaixo, as regras técnicas.
+
+- **Planos:** use `keys` com movimentos contínuos dentro da cena (pull-back, grua, travelling, órbita). `hold`,
+  `push` e `glide` continuam valendo, mas deixam o vídeo parado se forem o vídeo todo.
 - **Reações:** a troca de expressão, o `shock` e os `kicks` caem **0–3 frames antes da palavra**, ou seja,
   `t = start da palavra − 0,05`.
-- **Câmera viva:** todo plano parado é `hold` (nunca fique parado: o QA reprova trechos congelados de 12 frames ou
+- **Câmera viva:** com `keys`, o avanço lento já vem embutido. Sem `keys`, todo plano parado é `hold` (nunca fique parado: o QA reprova trechos congelados de 12 frames ou
   mais). `punch` vai nas palavras de impacto; `kicks` nos impactos físicos (queda, batida).
 - **Desfoque:** `dof` de 12–14 nos closes, 10–12 no medio, 0 nos abertos e aéreos.
 - **Crossfade:** só quando muda de lugar ou de tempo (`xfade` 0,2–0,3). Dentro do mesmo lugar, corte seco.
@@ -130,6 +171,8 @@ Exemplo: `"music": {"mood": "curioso", "stop": 31.15}`, com `{"t": 31.15, "name"
   Reserve a faixa até 676 px do fundo para duas linhas. Quem fala (`talk` ou `focus`) fica inteiro acima dela;
   o validador recusa cruzamentos durante o movimento. Em `close` de rosto e peito, o queixo também fica acima da faixa; braços e pernas podem sair do quadro.
   Altura da silhueta: `medio` 35–45%, `aberto`/`baixo` ≥18%, `close` ≥65% (antes do corte do corpo).
+  Com `keys`, a regra vale quadro a quadro pelo tamanho: de 65% para cima conta como close (queixo acima da faixa);
+  abaixo disso, o corpo inteiro fica acima da faixa. Só entra na regra quem faz `talk` ou é o `focus`.
   Nas quatro views, o eixo se desloca até o spot de `focus` (ator) ou do primeiro `talk`, sem mudar a direção.
 - Em Paris, use o apresentador em `esquerda` e o figurante em `praca_perto`. `aberto` e `medio`
   compartilham o eixo da rua. O close prioriza rosto e peito; confira a continuidade ao cortar para ele.

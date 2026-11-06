@@ -1,22 +1,23 @@
-import { actorPosition } from "./space";
+import { actorPosition, travelEnds } from "./space";
 // One three.js world for a whole video: shared sky (5 stops), sun disc + halo, clouds, fog = horizon colour,
 // hemi/sun/fill lights, the cast as lit cards from the Pool, plus one group per set used by the spec (only the shot's
 // set is shown). update(shot, t, cam) is a pure function of (shot, t): frames are seeked out of order.
 // Ported from the bridge's World (world.ts) and the generic half of cast.ts, minus everything bridge-specific.
 import * as THREE from "three";
-import type { VideoSpec, ShotSpec, ActorSpec, SetId } from "./spec";
+import type { VideoSpec, ShotSpec, ActorSpec, SetId, EffectSpec } from "./spec";
 import { camAt, type V3 } from "./camera";
 import { SETS } from "./sets/index";
 import type { SetDef } from "./sets/types";
-import { poseAt, blinkAt } from "./cast/actions";
+import { actorPose, blinkAt } from "./cast/actions";
 import { drawChar } from "./cast/chars";
 import { Pool, Actor, Fx, type Place, type FxPlace } from "./style/cards";
-import { fxShadow, fxContact, fxPuff, fxStars, fxBurst, type FrontOpts, type Pen } from "./style/toon";
-import { LIGHTS, LOOK, type WorldLook } from "./style/lights";
+import { fxShadow, fxContact, fxPuff, fxStars, fxBurst, fxFire, fxGlow, fxPool, fxRing, fxSplash, fxWave, type FrontOpts, type Pen } from "./style/toon";
+import { ROOM_UNLIT } from "./sets/room";
+import { LIGHTS, LIGHT_IDS, LOOK, type LightId, type WorldLook } from "./style/lights";
 import { TONE, CHAR, untone } from "./style/shade";
 import { NOINK } from "./style/ink";
 import { ctex, cloudHD } from "./style/paint";
-import { setSight, type Kit, type Ray } from "./style/build";
+import { setSight, kitClone, type Kit, type Ray } from "./style/build";
 
 import { setDressing, shotSky } from "./shot-extras";
 
@@ -41,6 +42,13 @@ const haloTex = () => ctex("sunHalo", 256, 256, (g) => {
 });
 
 // ---------------- cast helpers (cast.ts) ----------------
+/** enter: scale 0 -> 1 in 0.35 s with an overshoot; exit: 1 -> 0 in 0.25 s */
+const popScale = (a: ActorSpec, t: number) => {
+  let k = 1;
+  if (a.enter !== undefined) { const u = Math.min(1, Math.max(0, (t - a.enter) / 0.35)) - 1; k = t < a.enter ? 0 : u * u * (2.7 * u + 1.7) + 1; }
+  if (a.exit !== undefined && t >= a.exit) k *= 1 - Math.min(1, (t - a.exit) / 0.25);
+  return k;
+};
 const q = (v: number, n = 120) => Math.round(v * n) / n;
 const fkey = (o: object) => JSON.stringify(o, (_k, v) => (typeof v === "number" ? q(v) : v));
 /** drawing resolution by distance: [canvas w, h, scale from the 600 x 1000 design]; sized for the 1440 x 2560 final */
@@ -53,11 +61,11 @@ const light2D = (sun: THREE.Vector3, right: THREE.Vector3, mirror: boolean) => {
 };
 /** ground shadow under a standing card: a tight multiply contact pool under the feet, plus by day (cards cast no real
  *  shadow) a lighter soft tail stretched away from the sun, ~1.6 m / tan(sun elevation), capped */
-const CONTACT: Record<"day" | "golden", [number, number, number]> = { day: [0.2, 0.21, 0.33], golden: [0.24, 0.2, 0.33] };
+const CONTACT: Record<LightId, [number, number, number]> = { day: [0.2, 0.21, 0.33], golden: [0.24, 0.2, 0.33], night: [0.3, 0.3, 0.42] };
 const TAIL: [number, number, number] = [0.42, 0.44, 0.62];
 const toSrgb = (v: number) => { const c = clamp01(v); return c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055; };
 const hexOf = (c: [number, number, number], k: number) => "#" + c.map((v) => Math.round(255 * toSrgb(1 - (1 - v) * k)).toString(16).padStart(2, "0")).join("");
-const blob = (out: FxPlace[], sun: THREE.Vector3, light: "day" | "golden", x: number, y: number, z: number, sc = 1, k = 1) => {
+const blob = (out: FxPlace[], sun: THREE.Vector3, light: LightId, x: number, y: number, z: number, sc = 1, k = 1) => {
   const hl = Math.hypot(sun.x, sun.z) || 1, ox = -sun.x / hl, oz = -sun.z / hl, rot = Math.atan2(-ox, -oz);
   if (light === "day") {
     const el = Math.asin(Math.min(0.99, Math.max(0.1, sun.y)));
@@ -74,7 +82,7 @@ const blob = (out: FxPlace[], sun: THREE.Vector3, light: "day" | "golden", x: nu
 const sightLines = (spec: VideoSpec, def: SetDef): Ray[] => {
   const out: Ray[] = [];
   for (const s of spec.shots) if (s.set === def.id) for (let t = s.start; t < s.end; t += 2 / spec.fps) {
-    const c = camAt(s, t, def.views, spec.fps, def.spots), o = V(c.pos), fw = V(c.look).sub(o), len = fw.length();
+    const c = camAt(s, t, def.views, spec.fps, def.spots, def.walkways), o = V(c.pos), fw = V(c.look).sub(o), len = fw.length();
     fw.normalize();
     const rt = fw.clone().cross(new THREE.Vector3(0, 1, 0)).normalize(), up = rt.clone().cross(fw);
     const ty = Math.tan((c.fov * Math.PI) / 360), tx = ty * (9 / 16);
@@ -84,12 +92,52 @@ const sightLines = (spec: VideoSpec, def: SetDef): Ray[] => {
   return out;
 };
 
+const WAVE_SPEED = 3, WAVE_PERIOD = 0.45, WAVE_LINE = 0.13; // m/s, s, m: slowed so the eye can follow the rings
+/** one shot effect as billboards/flat cards (see EffectSpec); base = the spot or actor's feet, null if missing */
+function effect(out: FxPlace[], e: EffectSpec, shot: ShotSpec, t: number, eye: THREE.Vector3, base: THREE.Vector3 | null) {
+  const t0 = e.start ?? shot.start, t1 = e.end ?? shot.end;
+  // sound: `end` stops the source; rings already out keep spreading and fade (no frame where they all vanish)
+  const tail = e.kind === "sound" ? (e.size ?? 4) / (e.speed ?? WAVE_SPEED) : 0;
+  if (!base || t < t0 || t > t1 + tail) return;
+  const src = (tt: number) => {
+    const u = t1 > t0 ? Math.min(1, Math.max(0, (tt - t0) / (t1 - t0))) : 0, dx = e.dx ?? 0, dz = e.dz ?? 0;
+    return base.clone().add(new THREE.Vector3(dx + ((e.toDx ?? dx) - dx) * u, e.y ?? 0, dz + ((e.toDz ?? dz) - dz) * u));
+  };
+  const p = src(t), age = t - t0;
+  if (e.kind === "fire") {
+    const h = e.size ?? 1.2, away = p.clone().sub(eye).setY(0).normalize().multiplyScalar(0.08);
+    out.push({ key: "glow", cw: 256, ch: 256, draw: fxGlow, x: p.x + away.x, y: p.y + h * 0.45, z: p.z + away.z, w: h * 2.2, h: h * 2.2, soft: true });
+    const k = q((age * 2.5) % 1, 12) % 1;
+    out.push({ key: `fire|${k}`, cw: 300, ch: 420, draw: (pen) => fxFire(pen, k), x: p.x, y: p.y + h / 2, z: p.z, w: h * 300 / 420, h });
+  } else if (e.kind === "water") {
+    const d = e.size ?? 2.5, k = q((age / 1.6) % 1, 24) % 1;
+    out.push({ key: "pool", cw: 600, ch: 600, draw: fxPool, x: p.x, y: p.y + 0.02, z: p.z, w: d, h: d, flat: true });
+    out.push({ key: `ripple|${k}`, cw: 600, ch: 600, draw: (pen) => fxRing(pen, k), x: p.x, y: p.y + 0.03, z: p.z, w: d * 0.9, h: d * 0.9, flat: true, soft: true });
+  } else if (e.kind === "splash") {
+    const d = e.size ?? 1.6, u = age / 0.8;
+    if (u < 1) out.push({ key: `splash|${q(u, 20)}`, cw: 800, ch: 800, draw: (pen) => fxSplash(pen, q(u, 20)), x: p.x, y: p.y + d * 0.39, z: p.z, w: d, h: d, soft: true });
+  } else {
+    const R = e.size ?? 4, speed = e.speed ?? WAVE_SPEED, every = e.every ?? WAVE_PERIOD, life = R / speed;
+    for (let n = Math.floor(Math.min(age, t1 - t0) / every); n >= 0; n--) {
+      const te = t0 + n * every, a = t - te;
+      if (a > life) break;
+      const r = speed * a;
+      if (r < 0.08) continue;
+      const c = src(te), line = Math.round(Math.min(40, Math.max(3, WAVE_LINE * Math.max(1, R / 4) / (2 * r) * 256))); // thicker for big rings
+      const alpha = q(Math.min(1, 2.5 * (1 - a / life), a / 0.2), 10); // fades in over 0.2 s and out over the last 40%
+      if (alpha <= 0) continue;
+      out.push({ key: `wave|${line}|${alpha}`, cw: 256, ch: 256, draw: (pen) => fxWave(pen, line, alpha), x: c.x, y: c.y + (e.y === undefined ? 1.5 : 0), z: c.z, w: 2 * r, h: 2 * r, soft: true });
+    }
+  }
+}
+
 export class Stage {
   root = new THREE.Group();
   fog = new THREE.Fog("#bccbec", 25, 420); // main.ts puts it on the scene
   private spec: VideoSpec;
   private sets = new Map<SetId, THREE.Group>();
   private dressing = new Map<SetId, THREE.Group>();
+  private movers = new Map<ShotSpec, (THREE.Object3D | null)[]>();
   private extraClouds: THREE.Mesh[] = [];
   private pool = new Pool();
   private actors: Actor[] = [];
@@ -98,7 +146,7 @@ export class Stage {
   private sky: THREE.Mesh; private skyMat: THREE.ShaderMaterial;
   private sunDisc: THREE.Sprite; private sunHalo: THREE.Sprite;
   private sunCache = new Map<number, THREE.Vector3>();
-  private cloudMaps: Record<"day" | "golden", THREE.Texture[]>;
+  private cloudMaps: Record<LightId, THREE.Texture[]>;
   private clouds: THREE.Mesh[] = [];
   private frustum = new THREE.Frustum();
   private m4 = new THREE.Matrix4(); private v = new THREE.Vector3(); private sph = new THREE.Sphere();
@@ -134,7 +182,7 @@ export class Stage {
     this.sun.shadow.mapSize.set(4096, 4096);
     this.fill = new THREE.DirectionalLight("#9fb8ff", 0.35);
     R.add(this.hemi, this.sun, this.sun.target, this.fill, this.fill.target);
-    this.cloudMaps = { day: [0, 1, 2, 3].map((k) => cloudHD(k, LOOK.day.cloud)), golden: [0, 1, 2, 3].map((k) => cloudHD(k, LOOK.golden.cloud)) };
+    this.cloudMaps = Object.fromEntries(LIGHT_IDS.map((l) => [l, [0, 1, 2, 3].map((k) => cloudHD(k, LOOK[l].cloud))])) as unknown as Record<LightId, THREE.Texture[]>;
     for (let i = 0; i < 9; i++) {
       const a = (i / 9) * Math.PI * 2 + 0.3, d = 620 + (i % 3) * 60;
       const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: this.cloudMaps.day[i % 4], color: new THREE.Color(1.1, 1.1, 1.1), transparent: true, depthWrite: false, fog: false }));
@@ -164,6 +212,12 @@ export class Stage {
       this.sets.set(id, g); R.add(g);
     }
     setSight([]);
+    for (const s of spec.shots) this.movers.set(s, (s.movers ?? []).map((m) => {
+      const o = kit[m.model];
+      const g = o && kitClone(kit, m.model, new THREE.Box3().setFromObject(o).getSize(this.v).y * (m.scale ?? 1));
+      if (g) { g.visible = false; R.add(g); }
+      return g;
+    }));
   }
 
   /** camera-relative sun, frozen per shot: the shot's mean view direction turned by az toward screen right, lifted by el */
@@ -173,7 +227,7 @@ export class Stage {
     const L = LIGHTS[s.light];
     let fx = 0, fz = 0;
     for (let t = s.start; t < s.end; t += 3 / this.spec.fps) {
-      const c = camAt(s, t, def.views, this.spec.fps, def.spots), x = c.look[0] - c.pos[0], z = c.look[2] - c.pos[2], n = Math.hypot(x, z) || 1;
+      const c = camAt(s, t, def.views, this.spec.fps, def.spots, def.walkways), x = c.look[0] - c.pos[0], z = c.look[2] - c.pos[2], n = Math.hypot(x, z) || 1;
       fx += x / n; fz += z / n;
     }
     const n = Math.hypot(fx, fz) || 1; fx /= n; fz /= n;
@@ -196,13 +250,23 @@ export class Stage {
     const def = SETS[shot.set], L = LIGHTS[shot.light];
     const K: WorldLook = { ...LOOK[shot.light], ...def.look };
     // ---- camera ----
-    const c = camAt(shot, t, def.views, this.spec.fps, def.spots);
+    const c = camAt(shot, t, def.views, this.spec.fps, def.spots, def.walkways);
     cam.position.set(...c.pos); cam.up.set(0, 1, 0); cam.lookAt(...c.look); cam.rotateZ(THREE.MathUtils.degToRad(c.roll));
     cam.fov = c.fov; cam.near = 0.2; cam.far = 1500; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
     const look = V(c.look), dist = cam.position.distanceTo(look);
     cam.layers.enable(NOINK); // sky, clouds and sun sprites live on the no-ink layer but are still rendered
     for (const [id, g] of this.sets) g.visible = id === shot.set;
+    for (const u of ROOM_UNLIT) { const v = shot.light === "night" ? u.night : u.day; if (v.map) u.mat.map = v.map; u.mat.color.copy(v.color); }
     for (const [s, g] of this.dressing) g.visible = s === shot.set;
+    for (const [s, list] of this.movers) list.forEach((g, i) => {
+      if (!g) return;
+      g.visible = s === shot;
+      if (s !== shot) return;
+      const m = shot.movers![i], [x, y, z] = def.spots[m.at], t0 = m.start ?? shot.start, t1 = m.end ?? shot.end;
+      const u = THREE.MathUtils.clamp((t - t0) / (t1 - t0), 0, 1), dx = m.dx ?? 0, dz = m.dz ?? 0, dy = m.y ?? 0;
+      g.position.set(x + dx + ((m.toDx ?? dx) - dx) * u, y + dy + ((m.toY ?? dy) - dy) * u, z + dz + ((m.toDz ?? dz) - dz) * u);
+      g.rotation.y = THREE.MathUtils.degToRad(m.turn ?? 0);
+    });
     // ---- light rig: camera-relative sun frozen per shot, two-tone uniforms, shadow fit ----
     const sunDir = this.shotSun(shot, def);
     this.hemi.color.set(L.sky); this.hemi.groundColor.set(L.ground); this.hemi.intensity = L.hemiI;
@@ -258,15 +322,22 @@ export class Stage {
     let focus = look;
     const hands: Record<string, { feet: THREE.Vector3; sc: number; head: THREE.Vector3 }> = {};
     for (const a of shot.actors) {
-      const ch = this.spec.cast[a.who], seed = ids.indexOf(a.who) + 1, ts = t - shot.start;
+      const ch = this.spec.cast[a.who], seed = ids.indexOf(a.who) + 1;
+      const pop = popScale(a, t);
+      if (pop <= 1e-3) continue;
       const { p, dir } = this.feet(shot, def, a, t);
       const moving = dir.lengthSq() > 1e-6, mirror = moving && dir.dot(right) < 0;
-      const pose = poseAt(a.action, ts, seed, a.cue !== undefined ? a.cue - shot.start : Infinity);
+      const [ta, tb] = a.at && !a.path ? travelEnds(def.spots, a) : [p, p], travel = ta.distanceTo(tb);
+      const pose = actorPose(a, shot.start, shot.end, t, seed, travel);
+      if (a.enter !== undefined && t - a.enter < 0.5) { // pop-in: a dust puff round the feet
+        const k = (t - a.enter) / 0.5;
+        fxp.push({ key: `puff|${q(k, 20)}`, cw: 300, ch: 300, draw: (pen) => fxPuff(pen, k), x: p.x, y: p.y + 0.3, z: p.z + 0.05, w: 1.8 * (ch.scale ?? 1), h: 1.8 * (ch.scale ?? 1), soft: true });
+      }
       if (a.hold) pose.hand = { ...a.hold, ...pose.hand }; // held props, unless the action holds something there
       const ex = (a.expr ?? []).filter(([te]) => te <= t).pop();
       const fo: FrontOpts = { ...pose, expr: ex ? ex[1] : pose.expr, blink: blinkAt(seed, t, this.spec.fps),
         facing: a.facing ?? (moving ? 1 : 0), light: light2D(sunDir, right, mirror), seed };
-      const sc = ch.scale ?? 1, roll = pose.roll ?? 0;
+      const sc = (ch.scale ?? 1) * pop, roll = pose.roll ?? 0;
       const [w, h, k] = tier(cam.position.distanceTo(this.v.set(p.x, p.y + 1.2 * sc, p.z)) / sc);
       const { roll: _r, impact: _i, ...drawn } = fo;
       places.push({ key: `F|${ch.id}|${fkey(drawn)}`, draw: (pen) => drawChar(pen, ch, drawn), x: p.x, y: p.y, z: p.z, mirror, scale: sc, roll, size: [w, h, k] });
@@ -276,7 +347,7 @@ export class Stage {
         if (im < 0.7) fxp.push({ key: `puff|${q(im / 0.7, 20)}`, cw: 300, ch: 300, draw: (pen) => fxPuff(pen, im / 0.7), x: mid.x, y: p.y + 0.35 * sc, z: mid.z, w: 2.2 * sc, h: 2.2 * sc, soft: true });
         if (im > 0.2) fxp.push({ key: `stars|${q((im * 0.8) % 1, 24)}`, cw: 420, ch: 210, draw: (pen) => fxStars(pen, (im * 0.8) % 1), x: hands[a.who].head.x, y: hands[a.who].head.y + 0.55 * sc, z: hands[a.who].head.z, w: 1.1 * sc, h: 0.55 * sc });
       }
-      if (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march") blob(fxp, sunDir, shot.light, p.x, p.y, p.z);
+      if (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march") blob(fxp, sunDir, shot.light, p.x, p.y, p.z, pop);
       if (shot.focus === a.who) focus = p.clone().setY(p.y + EYE * sc);
     }
     for (const th of shot.throws ?? []) { // a visible stone: hand -> forehead on an arc, with a trail; a burst on the hit
@@ -297,6 +368,7 @@ export class Stage {
         fxp.push({ key: `hit|${q(hb, 20)}`, cw: 500, ch: 500, draw: (pen: Pen) => fxBurst(pen, hb), x: to.x, y: to.y, z: to.z, w: 1.2 * B.sc, h: 1.2 * B.sc });
       }
     }
+    for (const e of shot.effects ?? []) effect(fxp, e, shot, t, cam.position, hands[e.at]?.feet ?? (def.spots[e.at] ? V(def.spots[e.at]) : null));
     if (shot.focus && shot.focus in def.spots) focus = V(def.spots[shot.focus]).setY(def.spots[shot.focus][1] + EYE);
     // ---- placement (frustum-culled), then one pool flush ----
     this.frustum.setFromProjectionMatrix(this.m4.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));

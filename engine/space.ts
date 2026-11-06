@@ -109,10 +109,19 @@ export function actorPosition(shot: ShotSpec, spots: Record<string, V3>, walkway
   if (a.path) return pathPosition(walkways[a.path], t);
   const mates = shot.actors.filter((b) => !b.path && b.at === a.at);
   const off = (mates.indexOf(a) - (mates.length - 1) / 2) * 0.9;
-  const A = new THREE.Vector3(...spots[a.at!]), B = a.to ? new THREE.Vector3(...spots[a.to]) : A.clone();
-  const u = Math.max(0, Math.min(1, (t - shot.start) / (shot.end - shot.start)));
+  const [A, B] = travelEnds(spots, a);
+  const [t0, t1] = a.travel ?? [shot.start, shot.end];
+  const u = Math.max(0, Math.min(1, (t - t0) / (t1 - t0)));
   const p = A.clone().lerp(B, u * u * (3 - 2 * u)); p.x += off;
-  return { p, dir: B.sub(A) };
+  // dir is zero outside the travel window: the actor faces the camera while not moving
+  return { p, dir: t >= t0 && t <= t1 ? B.sub(A) : new THREE.Vector3() };
+}
+
+/** start and end of an actor's move: the spots plus dx/dz, the end shifted by toDx/toDz when given */
+export function travelEnds(spots: Record<string, V3>, a: ActorSpec): [THREE.Vector3, THREE.Vector3] {
+  const A = new THREE.Vector3(...spots[a.at!]).add(new THREE.Vector3(a.dx ?? 0, 0, a.dz ?? 0));
+  const B = new THREE.Vector3(...spots[a.to ?? a.at!]).add(new THREE.Vector3(a.toDx ?? a.dx ?? 0, 0, a.toDz ?? a.dz ?? 0));
+  return [A, B];
 }
 
 /** Continuous clearance: split at wraps, then bound distance changes by maximum relative speed. */
@@ -125,7 +134,7 @@ export function crowdNearTime(shot: ShotSpec, spots: Record<string, V3>, walkway
     for (let k = Math.floor((offset + shot.start * 1.2) / length) + 1; (k * length - offset) / 1.2 < shot.end; k++) cuts.push((k * length - offset) / 1.2);
   }
   cuts.push(shot.end);
-  const speed = 1.2 + (speaker.to ? 1.5 * new THREE.Vector3(...spots[speaker.at!]).distanceTo(new THREE.Vector3(...spots[speaker.to])) / (shot.end - shot.start) : 0);
+  const speed = 1.2 + (speaker.at ? 1.5 * travelEnds(spots, speaker)[0].distanceTo(travelEnds(spots, speaker)[1]) / ((speaker.travel?.[1] ?? shot.end) - (speaker.travel?.[0] ?? shot.start)) : 0);
   const distance = (t: number) => {
     const a = actorPosition(shot, spots, walkways, extra, t).p, b = actorPosition(shot, spots, walkways, speaker, t).p;
     return Math.hypot(a.x - b.x, a.z - b.z);
