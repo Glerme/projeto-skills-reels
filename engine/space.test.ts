@@ -101,7 +101,7 @@ test("walkway endpoints and loop discontinuities stay outside every street view"
 });
 
 test("Eiffel spec uses continuous dressing and valid sidewalk paths", { skip: !kit["lantern"] || !kit["stall-green"] }, () => {
-  const s = JSON.parse(readFileSync("videos/torre-eiffel-verao/video.json", "utf8"));
+  const s = JSON.parse(readFileSync("engine/fixtures/torre-eiffel-verao.json", "utf8"));
   for (const [role, id] of Object.entries(s.cast)) s.cast[role] = JSON.parse(readFileSync(`kit/characters/${id}.json`, "utf8"));
   const result = validateSpec(s, kit);
   assert.ok(result.ok, result.ok ? "" : result.errors.join("\n"));

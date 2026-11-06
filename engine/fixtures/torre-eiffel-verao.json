@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "slug": "torre-eiffel-verao",
+  "format": "curiosidade",
+  "fiction": false,
+  "fps": 30,
+  "duration": 35.61,
+  "cast": {
+    "cientista": "cientista",
+    "visitante": "mulher"
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 7.43,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "aberto"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              0,
+              "shock"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 0,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 2,
+      "start": 7.43,
+      "end": 11.94,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              7.43,
+              "neutral"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 3,
+      "start": 11.94,
+      "end": 17.51,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "push",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              11.94,
+              "smile"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 4,
+      "start": 17.51,
+      "end": 22.186,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              17.51,
+              "smile"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 5,
+      "start": 22.186,
+      "end": 28.31,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "push",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              22.186,
+              "neutral"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 6,
+      "start": 28.31,
+      "end": 31.71,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "hold",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              28.31,
+              "smile_closed"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    },
+    {
+      "id": 7,
+      "start": 31.71,
+      "end": 35.61,
+      "set": "paris",
+      "light": "day",
+      "cam": {
+        "recipe": "push",
+        "from": "medio"
+      },
+      "actors": [
+        {
+          "who": "cientista",
+          "at": "esquerda",
+          "action": "talk",
+          "expr": [
+            [
+              31.71,
+              "smile"
+            ]
+          ],
+          "facing": 0
+        },
+        {
+          "who": "visitante",
+          "action": "walk",
+          "path": "praca_perto"
+        }
+      ],
+      "dof": 10,
+      "focus": "cientista",
+      "sky": {
+        "sun": true,
+        "clouds": 2
+      }
+    }
+  ],
+  "flash": [],
+  "sfx": [],
+  "music": {
+    "mood": "curioso"
+  },
+  "dressing": {
+    "paris": [
+      {
+        "model": "tree_default",
+        "at": "fundo",
+        "dx": 0,
+        "dz": -20,
+        "scale": 0.8,
+        "turn": 0
+      },
+      {
+        "model": "lantern",
+        "at": "fundo",
+        "dx": -1.3,
+        "dz": -3,
+        "scale": 1,
+        "turn": 0
+      },
+      {
+        "model": "stall-bench",
+        "at": "fundo",
+        "dx": -2.4,
+        "dz": -7,
+        "scale": 1,
+        "turn": 90
+      },
+      {
+        "model": "lantern",
+        "at": "fundo",
+        "dx": 2.4,
+        "dz": 1.2,
+        "scale": 1,
+        "turn": 0
+      }
+    ]
+  }
+}
