@@ -11,13 +11,13 @@ import { ANCHORS, SET_IDS, SKY_SETS, type SetId } from "./sets/anchors";
 export type { SetId };
 export type Light = import("./style/lights").LightId;
 export const ACTION_IDS = ["stand", "walk", "talk", "point", "shock", "cheer", "fall", "sit", "wave",
-  "gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple", "run"] as const;
+  "gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple", "run", "chop"] as const;
 export type ActionId = (typeof ACTION_IDS)[number];
 export type Mood = "curioso" | "animado" | "tenso" | "calmo";
 /** scale: optional size multiplier (0.5–2), e.g. a giant; default 1 */
 export type CharDef = { id: string; label: string; build: "adult" | "stout" | "kid" | "elder" | "slim"; outfit: Outfit; skin: number; scale?: number };
-/** cue: absolute time of the action's key moment (whirl: sling release; topple: the hit) */
-export const HAND_PROPS = ["stone", "staff", "spear", "helmet", "sling"] as const;
+/** cue: absolute time of the action's key moment (whirl: sling release; topple: the hit; chop: the axe lands) */
+export const HAND_PROPS = ["stone", "staff", "spear", "helmet", "sling", "axe"] as const;
 /** hold: props kept in the screen-left / screen-right hand whatever the action (the action's own props win) */
 /** beats: [absolute time, action] switches during the shot (action is the one before the first beat);
  *  travel: [start, end] window of the at -> to move (default: the whole shot); dx/dz: metres off the spot; toDx/toDz: off the end spot;
@@ -197,7 +197,7 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
       for (const k of ["enter", "exit"]) if (ac[k] !== undefined) inside(ac[k], k);
       if (typeof ac.enter === "number" && typeof ac.exit === "number" && !(ac.exit > ac.enter)) errors.push(`${c}: exit deve vir depois de enter`);
       if (ac.cue !== undefined) inside(ac.cue, "cue");
-      else if (ac.action === "whirl" || ac.action === "topple") errors.push(`${c}: ${ac.action} precisa de cue (o tempo do arremesso ou do golpe)`);
+      else if (ac.action === "whirl" || ac.action === "topple" || ac.action === "chop") errors.push(`${c}: ${ac.action} precisa de cue (o tempo do arremesso ou do golpe)`);
       if (ac.hold !== undefined) {
         if (!isObj(ac.hold)) errors.push(`${c}: hold deve ser um objeto {L?, R?}`);
         else for (const [k, v] of Object.entries(ac.hold))

@@ -34,7 +34,7 @@ test("blinks every 0.5-2.3 s for 4 frames", () => {
 
 test("every kit character validates", () => {
   const cast = loadCharacters("kit/characters");
-  assert.equal(Object.keys(cast).length, 10); // the 8 starter characters + gigante (Davi e Golias) + estudante (e se — série)
+  assert.equal(Object.keys(cast).length, 11); // the 8 starter characters + gigante (Davi e Golias) + estudante (e se — série) + pirata (navio)
   const fx = JSON.parse(readFileSync("engine/fixtures/all-chars.json", "utf8"));
   assert.deepEqual(fx.cast, cast); // fixture must not drift from the kit
   fx.cast = cast;
@@ -42,7 +42,7 @@ test("every kit character validates", () => {
   assert.ok(r.ok, r.ok ? "" : r.errors.join("\n"));
 });
 
-const NEW = ["gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple"] as const;
+const NEW = ["gesture", "laugh", "taunt", "struggle", "unhelm", "pick", "whirl", "topple", "chop"] as const;
 const sig = (o: object) => JSON.stringify(o);
 
 test("new actions are deterministic", () => {
@@ -50,7 +50,7 @@ test("new actions are deterministic", () => {
 });
 
 test("no action holds a frozen pose for half a second", () => {
-  for (const a of ["stand", "walk", "talk", "gesture", "laugh", "taunt", "struggle", "pick", "whirl"] as const)
+  for (const a of ["stand", "walk", "talk", "gesture", "laugh", "taunt", "struggle", "pick", "whirl", "chop"] as const)
     for (let t = 0; t < 3; t += 0.5) {
       const frames = Array.from({ length: 15 }, (_, f) => sig(poseAt(a, t + f / 30, 2, 9)));
       assert.ok(new Set(frames).size > 1, `${a} frozen at ${t}`);
@@ -69,6 +69,13 @@ test("whirl spins the sling until the release cue, then lets go", () => {
   assert.equal(a.slingReleased, false);
   assert.equal(poseAt("whirl", 1.1, 1, 1.0).slingReleased, true);
   assert.ok(poseAt("whirl", 1.25, 1, 1.0).rig!.armL![0] < poseAt("whirl", 0.9, 1, 1.0).rig!.armL![0]); // the sling arm comes forward/down
+});
+
+test("chop raises the axe before the cue and brings it down at the cue", () => {
+  const arm = (t: number) => poseAt("chop", t, 1, 1.0).rig!.armR![0];
+  assert.equal(poseAt("chop", 0.5, 1, 1.0).hand?.R, "axe");
+  assert.ok(arm(0.95) > arm(0.2) + 100); // raised over the head
+  assert.ok(arm(1.3) < arm(0.95) - 90); // swung down
 });
 
 test("topple stands until the hit, then rolls to the ground and lands", () => {

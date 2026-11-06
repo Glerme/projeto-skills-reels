@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.assemble import assemble, check, resolve_cast
+from pipeline.assemble import assemble, check, overlays_html, resolve_cast
 
 MINI = Path(__file__).parent / "fixtures/mini"
 
@@ -46,13 +46,39 @@ class AssembleTest(unittest.TestCase):
         self.assertIn('id="fiction-badge"', html)
         self.assertIn("FICÇÃO", html)
 
+    def test_overlays_and_bw(self):
+        self.edit(lambda s: s.update({"overlays": [{"start": 0, "end": 1, "text": "DIA <1>", "kind": "dia"}], "bw": [[0.2, 0.8]]}))
+        html = assemble(self.dir).read_text(encoding="utf-8")
+        self.assertIn('id="ov0"', html)
+        self.assertIn("DIA &lt;1&gt;", html)  # text is escaped
+        self.assertIn('tl.fromTo("#ov0"', html)
+        self.assertIn("grayscale(1)", html)
+        self.edit(lambda s: s.update({"overlays": [{"start": 0, "end": 99, "text": "x", "kind": "dia"}]}))
+        with self.assertRaises(SystemExit):
+            assemble(self.dir)
+
+    def test_overlay_font_fits_safe_width(self):
+        for kind, maximum, padding, stroke in (("termo", 92, 0, 0.22), ("placa", 56, 80, 0)):
+            sizes = []
+            for text in ("AÇO", "MARCA DE PLIMSOLL", "M" * 40):
+                with self.subTest(kind=kind, text=text):
+                    html, _ = overlays_html({"duration": 1, "overlays": [
+                        {"start": 0, "end": 1, "kind": kind, "text": text}]})
+                    size = float(re.search(r"font-size:([\d.]+)px", html).group(1))
+                    sizes.append(size)
+                    self.assertLessEqual(size, maximum)
+                    self.assertLessEqual(size * (len(text) * 0.72 + stroke) + padding, 780)
+            self.assertEqual(sizes[0], maximum)
+            self.assertLessEqual(sizes[1], sizes[0])
+            self.assertLess(sizes[2], sizes[1])
+
     def test_spec_embedded(self):
         index = assemble(self.dir)
         raw = json.loads((self.dir / "video.json").read_text(encoding="utf-8"))
         self.assertEqual(embedded_spec(index), resolve_cast(raw))
         self.assertIsInstance(embedded_spec(index)["cast"]["homem"], dict)
         html = index.read_text(encoding="utf-8")
-        for marker in ("{{SPEC}}", "{{DURATION}}", "{{CAPTIONS_HOST}}", "{{FICTION_BADGE}}"):
+        for marker in ("{{SPEC}}", "{{DURATION}}", "{{CAPTIONS_HOST}}", "{{FICTION_BADGE}}", "{{OVERLAYS}}", "{{OVERLAY_TWEENS}}"):
             self.assertNotIn(marker, html)
         self.assertIn('data-track-kind="captions"', html)
         for f in ("assets/mix.wav", "compositions/captions.html", "lib/engine.js", "hyperframes.json"):

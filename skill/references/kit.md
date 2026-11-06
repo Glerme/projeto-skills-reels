@@ -2,7 +2,7 @@
 
 ## Personagens (`kit/characters/<id>.json`)
 
-O acervo atual tem 10 personagens (os 8 abaixo, mais `gigante` e `estudante`): `homem`, `mulher`, `crianca`, `idoso`, `cientista`, `executivo`, `operario` e
+O acervo atual tem 11 personagens (os 8 abaixo, mais `gigante`, `estudante` e `pirata`): `homem`, `mulher`, `crianca`, `idoso`, `cientista`, `executivo`, `operario` e
 `medico`.
 
 Formato: `{ "id", "label", "build": "adult|stout|kid|elder|slim", "outfit": {...}, "skin": 0-3 }`.
@@ -91,5 +91,10 @@ Pacotes que já estão no kit (todos CC0), para baixar de novo numa máquina nov
   jato: `--scale 2 --color "#eef0f4"`). O script centraliza o modelo em x/z e o apoia em y = 0 (os pacotes põem a
   origem num canto, e aí o `dx`/`dz` do dressing erra o lugar). Depois zipe os `.glb` e use `import-assets.sh`.
 - Fogo, água e ondas não são modelos: são `effects` da cena (`cenas.md`). Veículos andando e aviões voando são `movers`.
+
+- **Peças geradas** (`prop-`): `node scripts/mk-props.mjs <pasta>` gera `prop-jangada`, `prop-chapa` (chapa de aço) e
+  `prop-canhao` (boca para +x) com primitivas; zipe e importe com `import-assets.sh <zip> prop`. Para uma peça simples
+  que nenhum pacote CC0 tem, acrescente-a ali.
+- **Pirata** (`kit/characters/pirata.json`): bandana, barba, faixa e tapa-olho (`eyepatch`).
 
 Catálogo visual: regenere com `bash scripts/catalogo.sh` e veja as folhas em `docs/kit/catalogo/*.jpg`.

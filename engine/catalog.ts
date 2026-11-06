@@ -21,7 +21,7 @@ export function catalogSheets(cast: Record<string, CharDef>): CatalogSheet[] {
     { name: "expressoes", items: EXPR_IDS.map(expr => item(expr, [{ ...scientist, expr: [[0, expr]] }])) },
     { name: "acoes", items: ACTION_IDS.map(action => item(action, [{ ...scientist, action,
       ...(action === "walk" ? { at: "esquerda", to: "direita" } : {}),
-      ...(action === "whirl" || action === "topple" ? { cue: 1 } : {}) }], "palco", "aberto")) },
+      ...(action === "whirl" || action === "topple" || action === "chop" ? { cue: 1 } : {}) }], "palco", "aberto")) },
     ...Object.values(SETS).map(def => ({ name: `cenarios-${def.id}`, items: Object.keys(def.views).map(view =>
       ({ ...item(view, [], def.id, view), anchors: true })) })),
     { name: "props", items: KENNEY.map(model => ({ ...item(model, [{ ...scientist, at: "esquerda" }], "palco", "aberto"), model })) },

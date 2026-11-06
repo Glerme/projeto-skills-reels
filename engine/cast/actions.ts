@@ -58,6 +58,11 @@ export function poseAt(action: ActionId, t: number, seed: number, cue = Infinity
       return { mode: "stand", expr: "stern", seed, tilt: 3 - 10 * k, hand: { L: "sling" }, sling: 0, slingReleased: true,
         rig: { armL: [150 - 95 * k, 18 - 10 * k], armR: [82 - 40 * k, 10 * k], legL: [14, 4 + 10 * k], legR: [14, 4] } };
     }
+    case "chop": { // axe raised over the head in the 0.6 s before the cue, brought down hard at the cue, then held low
+      const up = sm((t - (cue - 0.6)) / 0.45), down = sm((t - cue) / 0.15);
+      return { mode: "stand", expr: "stern", seed, talk: t >= cue && t < cue + 0.5, hand: { R: "axe" }, tilt: -4 * up + 14 * down, headTilt: 6 * down + 2 * S(0.3, t, seed),
+        rig: { armR: [35 + 130 * up - 140 * down + 3 * S(0.5, t, seed), 20 - 10 * up + 20 * down], armL: [30 + 10 * up + 4 * S(0.45, t, seed), 40], crouch: 0.15 * down } };
+    }
     case "topple": { // stands with the spear; at the cue the head snaps back, arms fly up, the body rolls to the ground
       if (t < cue) return { ...idle(t, seed), mode: "stand", seed, hand: { R: "spear" }, rig: { armR: [20 + 3 * S(0.5, t), -10], armL: [30, 40] } };
       const d = t - cue, fall = sm((d - 0.2) / 0.75) ** 1.6, landed = d >= 0.95;

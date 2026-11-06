@@ -19,6 +19,7 @@
       <div id="flash"></div>
       {{CAPTIONS_HOST}}
       {{FICTION_BADGE}}
+      {{OVERLAYS}}
       <audio id="mix" class="clip" src="assets/mix.wav" data-start="0" data-duration="{{DURATION}}" data-track-index="1"></audio>
     </div>
     <!-- the video spec (video.json); read by lib/engine.js -->
@@ -28,6 +29,7 @@
     <script>
       // the picture is drawn by lib/engine.js; this empty timeline only gives the root its clock
       const tl = gsap.timeline({ paused: true });
+      {{OVERLAY_TWEENS}}
       window.__timelines["main"] = tl;
       tl.seek(0);
     </script>

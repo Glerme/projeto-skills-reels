@@ -61,7 +61,7 @@ Ele resolve o elenco do acervo e cita a cena de cada erro.
     próprio `at` deslocado (para afastar ou juntar uma fila). Quem divide um spot já fica a 0,9 m um do outro.
   - `enter`/`exit`: tempos absolutos de um pop de entrada (escala com overshoot em 0,35 s e poeira nos pés) e de
     saída (encolhe em 0,25 s). Ponha um `pop` no `sfx` no mesmo tempo.
-  - `hold`: objeto na mão, independente da ação: `{"L": "staff"}`. Valores: `stone staff spear helmet sling`.
+  - `hold`: objeto na mão, independente da ação: `{"L": "staff"}`. Valores: `stone staff spear helmet sling axe`.
   - até 3 atores por cena nos planos médios; numa fila ou multidão, mais, com a câmera aberta ou em travelling.
 - `throws`: `[{from, to, start, end}]`. É uma pedra visível, com rastro, da mão de quem lança (mão levantada do lado
   esquerdo) até a testa do alvo, com brilho no acerto. Combine com `whirl` (`cue` = `start`) e `topple` (`cue` = `end`).
@@ -115,6 +115,14 @@ só fora do quadro; em percurso fechado, retorna ao mesmo ponto sem salto. `ida`
 - `at`/`to` continuam para quem fala e para deslocamentos permitidos. Se `walk` atravessar a rua:
   `walk de centro até esquina cruza a pista; figurante anda por path`.
 
+**`overlays`:** textos na tela do formato "você inventa", com pop de entrada: `[{start, end, text, kind}]`, até 40
+letras. `kind`: `dia` (etiqueta escura no topo, ex.: "DIA 1"), `termo` (palavra grande amarela com contorno, ex.:
+"EMPUXO") ou `placa` (cartão branco com número, ex.: "AÇO 7,8 × ÁGUA 1"). `termo` e `placa` ficam no mesmo lugar:
+não sobreponha os dois. A fonte encolhe automaticamente pelo texto para caber em 780 px (margens de 150 px),
+até o máximo de 92 px (`termo`) ou 56 px (`placa`). Ponha um `pop` no `sfx` no `start`.
+
+**`bw`:** `[[início, fim], ...]` em preto e branco (quando o vilão vence, como no formato do cofre).
+
 **`flash`:** tempos de flash branco (4 frames). Um só, logo depois do gancho.
 
 **`sfx`:** `[{t, name, gainDb?}]`, com nomes `pop whoosh boing thud ding splash creak crash steps sparkle tick sting`.
@@ -141,7 +149,8 @@ Exemplo: `"music": {"mood": "curioso", "stop": 31.15}`, com `{"t": 31.15, "name"
 ## Ações e expressões
 
 **Ações (todas animadas, com esqueleto articulado; nenhuma fica parada):**
-`stand talk walk point wave cheer shock fall sit gesture laugh taunt struggle unhelm pick whirl topple run`.
+`stand talk walk point wave cheer shock fall sit gesture laugh taunt struggle unhelm pick whirl topple run chop`.
+- `chop`: levanta o machado nos 0,6 s antes do `cue` e golpeia no `cue` (tempo absoluto, obrigatório).
 - `run`: corre inclinado, com os punhos alternando; o passo segue a velocidade do `travel`.
 - `talk` mexe a boca e uma mão; `gesture` gesticula com as duas mãos; `laugh` gargalha com o corpo; `taunt` ameaça com a
   lança erguida.

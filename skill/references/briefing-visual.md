@@ -53,7 +53,7 @@ ou renderizar.
 - atuais: `jacket`, `pants`, `boots`, `belt`, `buttons`, `sash`, `dress`;
 - de época: `tunic`, `girdle` (cinto de pano), `mantle` (manto), `sandals`, `greaves` (caneleiras), `armor` (armadura
   de escamas), `shield` (escudo redondo), `bag` (bolsa de pastor);
-- rosto: `beard`, `moustache`, `glasses` (cor do aro) com `glassesStyle`: `square` (padrão), `round` ou `sun` (lentes
+- rosto: `eyepatch` (cor do tapa-olho de pirata, sobre o olho do lado esquerdo da tela), `beard`, `moustache`, `glasses` (cor do aro) com `glassesStyle`: `square` (padrão), `round` ou `sun` (lentes
   escuras, para agentes e seguranças);
 - cientista: `hairStyle: "messy"` (mechas pontudas), `labCoat` (cor; longo, aberto, lapelas, bolso com canetas e átomo),
   `shirt` (cor da camisa com gola), `gloves` (cor das mãos), `skin` e `ink` (cores próprias opcionais).
@@ -62,6 +62,6 @@ ou renderizar.
 
 **Cabeça (`hat`):** `hair`, `cap`, `helmet` (com `crest`), `crown`, `headcloth`, `tophat`, `bonnet`, `shako`.
 
-**Objetos de mão (animação):** `stone`, `staff`, `spear`, `helmet`, `sling`.
+**Objetos de mão (animação):** `stone`, `staff`, `spear`, `helmet`, `sling`, `axe` (machado, com a ação `chop`).
 
 Uma peça que não está aqui é peça nova: avise no briefing antes de prometer.

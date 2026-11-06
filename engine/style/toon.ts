@@ -22,9 +22,10 @@ export type Outfit = {
   // ancient costume pieces (all optional; a stylised cartoon look, not an archaeological reconstruction)
   tunic?: string; girdle?: string; mantle?: string; sandals?: boolean; greaves?: string; armor?: string; shield?: string;
   beard?: string; crest?: string; headcloth?: string; bag?: string;
+  /** pirate eye patch colour: over the screen-left eye, strap across the head */ eyepatch?: string;
 };
 /** something held in a hand: drawn at the hand, in front of the body */
-export type HandProp = "stone" | "staff" | "spear" | "helmet" | "sling";
+export type HandProp = "stone" | "staff" | "spear" | "helmet" | "sling" | "axe";
 /** articulated pose, angles in degrees: arm [shoulder from hanging-down, outward positive (180 = straight up); elbow bend],
  *  leg [hip outward from straight down; knee bend]; crouch 0..1 lowers the hips with the feet planted */
 export type Rig = { armL?: [number, number]; armR?: [number, number]; legL?: [number, number]; legR?: [number, number]; crouch?: number };
@@ -790,6 +791,9 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     } else if (hp === "spear") {
       p.band([[hx, hy + 0.9 * HH], [hx, hy - 1.7 * HH]], "#7a5a34", 5 * u, 1.5 * u, "round");
       p.poly([[hx - 7 * u, hy - 1.7 * HH], [hx, hy - 2.05 * HH], [hx + 7 * u, hy - 1.7 * HH], [hx, hy - 1.6 * HH]], "#b5843f", 1.8 * u);
+    } else if (hp === "axe") { // short wooden handle, steel head on the outer side
+      p.band([[hx, hy + 0.3 * HH], [hx, hy - 0.85 * HH]], "#8a5a34", 5 * u, 1.5 * u, "round");
+      p.poly([[hx, hy - 0.82 * HH], [hx + side * 20 * u, hy - 0.98 * HH], [hx + side * 24 * u, hy - 0.5 * HH], [hx, hy - 0.6 * HH]], "#9aa2aa", 2 * u);
     } else if (hp === "helmet") {
       p.ell(hx, hy + 2 * u, 0.5 * W * 0.9, 0.36 * HH, "#b08a4a", ow * 0.8, 180, 360);
       p.band([[hx - 0.46 * W, hy + 2 * u], [hx + 0.46 * W, hy + 2 * u]], "#8c6a36", 4 * u, 1.2 * u);
@@ -853,6 +857,12 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
     }
     p.stroke([[fx - 2 * u, hc - 3 * u], [fx + 2 * u, hc - 3 * u]], 3 * u, o.glasses);
     p.ink = ink;
+  }
+  if (o.eyepatch) { // strap first, then the patch over the screen-left eye
+    const lx = 300 + 7 * u * facing - 13 * u;
+    p.stroke([[lx + 8 * u, hc - 7 * u], [300 + 0.95 * H.a, hc - 0.55 * H.b]], 3 * u, o.eyepatch);
+    p.stroke([[lx - 9 * u, hc - 3 * u], [300 - 0.98 * H.a, hc - 0.1 * H.b]], 3 * u, o.eyepatch);
+    p.ell(lx, hc + 1 * u, 11 * u, 10 * u, o.eyepatch, 2.5 * u);
   }
   p.rot = null;
 };
@@ -978,6 +988,7 @@ export const bodySide = (p: Pen, o: Outfit, opts: SideOpts) => {
   if (o.headphones) headphonesOnHead(p, o.headphones, H, hx, hc, true);
   const brim = !!o.hat && o.hat !== "hair" && o.hat !== "bonnet" && o.hat !== "cap";
   faceSide(p, hx, hc, W, expr, lid, brim, skin, o.moustache, o.build === "stout");
+  if (o.eyepatch) p.stroke([[hx + 30 * u, hc - 9 * u], [hx - 0.9 * H.a, hc - 0.45 * H.b]], 3 * u, o.eyepatch); // the patch is on the far eye: only the strap shows
   p.rot = null;
 };
 

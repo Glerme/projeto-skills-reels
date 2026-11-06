@@ -104,3 +104,19 @@ só citadas, sem mostrar personagem nem logo.
   selo FICÇÃO (`"fiction": false`), como o "e se".
 - **Erros que derrubam:** gastar o começo explicando a referência ("Stand é tipo…"), ritmo acima de 200 palavras/min,
   e uma virada final que não é de física.
+
+## Você inventa (80–95 s, cerca de 330 palavras). `"format": "curiosidade"`
+
+Estudo de @explicamostudo (cofre, 385 mil views; o navio do mesmo perfil, sem vilão, ficou em 5 mil) e de
+@inventadesdecero. Explica como um objeto funciona fazendo o espectador inventá-lo em etapas. Exemplo:
+`videos/navio-flutua`.
+1. **Gancho afirmativo com o paradoxo** ("Um navio de aço com mais de duzentas mil toneladas flutua. Um prego de aço
+   afunda na hora."), depois "Vamos inventar o [objeto] do zero."
+2. **Vilão fixo com nome** que quebra cada versão (o ladrão do cofre, o pirata Caolho). Sem vilão o vídeo flopa.
+3. **Etapas "Dia um… Dia sete"** (etiqueta `dia` no `overlays`): versão simples → o vilão (ou a física) quebra →
+   "Então você…" com a peça nova pelo nome técnico (`termo` amarelo) → um número real (`placa`).
+4. **Preto e branco** (`bw`) quando o vilão vence; dia nas construções, noite nos ataques.
+5. **Fecho:** "Parabéns. Você construiu um [objeto]." + "Se você sabia…, comenta [palavra]. Se não sabia, comenta
+   [palavra]."
+- Voz neutra, em segunda pessoa e no presente. Todo fato tem fonte no `SCRIPT.md`. Não leva selo FICÇÃO.
+- A duração de 90 s foi pedida pelo usuário para este formato (a série "e se" continua com no máximo 1 min).

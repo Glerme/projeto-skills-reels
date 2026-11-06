@@ -153,6 +153,22 @@
     "headphones": "#e8e4dc",
     "hoodie": true
    }
+  },
+  "pirata": {
+   "id": "pirata",
+   "label": "Pirata",
+   "build": "stout",
+   "skin": 1,
+   "outfit": {
+    "jacket": "#5a3b2e",
+    "pants": "#3a3340",
+    "boots": "#2a201a",
+    "hat": "headcloth",
+    "headcloth": "#a8443a",
+    "beard": "#3b2b22",
+    "sash": "#a8443a",
+    "eyepatch": "#16171c"
+   }
   }
  },
  "shots": [
