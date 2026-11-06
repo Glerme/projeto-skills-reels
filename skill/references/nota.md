@@ -1,8 +1,8 @@
 # Nota de retenção (antes da aprovação final)
 
 A revisão de stills só confere regras. Esta nota mede se o vídeo **prende**. Adaptada do avaliador do
-story-video-studio (@theoxmotion), com o ritmo trocado pela nossa gramática de câmera (`cenas.md`): menos cortes e
-movimento contínuo.
+story-video-studio (@theoxmotion), com o ritmo trocado pela nossa direção (`direcao.md`): câmera sempre em movimento e uma
+imagem nova por frase.
 
 Leia `qa/report.md` (seção "Métricas"), `roteiro.txt` e o `SCRIPT.md`. Não abra stills: o visual é do revisor.
 Ninguém aqui ouve o áudio. Peça ao usuário para ouvir os primeiros 10 s antes de postar.
@@ -15,7 +15,8 @@ Dê de 0 a 10 em cada item, com uma linha de motivo:
 3. **Virada ou porquê:** algo que se achava se inverte, ou o mecanismo fica claro numa analogia.
 4. **Fato concreto:** um número, um nome, um tamanho, com fonte no `SCRIPT.md`.
 5. **Fecho:** termina numa imagem, numa fala ou numa pergunta que abre outra. 0: resume, se despede ou pede para
-   seguir. Na série, também a pergunta que divide os comentários.
+   seguir. Na série, também a pergunta que divide os comentários. No "e se — série", o "Segue aí pra ver…" vale 10 se
+   promete o desfecho da virada; "siga para mais" genérico vale 0.
 6. **Tamanho e ritmo:** duração dentro da faixa do formato e ritmo de 170 a 210 palavras/min. Na história, um plano
    de mais de 8 s precisa de `glide` ou de troca de ação dentro dele.
 

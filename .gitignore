@@ -21,3 +21,6 @@ videos/*/index.html
 videos/*/assets/mix.wav
 videos/*/assets/stem_*.wav
 videos/*/agentes/render.log
+
+# vídeos ficam só na máquina (pesam no git)
+videos/

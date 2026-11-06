@@ -20,7 +20,7 @@ const visible = (b: ReturnType<typeof bounds>) => b.depth && b.right >= -1 && b.
 function projector(shot: ShotSpec, def: SetDef, cast: Record<string, CharDef>) {
   const camera = new THREE.PerspectiveCamera(50, 9 / 16, 0.2, 1500);
   return (a: ActorSpec, t: number, bottom?: number) => {
-    const c = camAt(shot, t, def.views, 30, def.spots);
+    const c = camAt(shot, t, def.views, 30, def.spots, def.walkways);
     camera.fov = c.fov; camera.updateProjectionMatrix();
     camera.position.set(...c.pos); camera.up.set(0, 1, 0); camera.lookAt(...c.look);
     camera.rotateZ(THREE.MathUtils.degToRad(c.roll)); camera.updateMatrixWorld();
@@ -41,15 +41,22 @@ export function speakerFraming(shot: ShotSpec, def: SetDef, speaker: ActorSpec, 
     const t = Math.min(shot.end, shot.start + f / 30);
     // Lower head envelope leaves room for bob/tilt, including the shorter child's chin.
     const chin = cast[speaker.who]?.build === "kid" ? 0.7 : 1.0;
-    const b = project(speaker, t, close ? chin : undefined);
     const full = project(speaker, t);
     const height = (full.top - full.bottom) / 2;
+    // free camera: the frame size decides the rule (a face close from 65 % of the frame height). While the lens is
+    // moving between close and medium, the face rule holds: at ~62-65 % no framing fits the whole card above the band.
+    const moving = () => {
+      const h = (u: number) => { const b = project(speaker, Math.max(shot.start, Math.min(shot.end, u))); return (b.top - b.bottom) / 2; };
+      return Math.abs(h(t + 1 / 30) - h(t - 1 / 30)) > 0.004;
+    };
+    const closeNow = shot.cam.recipe === "keys" ? height >= SPEAKER_MIN_HEIGHT.close || (height >= SPEAKER_MIN_HEIGHT.medio && moving()) : close;
+    const b = closeNow ? project(speaker, t, chin) : full;
     const from = SPEAKER_MIN_HEIGHT[shot.cam.from] ?? 0;
     const to = shot.cam.recipe === "glide" ? SPEAKER_MIN_HEIGHT[shot.cam.to!] ?? 0 : from;
     const minimum = Math.min(from, to);
     const medium = shot.cam.from === "medio" && (shot.cam.recipe !== "glide" || shot.cam.to === "medio");
     const center = (b.left + b.right) / 2;
-    const cropped = close ? b.top > 1 || Math.abs(center) > 1 : !inside(b);
+    const cropped = closeNow ? b.top > 1 || Math.abs(center) > 1 : !inside(b);
     if (!b.depth || cropped || b.bottom < -1 + 2 * CAPTION_TOP / 1920 ||
         height < minimum || (medium && height > 0.45)) return t;
   }

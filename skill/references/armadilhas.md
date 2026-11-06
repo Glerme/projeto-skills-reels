@@ -38,6 +38,8 @@ Vieram das revisões do short da ponte e da montagem deste kit.
 
 - **Paris:** estreia de figurante invisível reprova (altura ≥ 8% por meia cena); confira quem fala inteiro até o último punch, pavimento até a neblina e bronze sem a soma azul da sombra.
 
-- **Câmera que salta:** no mesmo cenário, mantenha lado/eixo e direção até 15° e deslocamento transversal até 50% da menor distância, distância até 2,5× e só um degrau; prefira push/glide lentos com menos cortes.
+- **Câmera que salta:** no mesmo cenário, mantenha lado/eixo e direção até 15° e deslocamento transversal até 50% da menor distância, distância até 2,5× e só um degrau. Para mudar de plano sem corte, mova a câmera dentro da cena (`keys`); a cena seguinte começa onde a anterior terminou.
+- **Vídeo parado:** o mesmo enquadramento e a mesma pose por mais de uma frase. Veja `direcao.md`.
+- **Câmera olhando o céu ou passando por dentro do personagem:** confira o still no meio de cada movimento de `keys`; para chegar perto sem atravessar, feche o `fov`.
 - **Figurante que some no corte:** mantenha o mesmo papel na mesma path até a última cena daquele cenário; sair do quadro andando é permitido.
 - **Legenda no corpo ou sob a interface:** use base a 490 px do fundo e 150 px nas laterais, dentro da zona segura de 460 px.

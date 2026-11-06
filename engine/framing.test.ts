@@ -153,6 +153,17 @@ test("speaker clears caption band throughout a shot; face close must still clear
   assert.equal(speakerFraming(shot, close, shot.actors[0], s.cast), undefined);
 });
 
+test("keys: a pull-back from a face close to medium passes on the face rule while it moves, not once it stops", () => {
+  const s = fixture(), shot = s.shots[0];
+  shot.actors = [{ ...shot.actors[0], at: "centro" }];
+  const pull = { recipe: "keys", keys: [{ t: shot.start, on: "centro", dist: 3.5, h: 1.3, aim: 1.2, fov: 32 },
+    { t: shot.start + 1, on: "centro", dist: 7.2, h: 1.4, aim: 0.6, fov: 40, ease: "out" }] } as import("./spec").ShotSpec["cam"];
+  assert.equal(speakerFraming({ ...shot, cam: pull }, SETS.palco, shot.actors[0], s.cast), undefined);
+  // the same 62 % frame held still: the whole card must clear the band, and it cannot
+  const held = { recipe: "keys", keys: [{ t: shot.start, on: "centro", dist: 5.6, h: 1.35, aim: 0.9, fov: 36 }] } as import("./spec").ShotSpec["cam"];
+  assert.equal(speakerFraming({ ...shot, cam: held }, SETS.palco, shot.actors[0], s.cast), shot.start);
+});
+
 test("caption band covers maximum two-line type and stroke inside craft's safe bottom", () => {
   const source = readFileSync("pipeline/captions.py", "utf8");
   const bottom = Number(source.match(/bottom: (\d+)px/)![1]);

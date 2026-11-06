@@ -2,7 +2,7 @@
 
 ## Personagens (`kit/characters/<id>.json`)
 
-O acervo atual tem 8 personagens: `homem`, `mulher`, `crianca`, `idoso`, `cientista`, `executivo`, `operario` e
+O acervo atual tem 10 personagens (os 8 abaixo, mais `gigante` e `estudante`): `homem`, `mulher`, `crianca`, `idoso`, `cientista`, `executivo`, `operario` e
 `medico`.
 
 Formato: `{ "id", "label", "build": "adult|stout|kid|elder|slim", "outfit": {...}, "skin": 0-3 }`.
@@ -16,6 +16,9 @@ Não escolha roupa, cabelo ou acessório sem essa confirmação.
 O `cientista` segue o mockup confirmado: cabelo bagunçado, óculos, jaleco longo, camisa escura e três canetas visíveis no bolso (azul, vermelha e laranja).
 Use `neutral`, `shock`, `thoughtful` (olhar de lado), `smile_closed`, `skeptical` (uma sobrancelha) ou
 `excited` (olhos de estrela) em `actors[].expr`. As peças são opcionais; veja `briefing-visual.md`.
+
+A `estudante` (15–20 anos, rabo de cavalo castanho, fone grande na cabeça, moletom terracota, jeans e tênis branco) é a
+Nina da série `e-se-super-audicao`: o fone é a marca dela, presente em todas as partes.
 
 **Personagem novo:**
 1. Copie o mais parecido.
@@ -71,5 +74,22 @@ Só pacotes **CC0** (Kenney, Quaternius), low-poly de cor chapada.
 - Os `.glb` ficam em `kit/kenney/` (fora do git); texturas externas viram `Textures/colormap-<prefixo>.png`.
 - Recusa sobrescrever `.glb` ou textura diferente; nomes no JSON não se repetem.
 - Depois, rode `npm run build` e `npm run validate:build`. Use o nome registrado em `dressing.<setId>[]`.
+
+Pacotes que já estão no kit (todos CC0), para baixar de novo numa máquina nova:
+- **Carros** (`car-`): Kenney Car Kit (kenney.nl, download manual). Além de sedan/taxi/van/suv: `car-police`,
+  `car-ambulance`, `car-firetruck`, `car-truck`, `car-garbage-truck`, `car-cone`, `car-box`.
+- **Barcos** (`water-`): Kenney Watercraft Kit, em opengameart.org/content/watercraft-kit (link direto do zip):
+  `water-boat-row-small`, `water-boat-sail-a`, `water-boat-speed-a`, `water-boat-fishing-small`,
+  `water-ship-ocean-liner-small`, `water-ship-cargo-a`, `water-buoy`, `water-cargo-container-a`.
+- **Móveis** (`furniture-`): Kenney Furniture Kit, em opengameart.org/content/furniture-kit (só OBJ). Mesas
+  (`furniture-table`, `-table-round`, `-table-coffee`, `-table-cloth`, `-table-glass`, `-desk`, `-side-table`), cadeiras
+  (`-chair`, `-chair-desk`, `-chair-cushion`, `-stool-bar`), cozinha (`-kitchen-fridge`, `-stove`, `-sink`, `-cabinet`),
+  sala (`-lounge-sofa`, `-bookcase-open`, `-television-modern`, `-lamp-round-floor`, `-potted-plant`), `-bed-single`,
+  `-laptop`, `-computer-screen`, `-radio`, `-speaker`, `-trashcan`, `-cardboard-box-closed`.
+- **Avião** (`plane-jetliner`): "Jumbo jet (wide body)", opengameart.org/content/jumbo-jetwide-body (OBJ sem material).
+- OBJ vira GLB com `node scripts/obj2glb.mjs <saída> --scale <s> [--color #hex] <arquivos.obj>` (móveis: `--scale 0.21`;
+  jato: `--scale 2 --color "#eef0f4"`). O script centraliza o modelo em x/z e o apoia em y = 0 (os pacotes põem a
+  origem num canto, e aí o `dx`/`dz` do dressing erra o lugar). Depois zipe os `.glb` e use `import-assets.sh`.
+- Fogo, água e ondas não são modelos: são `effects` da cena (`cenas.md`). Veículos andando e aviões voando são `movers`.
 
 Catálogo visual: regenere com `bash scripts/catalogo.sh` e veja as folhas em `docs/kit/catalogo/*.jpg`.

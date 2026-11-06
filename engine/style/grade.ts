@@ -1,3 +1,4 @@
+import type { LightId } from "./lights";
 // Colour grade for the bridge short (post agent): references/grade/GradeEffect.ts (reports/grade.md) verbatim,
 // plus GRADES / GRADE_STRENGTH / gradeFor() so the lead can re-fit the presets after the lighting merge.
 // The presets were fitted to the OLD unlit stills: after the WORLD lighting lands they will over-correct; re-fit
@@ -166,13 +167,20 @@ export const GRADE_GOLDEN2: GradeParams = {
   tintS: [0.02, 0.002], tintM: [0, 0], tintH: [-0.012, 0.006],
   vig: [0.2, 0.4],
 };
-export const GRADES: Record<"day" | "golden", GradeParams> = { day: GRADE_DAY2, golden: GRADE_GOLDEN2 };
+/** night: darker mids, desaturated, blue shadows and mids, heavy vignette */
+export const GRADE_NIGHT: GradeParams = {
+  ky: [0, 0.07, 0.19, 0.42, 0.68, 0.86, 1],
+  sat: [0.85, 0.9, 0.9],
+  tintS: [0.03, -0.004], tintM: [0.012, -0.002], tintH: [0.004, 0],
+  vig: [0.28, 0.38],
+};
+export const GRADES: Record<LightId, GradeParams> = { day: GRADE_DAY2, golden: GRADE_GOLDEN2, night: GRADE_NIGHT };
 /** One strength (0..1, the effect's `amount`) per preset, set against the NEW world (bridge_world, 2026-10-31): full-strength
  *  presets overshot (day median Y' .59-.67 vs target .571, golden .58 vs .52); day 0.65 / golden 0.45 land at
  *  .54-.62 / ~.52. Re-fit the presets (grade.md 5.C) after the merge and raise these again. */
-export const GRADE_STRENGTH: Record<"day" | "golden", number> = { day: 1, golden: 1 };
+export const GRADE_STRENGTH: Record<LightId, number> = { day: 1, golden: 1, night: 1 };
 /** Apply the preset of a light to the effect (only touches uniforms when the light changes). */
-export function gradeFor(fx: GradeEffect, light: "day" | "golden") {
+export function gradeFor(fx: GradeEffect, light: LightId) {
   const tag = fx as unknown as { _light?: string };
   if (tag._light !== light) { fx.set(GRADES[light]); tag._light = light; }
   fx.amount = GRADE_STRENGTH[light];

@@ -1,6 +1,6 @@
 // Pure action -> FrontOpts mapping (no three, no document). Time t is in seconds from the start of the action.
 import type { FrontOpts } from "../style/toon";
-import type { ActionId } from "../spec";
+import type { ActionId, ActorSpec } from "../spec";
 
 const TAU = Math.PI * 2;
 const BASE_LIFT = 60; // toon.ts default
@@ -17,10 +17,10 @@ const idle = (t: number, seed: number) => ({
 const mouth = (t: number, seed: number, every = 5) => Math.floor((frame(t) + (seed % 5)) / every) % 2 === 0;
 
 /** pose for an action at t seconds into the shot; cue = seconds into the shot of the key moment (release, hit) */
-export function poseAt(action: ActionId, t: number, seed: number, cue = Infinity): FrontOpts {
+export function poseAt(action: ActionId, t: number, seed: number, cue = Infinity, speed = 1.2): FrontOpts {
   switch (action) {
     case "walk": { // phase 1 = two steps; arms swing against the legs; lean 1..7 deg. The Stage moves the actor.
-      const phase = (t * STEPS_PER_S) / 2, sw = Math.sin(TAU * phase);
+      const phase = (t * STEPS_PER_S * speed / 1.2) / 2, sw = Math.sin(TAU * phase);
       return { mode: "stroll", phase, tilt: 4 + 3 * Math.sin(TAU * 0.5 * t + seed), headTilt: 2 * Math.sin(TAU * 2 * phase), seed,
         rig: { armL: [14 + 16 * sw, 18 + 8 * sw], armR: [14 - 16 * sw, 18 - 8 * sw] } };
     }
@@ -64,6 +64,11 @@ export function poseAt(action: ActionId, t: number, seed: number, cue = Infinity
       return { mode: "stand", expr: d < 0.2 ? "shock" : "dazed", seed, headTilt: -18 * sm(d / 0.15), roll: 90 * fall,
         impact: landed ? d - 0.95 : undefined, rig: { armL: [120 + 30 * fall, 30], armR: [130 + 20 * fall, 40] } };
     }
+    case "run": { // phase from the real speed; leaning in, knees high, fists pumping against the legs
+      const phase = t * Math.max(1.2, speed) / 1.6, sw = Math.sin(TAU * phase);
+      return { mode: "march", phase, tilt: 9 + 2 * Math.sin(TAU * 2 * phase), headTilt: -3 + 2 * Math.sin(TAU * 2 * phase), seed,
+        rig: { armL: [30 + 35 * sw, 95], armR: [30 - 35 * sw, 95] } };
+    }
     case "point": return { mode: "stand", arms: "point", seed, headTilt: 2 * S(0.4, t, seed) };
     case "cheer": return { mode: "stand", expr: "grin", seed, lift: BASE_LIFT * (1 + 0.06 * Math.abs(S(1.5, t))),
       rig: { armL: [160 + 12 * S(1.5, t), 10], armR: [160 - 12 * S(1.5, t), 10] } };
@@ -91,4 +96,49 @@ export function blinkAt(seed: number, t: number, fps = 30): boolean {
   // binary-free scan from the end is fine: queries are near-monotonic; use last start <= f
   let i = s.length - 1; while (i > 0 && s[i] > f) i--;
   return s[i] <= f && f < s[i] + 4;
+}
+
+const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
+const HANG: [number, number] = [8, 12];
+/** prev -> next with an overshoot: numbers and arm angles blend, everything else switches at once */
+function blendPose(prev: FrontOpts, next: FrontOpts, k: number): FrontOpts {
+  const out: FrontOpts = { ...next };
+  for (const f of ["tilt", "headTilt", "lift", "look"] as const)
+    if (typeof next[f] === "number" || typeof prev[f] === "number")
+      out[f] = lerp(prev[f] ?? (f === "lift" ? BASE_LIFT : 0), next[f] ?? (f === "lift" ? BASE_LIFT : 0), k);
+  if (prev.rig || next.rig) {
+    const a = prev.rig ?? {}, b = next.rig ?? {}, rig = { ...b };
+    for (const arm of ["armL", "armR"] as const) {
+      if (prev.arms || next.arms) break; // the named arm poses have no angles to blend
+      const p = a[arm] ?? HANG, n = b[arm] ?? HANG;
+      rig[arm] = [lerp(p[0], n[0], k), lerp(p[1], n[1], k)];
+    }
+    if (a.crouch !== undefined || b.crouch !== undefined) rig.crouch = Math.max(0, lerp(a.crouch ?? 0, b.crouch ?? 0, k));
+    out.rig = rig;
+  }
+  return out;
+}
+const BLEND_S = 0.3;
+/** eased start, overshoot (~10 %), settle */
+const back = (x: number) => { const u = sm(x) - 1; return u * u * (2.7 * u + 1.7) + 1; };
+
+/** The actor's pose at absolute time t: walking/running inside the travel window (step rate from the real speed),
+ *  otherwise the current beat (or the base action), blended from the previous one with a small overshoot. */
+export function actorPose(a: ActorSpec, shotStart: number, shotEnd: number, t: number, seed: number, distance = 0): FrontOpts {
+  const [t0, t1] = a.travel ?? [shotStart, shotEnd];
+  const beats: [number, ActionId][] = [[shotStart, a.action], ...(a.beats ?? [])];
+  const beatAt = (time: number) => { let i = 0; while (i < beats.length - 1 && beats[i + 1][0] <= time) i++; return i; };
+  const cue = (start: number) => a.cue !== undefined ? a.cue - start : Infinity;
+  const speed = distance / Math.max(0.1, t1 - t0);
+  if (distance > 0 && t >= t0 && t <= t1) {
+    const run = a.action === "run" || beats[beatAt(t)][1] === "run" || speed > 2.2;
+    return poseAt(run ? "run" : "walk", t - t0, seed, Infinity, Math.max(speed, 0.6));
+  }
+  const i = beatAt(t), [start, action] = beats[i];
+  const pose = poseAt(action, t - start, seed, cue(start));
+  // the switch from the previous beat, or from the end of the travel
+  const from = distance > 0 && t > t1 && t1 > start - BLEND_S ? { at: t1, pose: poseAt("walk", t1 - t0, seed, Infinity, Math.max(speed, 0.6)) }
+    : i > 0 ? { at: start, pose: poseAt(beats[i - 1][1], t - beats[i - 1][0], seed, cue(beats[i - 1][0])) } : undefined;
+  if (!from || t - from.at >= BLEND_S) return pose;
+  return blendPose(from.pose, pose, back((t - from.at) / BLEND_S));
 }

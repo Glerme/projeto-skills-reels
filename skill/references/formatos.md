@@ -66,3 +66,41 @@ A história contada em partes, para puxar a próxima parte e os comentários. Us
   ou deixa ele bater?"). A última fala anuncia a próxima parte ("Parte dois amanhã.").
 - O `SCRIPT.md` da parte guarda o que já foi revelado e a pergunta que ficou em aberto. A parte seguinte parte daí,
   com o mesmo elenco e o mesmo briefing visual.
+
+## E se — série (45–60 s, cerca de 140–180 palavras por parte). `"format": "e-se-serie"`
+
+Nunca passe de 1 minuto por parte (o usuário achou 1 min 20 s longo demais). Para caber: um teste por parte, a física
+em duas frases, a escalada com um só "Aí deu ruim." O resto vai para a parte seguinte.
+
+O formato padrão para poderes e hipóteses. Estudo de um perfil de referência (séries de 530 mil a 1,5 milhão de views;
+o vídeo do mesmo perfil explicando um fato em 3ª pessoa, sem personagem, ficou em 55 mil). A premissa é para o
+espectador ("você"), mas quem vive a história é **um personagem nosso, com nome, fixo na série inteira**.
+Voz **neutra**: "você", sem gíria regional e sem palavrão. Referências de games e animes são bem-vindas, desde que
+só citadas, sem mostrar personagem nem logo.
+
+1. **Gancho (1 frase):** "E se você acordasse amanhã podendo [poder]?" Na frase seguinte já entra o personagem:
+   "O Téo acordou assim." Da parte 2 em diante, o gancho é o problema que a parte anterior deixou ("O Téo quase…").
+2. **Origem boba (2–3 frases):** como ganhou o poder, com um detalhe banal e engraçado ("Estava jogando às três da
+   manhã, caiu a internet, foi dormir irritado.").
+3. **Primeiro uso banal que já dá errado:** algo do dia a dia (geladeira, despertador, um ovo) e um efeito colateral
+   inesperado (um estouro, um frio, ficar cego).
+4. **"E isso é física."** O porquê do efeito, com **um número concreto** e **uma analogia do dia a dia**. Fonte no
+   `SCRIPT.md`.
+5. **Teste e regra:** o personagem testa ("Teste um…"; o "Teste dois" fica para outra parte) e cria uma regra ("Regra número um: …"). O
+   espectador aprende o sistema do poder; cada teste é uma cena.
+6. **Escalada com risco:** cada batida maior que a anterior (vizinho → lei → governo). Antes de cada virada, um
+   marcador curto e fixo da série: **"Aí deu ruim."** Use de 1 a 2 vezes por parte.
+7. **"Só que tem um detalhe…"** e a virada numa frase curta, com um fato real ("A Terra gira.").
+8. **Chamada presa ao cliffhanger:** "Segue aí pra ver [o que está em aberto] na parte [n]." Nunca "siga para
+   mais" genérico: a chamada só funciona quando promete o desfecho da virada.
+
+- **Ritmo:** frases de 3 a 10 palavras, uma imagem nova a cada 1–2 s (`direcao.md`). Os números aparecem escritos na
+  tela como plaquinha (`"70 L"`, `"0,2 s"`).
+- **Série:** 3 a 4 partes por poder. As partes se citam ("Lembra do frio no sol?"), e um detalhe de uma série pode
+  virar pista de outra (o universo é compartilhado). O `SCRIPT.md` guarda o personagem, as regras já criadas e o que
+  ficou em aberto.
+- **Comentários:** uma parte pode nascer de um comentário ("Vocês pediram: e se ele tentasse…").
+- **Real ou ficção:** o personagem e a história são inventados, mas todo fato de física é real e tem fonte. Não leva
+  selo FICÇÃO (`"fiction": false`), como o "e se".
+- **Erros que derrubam:** gastar o começo explicando a referência ("Stand é tipo…"), ritmo acima de 200 palavras/min,
+  e uma virada final que não é de física.
