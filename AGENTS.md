@@ -80,6 +80,7 @@ cena, câmera ou animação → passo 6; só som ou legenda → passo 7. Antes d
 | lista | 45–60 s | itens do menos para o mais surpreendente |
 | e se | 15–25 s | segunda pessoa, presente |
 | e se — série | **no máximo 60 s** por parte | personagem fixo com nome, "Aí deu ruim.", cliffhanger (base: @rmhkaiser) |
+| explicador 2D | 90–125 s | `"mode": "2d"`, cena em `scene.html`, skill `explicador-2d` (base: @inventadesdecero). Exemplos: `videos/freio-caminhao`, `privada-sifao`, `freio-elevador` |
 | você inventa | ~90 s (pedido do usuário) | vilão fixo, "Dia um… Dia sete", `overlays` + `bw`, "Parabéns. Você construiu…" (base: @explicamostudo). Exemplo: `videos/navio-flutua` |
 
 ## 5. O que o usuário já decidiu (não pergunte de novo)
@@ -133,6 +134,7 @@ cena, câmera ou animação → passo 6; só som ou legenda → passo 7. Antes d
 | `motor` | Codex | recurso novo em `engine/` ou `scripts/`, com teste | arquivos mudados, como usar, o que ficou de fora |
 | `cenografo` | Codex | um cenário novo genérico em `engine/sets/` + projeto de teste | id, views, spots, spec de teste |
 | `corretor` | Codex | corrige o `video.json` quando o render falha | causa e mudança, em até 5 linhas |
+| `animador` | Codex | `scene.html` (SVG + GSAP) do formato explicador 2D (skill `explicador-2d`) | blocos tempo → desenho |
 | `revisor` | Claude Haiku | stills por cena contra `armadilhas.md` e o briefing; não edita nada | uma linha por cena + "RESULTADO: ok/corrigir" |
 
 A sua **última mensagem** vai para `videos/<slug>/agentes/<papel>.txt` e é tudo o que o coordenador lê: seja direto.

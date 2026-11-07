@@ -120,3 +120,13 @@ Estudo de @explicamostudo (cofre, 385 mil views; o navio do mesmo perfil, sem vi
    [palavra]."
 - Voz neutra, em segunda pessoa e no presente. Todo fato tem fonte no `SCRIPT.md`. Não leva selo FICÇÃO.
 - A duração de 90 s foi pedida pelo usuário para este formato (a série "e se" continua com no máximo 1 min).
+
+## Explicador 2D — invente do zero (90–125 s, cerca de 260–330 palavras). `"format": "explicador"`, `"mode": "2d"`
+
+Base: @inventadesdecero. Visual e regras em `~/.claude/skills/explicador-2d/` (desenho 2D em SVG, sem o motor 3D).
+- Começa por um objeto simples que você já conhece ("Isto é uma seringa cheia de água.") e mostra o princípio.
+- Escala para a máquina de verdade ("Agora faz isso num caminhão de quarenta toneladas.").
+- Cadeia de problema → solução: "Mas e se…?" → "Então você…" → "Funciona." → próximo problema. Quatro a seis voltas.
+- Fecho: lista de verbos ritmados ("Comprime, empurra, segura, escapa, freia."), "Parabéns. Você acabou de inventar
+  <a máquina>." e "Que máquina a gente reinventa agora?".
+- Segunda pessoa, presente, frases curtas. Sempre real, com fonte.
