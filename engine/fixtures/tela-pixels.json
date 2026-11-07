@@ -1,0 +1,392 @@
+{
+  "version": 1,
+  "slug": "_teste-tela-pixels",
+  "format": "curiosidade",
+  "fiction": false,
+  "fps": 30,
+  "duration": 24,
+  "cast": {},
+  "shots": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 3,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "imagem"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 0,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 12.0,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 3,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.75,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 2,
+      "start": 3,
+      "end": 6,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "subpixels"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 3,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.75,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 6,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.5,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 3,
+      "start": 6,
+      "end": 9,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "mistura"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 6,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.5,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 9,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.25,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 4,
+      "start": 9,
+      "end": 12,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "grade"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 9,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.25,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 12,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.0,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 5,
+      "start": 12,
+      "end": 15,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "varredura",
+          "speed": 0.75
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 12,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 11.0,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 15,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.75,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 6,
+      "start": 15,
+      "end": 18,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "rastro"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 15,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.75,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 18,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.5,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 7,
+      "start": 18,
+      "end": 21,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "lcd"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 18,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.5,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 21,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.25,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    },
+    {
+      "id": 8,
+      "start": 21,
+      "end": 24,
+      "set": "plano",
+      "light": "day",
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "mode": "oled"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 21,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.25,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          },
+          {
+            "t": 24,
+            "on": [
+              0,
+              1.65,
+              0.101
+            ],
+            "dist": 10.0,
+            "aim": 0,
+            "h": 0,
+            "fov": 34
+          }
+        ]
+      },
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      }
+    }
+  ],
+  "sfx": [],
+  "music": {
+    "mood": "curioso"
+  }
+}

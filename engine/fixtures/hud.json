@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "slug": "_teste-hud",
+  "format": "curiosidade",
+  "fiction": false,
+  "fps": 30,
+  "duration": 8,
+  "captionStyle": "topo-caixa",
+  "cast": {},
+  "sfx": [],
+  "music": {
+    "mood": "curioso"
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 8,
+      "set": "laboratorio",
+      "light": "day",
+      "actors": [],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 0,
+            "on": [
+              0,
+              1,
+              0
+            ],
+            "dist": 8,
+            "aim": 0,
+            "h": 0
+          },
+          {
+            "t": 8,
+            "on": [
+              0,
+              1,
+              0
+            ],
+            "dist": 7,
+            "aim": 0,
+            "h": 0
+          }
+        ]
+      },
+      "movers": [
+        {
+          "model": "furniture-radio",
+          "at": "centro",
+          "toDx": 0.3
+        }
+      ],
+      "hud": [
+        {
+          "kind": "selecao",
+          "anchor": {
+            "point": [
+              0,
+              0.6,
+              0
+            ],
+            "mover": 0
+          },
+          "size": [
+            1,
+            1.2,
+            1
+          ],
+          "label": "PEÇA",
+          "tone": "termo",
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "seta",
+          "anchor": {
+            "point": [
+              0,
+              1,
+              0
+            ],
+            "mover": 0
+          },
+          "from": [
+            200,
+            750
+          ],
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "numero",
+          "position": [
+            150,
+            1250
+          ],
+          "text": "12",
+          "label": "PARTES",
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "placa",
+          "position": [
+            150,
+            1400
+          ],
+          "text": "27",
+          "label": "COMBINAÇÕES",
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "progresso",
+          "position": [
+            150,
+            1550
+          ],
+          "colors": [
+            "#ff7777",
+            "#ffd23a",
+            "#74e39c",
+            "#9edbff"
+          ],
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "verbos",
+          "position": [
+            150,
+            1000
+          ],
+          "items": [
+            {
+              "text": "LIGAR",
+              "t": 0
+            },
+            {
+              "text": "MISTURAR",
+              "t": 3
+            }
+          ],
+          "start": 0,
+          "end": 8
+        },
+        {
+          "kind": "cartao",
+          "position": [
+            150,
+            1650
+          ],
+          "text": "RÁDIO",
+          "label": "COMO FUNCIONA",
+          "start": 0,
+          "end": 8
+        }
+      ]
+    }
+  ]
+}

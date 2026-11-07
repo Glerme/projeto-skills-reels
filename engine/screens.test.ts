@@ -139,8 +139,8 @@ test("scanout loop is continuous over the whole panel, including both edges", ()
   }
 });
 
-test("monitor-pixels screen state is applied on the cut frame and restores on seek", () => {
-  const spec = JSON.parse(readFileSync("videos/monitor-pixels/video.json", "utf8")) as VideoSpec;
+test("screen state is applied on the cut frame and restores on seek", () => {
+  const spec = JSON.parse(readFileSync("engine/fixtures/monitor-cortes.json", "utf8")) as VideoSpec;
   const d = createScreen();
   const cuts = [
     spec.shots.findIndex((s, i) => i > 0 && s.screens?.[0].mode === "grade" &&
@@ -193,7 +193,7 @@ test("flat monitor has only front planes and unlit housing; default pixels are d
 });
 
 test("2D fixture validates, background is bounded and cuts still reject jumps", () => {
-  const example = () => JSON.parse(readFileSync("videos/_teste-tela-pixels/video.json", "utf8"));
+  const example = () => JSON.parse(readFileSync("engine/fixtures/tela-pixels.json", "utf8"));
   assert.equal(validateSpec(example()).ok, true);
   for (const background of [null, {}, { top: "red" }, { top: "#123456", bottom: 42 }]) {
     const s = example(); s.shots[0].background = background;

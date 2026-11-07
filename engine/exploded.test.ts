@@ -27,7 +27,7 @@ test("explosion reverses continuously, preserves housing and restores seeks", ()
 });
 
 test("fixture validates; malformed timelines, highlights and layer anchors fail", () => {
-  const fixture = () => JSON.parse(readFileSync("videos/_teste-explodido/video.json", "utf8"));
+  const fixture = () => JSON.parse(readFileSync("engine/fixtures/explodido.json", "utf8"));
   assert.equal(validateSpec(fixture()).ok, true);
   for (const bad of [[], [[0, -1]], [[0, 2]], [[-1,0]], [[0,0],[0,1]], [[0,0],null]]) {
     const s = fixture(); s.shots[0].screens[0].explode = bad;
@@ -73,7 +73,7 @@ test("highlight and OLED fades are continuous and restore on seek", () => {
 });
 
 test("exploded fixture: continuous moving camera, whole stack in the wide key, highlighted plate whole in its close", () => {
-  const fixture = JSON.parse(readFileSync("videos/_teste-explodido/video.json", "utf8"));
+  const fixture = JSON.parse(readFileSync("engine/fixtures/explodido.json", "utf8"));
   const d = createScreen();
   const frame = (shot: ShotSpec & { cam: { keys: any[] } }, key: any, highlight?: string) => {
     updateScreen(d, { at: "centro", mode: "branco", explode: [[0, 1]] }, shot, key.t, [0, 0.32, 0]);

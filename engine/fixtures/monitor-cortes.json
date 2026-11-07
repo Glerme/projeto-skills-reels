@@ -1,0 +1,1389 @@
+{
+  "version": 1,
+  "slug": "monitor-pixels",
+  "format": "curiosidade",
+  "fiction": false,
+  "fps": 30,
+  "duration": 58.82,
+  "cast": {},
+  "dressing": {
+    "plano": []
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 3.3,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "imagem",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 0,
+            "on": [
+              0,
+              1,
+              0.101
+            ],
+            "dist": 12.5,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 1.8,
+            "on": [
+              0.04,
+              1.12,
+              0.101
+            ],
+            "dist": 10.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 2.67,
+            "on": [
+              0.08,
+              1.48,
+              0.101
+            ],
+            "dist": 6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 3.3,
+            "on": [
+              0.1,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "start": 3.3,
+      "end": 9.38,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "subpixels"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 3.3,
+            "on": [
+              0.1,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 5.77,
+            "on": [
+              0.02,
+              1.7,
+              0.101
+            ],
+            "dist": 2.2,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 7.28,
+            "on": [
+              -0.08,
+              1.68,
+              0.101
+            ],
+            "dist": 1.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 8.54,
+            "on": [
+              -0.14,
+              1.64,
+              0.101
+            ],
+            "dist": 1.5,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 9.38,
+            "on": [
+              -0.1,
+              1.62,
+              0.101
+            ],
+            "dist": 1.65,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "start": 9.38,
+      "end": 12.6,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "imagem",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 9.38,
+            "on": [
+              -0.1,
+              1.62,
+              0.101
+            ],
+            "dist": 1.65,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 10.72,
+            "on": [
+              -0.04,
+              1.35,
+              0.101
+            ],
+            "dist": 6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 12.6,
+            "on": [
+              -0.1,
+              1.67,
+              0.101
+            ],
+            "dist": 10.4,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "start": 12.6,
+      "end": 16.06,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "mistura"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 12.6,
+            "on": [
+              -0.1,
+              1.67,
+              0.101
+            ],
+            "dist": 10.4,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 14.72,
+            "on": [
+              -0.1,
+              1.66,
+              0.101
+            ],
+            "dist": 10.1,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 16.06,
+            "on": [
+              -0.1,
+              1.65,
+              0.101
+            ],
+            "dist": 9.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "start": 16.06,
+      "end": 18.84,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "grade",
+          "density": 64,
+          "toDensity": 64
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 16.06,
+            "on": [
+              -0.1,
+              1.65,
+              0.101
+            ],
+            "dist": 9.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 18.84,
+            "on": [
+              -0.06,
+              1.04,
+              0.101
+            ],
+            "dist": 12.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "start": 18.84,
+      "end": 21.16,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "grade",
+          "density": 64,
+          "toDensity": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 18.84,
+            "on": [
+              -0.06,
+              1.04,
+              0.101
+            ],
+            "dist": 12.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 21.16,
+            "on": [
+              0.02,
+              1,
+              0.101
+            ],
+            "dist": 12.1,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "start": 21.16,
+      "end": 23.08,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "imagem",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 21.16,
+            "on": [
+              0.02,
+              1,
+              0.101
+            ],
+            "dist": 12.1,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 23.08,
+            "on": [
+              0.06,
+              0.98,
+              0.101
+            ],
+            "dist": 11.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "start": 23.08,
+      "end": 26.37,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "varredura",
+          "density": 128,
+          "speed": 0.4
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 23.08,
+            "on": [
+              0.06,
+              0.98,
+              0.101
+            ],
+            "dist": 11.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 26.37,
+            "on": [
+              -0.04,
+              1.04,
+              0.101
+            ],
+            "dist": 12.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "start": 26.37,
+      "end": 28.9,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "varredura",
+          "density": 128,
+          "speed": 0.6
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 26.37,
+            "on": [
+              -0.04,
+              1.04,
+              0.101
+            ],
+            "dist": 12.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 28.9,
+            "on": [
+              0.03,
+              1,
+              0.101
+            ],
+            "dist": 12,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "start": 28.9,
+      "end": 32.51,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "varredura",
+          "density": 128,
+          "speed": 1.44
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 28.9,
+            "on": [
+              0.03,
+              1,
+              0.101
+            ],
+            "dist": 12,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 32.51,
+            "on": [
+              -0.05,
+              1.04,
+              0.101
+            ],
+            "dist": 12.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "start": 32.51,
+      "end": 37.99,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "rastro",
+          "density": 128,
+          "trail": true
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 32.51,
+            "on": [
+              -0.05,
+              1.04,
+              0.101
+            ],
+            "dist": 12.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 34.52,
+            "on": [
+              0.02,
+              1,
+              0.101
+            ],
+            "dist": 12.3,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 36.56,
+            "on": [
+              0.08,
+              0.98,
+              0.101
+            ],
+            "dist": 11.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 37.99,
+            "on": [
+              0.04,
+              1,
+              0.101
+            ],
+            "dist": 12.2,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "start": 37.99,
+      "end": 39.36,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "rastro",
+          "density": 128,
+          "trail": false
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 37.99,
+            "on": [
+              0.04,
+              1,
+              0.101
+            ],
+            "dist": 12.2,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 39.36,
+            "on": [
+              -0.02,
+              1.02,
+              0.101
+            ],
+            "dist": 12.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "start": 39.36,
+      "end": 48.31,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "lcd",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 39.36,
+            "on": [
+              -0.02,
+              1.02,
+              0.101
+            ],
+            "dist": 12.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 40.15,
+            "on": [
+              0,
+              1.04,
+              0.101
+            ],
+            "dist": 12.3,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 43.4,
+            "on": [
+              0.04,
+              1.15,
+              0.101
+            ],
+            "dist": 10.5,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 45.23,
+            "on": [
+              0.08,
+              1.25,
+              0.101
+            ],
+            "dist": 9.2,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 48.31,
+            "on": [
+              0.12,
+              1.4,
+              0.101
+            ],
+            "dist": 7.5,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "start": 48.31,
+      "end": 50.04,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "oled",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 48.31,
+            "on": [
+              0.12,
+              1.4,
+              0.101
+            ],
+            "dist": 7.5,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 50.04,
+            "on": [
+              0.08,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "start": 50.04,
+      "end": 52.53,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "subpixels"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 50.04,
+            "on": [
+              0.08,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 51.55,
+            "on": [
+              -0.02,
+              1.7,
+              0.101
+            ],
+            "dist": 2.1,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 52.53,
+            "on": [
+              -0.08,
+              1.67,
+              0.101
+            ],
+            "dist": 1.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "start": 52.53,
+      "end": 53.88,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "oled",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 52.53,
+            "on": [
+              -0.08,
+              1.67,
+              0.101
+            ],
+            "dist": 1.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 53.88,
+            "on": [
+              -0.02,
+              1.5,
+              0.101
+            ],
+            "dist": 5.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "start": 53.88,
+      "end": 55.82,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "imagem",
+          "density": 128
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 53.88,
+            "on": [
+              -0.02,
+              1.5,
+              0.101
+            ],
+            "dist": 5.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 55.82,
+            "on": [
+              0.05,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "start": 55.82,
+      "end": 58.82,
+      "set": "plano",
+      "light": "day",
+      "background": {
+        "top": "#1d3a6b",
+        "bottom": "#0b1730"
+      },
+      "actors": [],
+      "screens": [
+        {
+          "at": "centro",
+          "dx": 0,
+          "dz": 0,
+          "y": 0,
+          "turn": 0,
+          "scale": 1,
+          "mode": "subpixels"
+        }
+      ],
+      "cam": {
+        "recipe": "keys",
+        "keys": [
+          {
+            "t": 55.82,
+            "on": [
+              0.05,
+              1.65,
+              0.101
+            ],
+            "dist": 2.6,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 56.62,
+            "on": [
+              0.01,
+              1.67,
+              0.101
+            ],
+            "dist": 2.3,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 57.23,
+            "on": [
+              -0.03,
+              1.69,
+              0.101
+            ],
+            "dist": 2,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 57.6,
+            "on": [
+              -0.06,
+              1.7,
+              0.101
+            ],
+            "dist": 1.8,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          },
+          {
+            "t": 58.82,
+            "on": [
+              -0.12,
+              1.72,
+              0.101
+            ],
+            "dist": 1.4,
+            "aim": 0,
+            "h": 0,
+            "yaw": 0,
+            "fov": 34,
+            "ease": "linear"
+          }
+        ]
+      }
+    }
+  ],
+  "overlays": [
+    {
+      "start": 16.06,
+      "end": 18.84,
+      "text": "1920 × 1080 ≈ 2 milhões",
+      "kind": "placa"
+    },
+    {
+      "start": 18.84,
+      "end": 21.16,
+      "text": "4K ≈ 8,3 milhões",
+      "kind": "placa"
+    },
+    {
+      "start": 26.37,
+      "end": 28.9,
+      "text": "60 Hz · câmera lenta",
+      "kind": "placa"
+    },
+    {
+      "start": 28.9,
+      "end": 32.51,
+      "text": "144 Hz ≈ 6,9 ms · câmera lenta",
+      "kind": "placa"
+    },
+    {
+      "start": 37.99,
+      "end": 39.36,
+      "text": "Tempo de resposta",
+      "kind": "placa"
+    }
+  ],
+  "sfx": [
+    {
+      "t": 3.3,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 5.77,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 7.28,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 8.54,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 12.6,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 13.753,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 14.907,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 16.06,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 18.84,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 23.08,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 26.37,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 28.9,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 37.99,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 48.31,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 50.04,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 52.53,
+      "name": "pop",
+      "gainDb": -9
+    },
+    {
+      "t": 55.82,
+      "name": "pop",
+      "gainDb": -9
+    }
+  ],
+  "music": {
+    "mood": "curioso"
+  }
+}

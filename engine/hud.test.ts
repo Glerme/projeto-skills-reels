@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { drawHud, projectHud, validateHud, hudEntry, type HudSpec } from "./hud";
 import { validateSpec } from "./spec";
 import { readFileSync } from "node:fs";
-const fixture = () => JSON.parse(readFileSync("videos/_teste-hud/video.json", "utf8"));
+const fixture = () => JSON.parse(readFileSync("engine/fixtures/hud.json", "utf8"));
 test("HUD fixture and every element validate; malformed input never throws", () => {
   assert.deepEqual(validateHud(fixture().shots[0].hud,0,8,1), []);
   assert.equal(validateSpec(fixture()).ok, true);

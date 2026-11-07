@@ -1,0 +1,670 @@
+{
+ "version": 1,
+ "slug": "_teste-explodido",
+ "format": "curiosidade",
+ "fiction": false,
+ "fps": 30,
+ "duration": 32,
+ "cast": {},
+ "shots": [
+  {
+   "id": 1,
+   "start": 0,
+   "end": 4,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 0,
+      "on": [
+       0,
+       0.32,
+       0
+      ],
+      "dist": 10,
+      "h": 1.95,
+      "aim": 1.65,
+      "yaw": -10,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 4,
+      "on": [
+       0,
+       0.32,
+       -1.8
+      ],
+      "dist": 15,
+      "h": 4.15,
+      "aim": 2.55,
+      "yaw": -40,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "branco",
+     "explode": [
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       1
+      ]
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 2,
+   "start": 4,
+   "end": 8,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 4,
+      "on": [
+       0,
+       0.32,
+       -1.8
+      ],
+      "dist": 15,
+      "h": 4.15,
+      "aim": 2.55,
+      "yaw": -40,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 5.4,
+      "on": [
+       0,
+       0.32,
+       -4.73
+      ],
+      "dist": 8.6,
+      "h": 4.65,
+      "aim": 3.65,
+      "yaw": -44,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 8,
+      "on": [
+       0,
+       0.32,
+       -4.73
+      ],
+      "dist": 8.0,
+      "h": 4.55,
+      "aim": 3.65,
+      "yaw": -40,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       4,
+       1
+      ]
+     ],
+     "highlight": "luz-de-fundo"
+    }
+   ],
+   "hud": [
+    {
+     "kind": "seta",
+     "start": 4,
+     "end": 8,
+     "anchor": {
+      "screen": 0,
+      "layer": "luz-de-fundo",
+      "point": [
+       0,
+       0,
+       0
+      ]
+     },
+     "from": [
+      850,
+      450
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 3,
+   "start": 8,
+   "end": 12,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 8,
+      "on": [
+       0,
+       0.32,
+       -4.73
+      ],
+      "dist": 8.0,
+      "h": 4.55,
+      "aim": 3.65,
+      "yaw": -40,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 9.2,
+      "on": [
+       0,
+       0.32,
+       -3.53
+      ],
+      "dist": 8.0,
+      "h": 4.15,
+      "aim": 3.15,
+      "yaw": -46,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 12,
+      "on": [
+       0,
+       0.32,
+       -3.53
+      ],
+      "dist": 7.6,
+      "h": 4.05,
+      "aim": 3.15,
+      "yaw": -42,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       8,
+       1
+      ]
+     ],
+     "highlight": "polarizador-tras"
+    }
+   ],
+   "hud": [
+    {
+     "kind": "seta",
+     "start": 8,
+     "end": 12,
+     "anchor": {
+      "screen": 0,
+      "layer": "polarizador-tras",
+      "point": [
+       0,
+       0,
+       0
+      ]
+     },
+     "from": [
+      850,
+      450
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 4,
+   "start": 12,
+   "end": 16,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 12,
+      "on": [
+       0,
+       0.32,
+       -3.53
+      ],
+      "dist": 7.6,
+      "h": 4.05,
+      "aim": 3.15,
+      "yaw": -42,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 13.2,
+      "on": [
+       0,
+       0.32,
+       -2.33
+      ],
+      "dist": 7.8,
+      "h": 3.85,
+      "aim": 2.65,
+      "yaw": -50,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 16,
+      "on": [
+       0,
+       0.32,
+       -2.33
+      ],
+      "dist": 7.4,
+      "h": 3.75,
+      "aim": 2.65,
+      "yaw": -46,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       12,
+       1
+      ]
+     ],
+     "highlight": "cristal"
+    }
+   ],
+   "hud": [
+    {
+     "kind": "seta",
+     "start": 12,
+     "end": 16,
+     "anchor": {
+      "screen": 0,
+      "layer": "cristal",
+      "point": [
+       0,
+       0,
+       0
+      ]
+     },
+     "from": [
+      850,
+      450
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 5,
+   "start": 16,
+   "end": 20,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 16,
+      "on": [
+       0,
+       0.32,
+       -2.33
+      ],
+      "dist": 7.4,
+      "h": 3.75,
+      "aim": 2.65,
+      "yaw": -46,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 17.2,
+      "on": [
+       0,
+       0.32,
+       -1.13
+      ],
+      "dist": 7.8,
+      "h": 3.55,
+      "aim": 2.15,
+      "yaw": -52,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 20,
+      "on": [
+       0,
+       0.32,
+       -1.13
+      ],
+      "dist": 7.4,
+      "h": 3.45,
+      "aim": 2.15,
+      "yaw": -48,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       16,
+       1
+      ]
+     ],
+     "highlight": "filtro-cor"
+    }
+   ],
+   "hud": [
+    {
+     "kind": "seta",
+     "start": 16,
+     "end": 20,
+     "anchor": {
+      "screen": 0,
+      "layer": "filtro-cor",
+      "point": [
+       0,
+       0,
+       0
+      ]
+     },
+     "from": [
+      850,
+      450
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 6,
+   "start": 20,
+   "end": 24,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 20,
+      "on": [
+       0,
+       0.32,
+       -1.13
+      ],
+      "dist": 7.4,
+      "h": 3.45,
+      "aim": 2.15,
+      "yaw": -48,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 21.2,
+      "on": [
+       0,
+       0.32,
+       0.07
+      ],
+      "dist": 7.8,
+      "h": 2.35,
+      "aim": 1.65,
+      "yaw": -44,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 24,
+      "on": [
+       0,
+       0.32,
+       0.07
+      ],
+      "dist": 7.6,
+      "h": 2.15,
+      "aim": 1.65,
+      "yaw": -38,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       20,
+       1
+      ]
+     ],
+     "highlight": "polarizador-frente"
+    }
+   ],
+   "hud": [
+    {
+     "kind": "seta",
+     "start": 20,
+     "end": 24,
+     "anchor": {
+      "screen": 0,
+      "layer": "polarizador-frente",
+      "point": [
+       0,
+       0,
+       0
+      ]
+     },
+     "from": [
+      850,
+      450
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 7,
+   "start": 24,
+   "end": 28,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 24,
+      "on": [
+       0,
+       0.32,
+       0.07
+      ],
+      "dist": 7.6,
+      "h": 2.15,
+      "aim": 1.65,
+      "yaw": -38,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 26.0,
+      "on": [
+       0,
+       0.32,
+       -1.8
+      ],
+      "dist": 13,
+      "h": 3.75,
+      "aim": 2.55,
+      "yaw": -34,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 28,
+      "on": [
+       0,
+       0.32,
+       0
+      ],
+      "dist": 10,
+      "h": 2.05,
+      "aim": 1.65,
+      "yaw": -22,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "lcd",
+     "explode": [
+      [
+       24,
+       1
+      ],
+      [
+       28,
+       0
+      ]
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  },
+  {
+   "id": 8,
+   "start": 28,
+   "end": 32,
+   "set": "bancada",
+   "light": "night",
+   "actors": [],
+   "cam": {
+    "recipe": "keys",
+    "keys": [
+     {
+      "t": 28,
+      "on": [
+       0,
+       0.32,
+       0
+      ],
+      "dist": 10,
+      "h": 2.05,
+      "aim": 1.65,
+      "yaw": -22,
+      "fov": 45,
+      "ease": "linear"
+     },
+     {
+      "t": 32,
+      "on": [
+       0,
+       0.32,
+       0
+      ],
+      "dist": 9.2,
+      "h": 1.85,
+      "aim": 1.65,
+      "yaw": -8,
+      "fov": 45,
+      "ease": "linear"
+     }
+    ]
+   },
+   "screens": [
+    {
+     "at": "centro",
+     "mode": "oled",
+     "explode": [
+      [
+       28,
+       0
+      ],
+      [
+       29,
+       1
+      ],
+      [
+       32,
+       0
+      ]
+     ],
+     "oled": [
+      [
+       28,
+       0
+      ],
+      [
+       30,
+       1
+      ]
+     ]
+    }
+   ],
+   "dof": 24,
+   "focus": "centro"
+  }
+ ],
+ "music": {
+  "mood": "curioso"
+ },
+ "sfx": []
+}
