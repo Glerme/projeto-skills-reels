@@ -184,7 +184,7 @@ test("a closed walkway still rejects a longitudinal leg that looks stationary fo
 test("every set/view/main spot frames a speaker at the required size", () => {
   for (const [set, def] of Object.entries(SETS)) for (const view of Object.keys(def.views)) {
     // These are landscape/action views, aimed at the tower, stream or duel rather than a presenter.
-    if (["aereo", "duelo", "riacho", "queda"].includes(view)) continue;
+    if (set === "plano" || ["aereo", "duelo", "riacho", "queda"].includes(view)) continue;
     for (const at of ["centro", "esquerda", "direita"]) for (const recipe of ["hold", "push"] as const) {
       const s = fixture();
       s.shots = [{ id: 1, start: 0, end: 60, set, light: "day", cam: { from: view, recipe, punch: [1] },

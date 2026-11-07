@@ -185,3 +185,59 @@ A direção (o que mostrar, quando mexer, a ordem das cenas) está em `direcao.m
   Nas quatro views, o eixo se desloca até o spot de `focus` (ator) ou do primeiro `talk`, sem mudar a direção.
 - Em Paris, use o apresentador em `esquerda` e o figurante em `praca_perto`. `aberto` e `medio`
   compartilham o eixo da rua. O close prioriza rosto e peito; confira a continuidade ao cortar para ele.
+
+**`screens`:** monitores fixos com tela animada, por cena (sem modelo externo):
+`[{"at":"centro","mode":"subpixels"}]`. Repita a mesma posição nos cortes; dois itens permitem comparação lado a lado.
+- `at`: spot; `dx`, `dz`, `y`: deslocamento em metros; `turn`: graus, frente em +z; `scale`: 0,3–3 (padrão 1).
+  Tela local: centro `[0,1.65,0.101]`, largura 3,2 m e altura 1,8 m; monitor inteiro: altura 2,675 m.
+- `mode`: `imagem` (paisagem pixelada), `subpixels` (tirinhas RGB grandes), `mistura` (R → RG → RGB, em terços
+  da cena: vermelho já aceso no início, verde e azul com rampas de 0,6 s; quadrado ao lado faz o mesmo fade vermelho → amarelo → branco),
+  `grade` (crossfade contínuo entre paisagem grossa e fina),
+  `varredura` (faixa desce, sai por baixo e volta por fora do topo; cada linha perde brilho suavemente após o redesenho, sem reiniciar a imagem inteira), `rastro` (bola clara com contorno sobre paisagem, rastro branco), `lcd` (preto cinza de 25–35%, mais claro nas bordas)
+  ou `oled` (mesma cena, preto apagado).
+- `density`: colunas, inteiro 2–128 (padrão 128; em `grade`, 24). `toDensity`: destino da `grade` (padrão 128).
+- `speed`: ciclos/s da `varredura`, 0,1–10 (padrão 0,5); é câmera lenta didática, não hertz reais.
+- `trail:false`: bola sem rastro (padrão `true`). Animações reiniciam no `start` da cena e seguem sua duração.
+  Use câmera `keys` mirando o centro da tela e `dof:0` nos detalhes. Para caber o monitor inteiro no quadro vertical com FOV 34°, mantenha cerca de 10 m ou mais. Teste dos oito modos: `videos/_teste-tela-pixels/`.
+
+**`set: "plano"`:** ilustração 2D de frente, sem chão, sombra de chão ou perspectiva. Use `cam.keys`:
+`on` desliza pelo desenho, `dist`/`fov` controlam o zoom; `yaw` e `h` não orbitam/inclinam o plano.
+Nos cortes, zoom (inclui `fov`) muda no máximo 2,5×; pan até metade da menor largura do quadro. `screens` vira monitor chapado; `turn` deve ser zero e não use `dof`.
+`background: {"top":"#1d3a6b","bottom":"#0b1730"}` por cena: degradê vertical (padrão azul-escuro).
+Só `top` faz cor chapada. Cores em `#rrggbb`; fundo fora de `plano` é recusado. Exemplo: `videos/_teste-tela-pixels/video.json`.
+
+## HUD de projeto (como funciona)
+
+`captionStyle: "topo-caixa"` escolhe legenda branca no topo (duas linhas), com a maior palavra não vazia
+em caixa fina com quatro pontos; omitido ou `"E"` mantém a legenda padrão embaixo. Reserve os primeiros
+380 px para a legenda no topo; o validador confere quem fala nessa faixa.
+
+`shots[].hud`: lista com `start`/`end` absolutos, dentro da cena; entrada suave de 0,25 s. Coordenadas de tela
+em px no quadro 1080 × 1920. Textos até 80 letras, desenhados em maiúsculas.
+- `selecao`: `{anchor, size:[largura,altura,profundidade], label, tone:"termo"|"ok"|"falha"}`;
+  caixa azul fina com cantos quadrados e etiqueta amarela, verde ou vermelha.
+- `seta`: `{anchor, from:[x,y]}`; sai de um ponto da tela e aponta para a peça.
+- `numero`: `{position:[x,y], text:"12", label:"PARTES"}`; número amarelo grande e legenda pequena.
+- `placa`: os mesmos campos de `numero`, com cartão escuro.
+- `progresso`: `{position:[x,y], colors:["#ffd23a","#74e39c"]}`; bloquinhos enchem de `start` até `end`.
+- `verbos`: `{position:[x,y], items:[{text:"LIGAR",t:0},{text:"MISTURAR",t:3}]}`; lista em caixa escura,
+  destaca em amarelo o último item cujo `t` passou (tempos crescentes dentro do elemento).
+- `cartao`: `{position:[x,y], text:"MONITOR", label:"COMO FUNCIONA"}`; título amarelo e linha pequena.
+
+`anchor: {point:[x,y,z]}` é o centro em metros no mundo. Com `mover:0`, `point` e `size` usam os eixos locais
+do primeiro `mover` da cena, na escala já aplicada ao modelo; acompanham seu deslocamento e rotação.
+A projeção acompanha a câmera, sem desfoque; âncoras atrás da lente são ocultadas. Não faz teste de oclusão.
+Para peças fixas do `dressing`, use o ponto do mundo correspondente. Distribua os elementos sem cobrir a peça
+ou a faixa da legenda. Exemplo de todos: `videos/_teste-hud/video.json` (rádio do kit no laboratório).
+
+**Monitor em camadas (3D):** `screens[].explode: [[tempo, valor], ...]`, valor 0–1, tempos absolutos
+crescentes dentro da cena; as lâminas recuam ao longo do eixo do monitor (1,2 m cada) e sobem 0,5 m cada, em
+escada, interpola suave e aceita remontagem (1 → 0). Repita o último valor no corte seguinte.
+Câmera de três quartos (yaw −40° a −50°, `fov` 45): leque inteiro com `on` [0, 0,32, −1,8], `aim` 2,55,
+`dist` 15; close de uma lâmina com `on` no centro dela, `dist` 7,5–8,5. Chegue ao close no primeiro 1–1,5 s.
+`highlight`: `luz-de-fundo`, `polarizador-tras`, `cristal`, `filtro-cor` ou `polarizador-frente`;
+ganha borda clara com brilho e mantém as outras a 40%, com fade de 0,6 s na entrada e saída. Moldura, pé e base não se movem.
+`oled: [[tempo, valor], ...]` faz o fade do LCD (0) para uma única camada emissiva (1), sem luz de fundo.
+`mode: "branco"` deixa a tela lisa e branca. `explode` e `oled` não servem no cenário `plano`.
+HUD `selecao`/`seta`: `anchor: {screen: 0, layer: "cristal", point: [0,0,0]}` segue o centro da
+camada; `point` é deslocamento local em metros, não combina com `mover`. Exemplo: `videos/_teste-explodido/video.json`.

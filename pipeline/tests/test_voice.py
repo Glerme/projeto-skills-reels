@@ -4,7 +4,12 @@ import unittest
 import wave
 from pathlib import Path
 
-from pipeline.voice import check_text, synth
+from pipeline.voice import check_text, spoken, synth
+
+
+class SpokenTest(unittest.TestCase):
+    def test_pixel_is_respelled_for_espeak(self):
+        self.assertEqual(spoken("Cada pixel, os Pixels e o subpixel."), "Cada picsel, os picsels e o subpicsel.")
 
 
 class CheckTextTest(unittest.TestCase):

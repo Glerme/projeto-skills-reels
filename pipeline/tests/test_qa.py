@@ -33,6 +33,12 @@ class QaTest(unittest.TestCase):
         p = planned_frames(spec, [{"text": "A", "start": 0.1, "end": 1.2}, {"text": "B", "start": 1.2, "end": 2.0}])
         self.assertTrue({3, 36, 60} <= p)
 
+    def test_hud_swaps_are_planned(self):
+        p = planned_frames({"fps": 30, "shots": [{"start": 0, "hud": [
+            {"start": 1, "end": 4, "items": [{"t": 2}]}]}]})
+        self.assertTrue({29, 30, 31, 59, 60, 61, 119, 120, 121} <= p)
+        self.assertNotIn(90, p)
+
     def test_metrics(self):
         spec = {"format": "e-se", "duration": 20, "shots": [{"id": 1, "start": 0, "end": 4}, {"id": 2, "start": 4, "end": 20}]}
         words = [{"text": f"w{i}", "start": i, "end": i + 0.5} for i in range(19)]

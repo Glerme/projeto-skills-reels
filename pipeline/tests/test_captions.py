@@ -64,3 +64,16 @@ class HtmlTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class TopCaptionTests(unittest.TestCase):
+    def test_top_box_escapes_text_and_keeps_default(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / 'captions.html'
+            groups = [{'text': 'O MONITOR <RGB>', 'start': 0.1, 'end': 1}]
+            render_html(groups, out, 'topo-caixa')
+            text = out.read_text()
+            self.assertIn('<b>MONITOR</b>', text)
+            self.assertIn('&lt;RGB&gt;', text)
+            self.assertIn('top: 160px', text)
+            render_html(groups, out)
+            self.assertNotIn('<b>', out.read_text())

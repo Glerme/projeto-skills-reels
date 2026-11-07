@@ -96,6 +96,7 @@ uniform sampler2D tNormal;
 uniform sampler2D tDepth;
 uniform sampler2D tMainDepth;
 uniform vec2 texel;
+uniform bool orthographic;
 uniform float cNear;
 uniform float cFar;
 uniform float p00;
@@ -126,8 +127,11 @@ const float SLEN[4] = float[4](1.0, 1.0, 1.41421, 1.41421);
 #define RMAX 9   // covers 5.1 px x pxScale 1.333 = 6.8 px at 1440x2560 (+0.5 AA ramp)
 
 // textureLod: explicit LOD inside loops (nearest-filtered targets, no derivatives needed)
-float dist(sampler2D t, vec2 uv) { return -perspectiveDepthToViewZ(textureLod(t, uv, 0.0).x, cNear, cFar); }
-vec3 viewPos(vec2 uv, float d) { vec2 n = uv * 2.0 - 1.0; return vec3(n.x * d / p00, n.y * d / p11, -d); }
+float dist(sampler2D t, vec2 uv) {
+  float depth = textureLod(t, uv, 0.0).x;
+  return orthographic ? -orthographicDepthToViewZ(depth, cNear, cFar) : -perspectiveDepthToViewZ(depth, cNear, cFar);
+}
+vec3 viewPos(vec2 uv, float d) { vec2 n = uv * 2.0 - 1.0; return vec3(n.x * (orthographic ? 1.0 : d) / p00, n.y * (orthographic ? 1.0 : d) / p11, -d); }
 
 // crease strength between this pixel (n0, P0) and a neighbour
 float crease(vec3 n0, vec3 P0, float zc, vec2 uq, float zq) {
@@ -278,7 +282,7 @@ export class InkPass extends Pass {
     const texel = new THREE.Vector2(1, 1);
     this.maskMat = fs(MASK_FRAG, {
       tNormal: { value: this.rt.texture }, tDepth: { value: this.rt.depthTexture }, tMainDepth: { value: null },
-      texel: { value: texel }, cNear: { value: 0.2 }, cFar: { value: 1500 }, p00: { value: 1 }, p11: { value: 1 },
+      orthographic: { value: false }, texel: { value: texel }, cNear: { value: 0.2 }, cFar: { value: 1500 }, p00: { value: 1 }, p11: { value: 1 },
       wNear: { value: o.widthNear }, wFar: { value: o.widthFar }, dNear: { value: o.distNear }, dFar: { value: o.distFar },
       creaseScale: { value: o.creaseScale }, depthLo: { value: o.depthLo }, depthHi: { value: o.depthHi },
       cosLo: { value: Math.cos((o.angleLo * Math.PI) / 180) }, cosHi: { value: Math.cos((o.angleHi * Math.PI) / 180) },
@@ -346,6 +350,7 @@ export class InkPass extends Pass {
 
     // 2) edge mask
     const u = this.maskMat.uniforms, e = cam.projectionMatrix.elements;
+    u.orthographic.value = e[15] === 1;
     u.cNear.value = cam.near; u.cFar.value = cam.far; u.p00.value = e[0]; u.p11.value = e[5];
     const fog = scene.fog as THREE.Fog | null;
     if (fog && (fog as THREE.Fog).isFog) { (u.fogRange.value as THREE.Vector2).set(fog.near, fog.far); (this.compMat.uniforms.fogColor.value as THREE.Color).copy(fog.color); }

@@ -1,3 +1,4 @@
+import { createScreen, updateScreen, type Screen } from "./screens";
 import { actorPosition, travelEnds } from "./space";
 // One three.js world for a whole video: shared sky (5 stops), sun disc + halo, clouds, fog = horizon colour,
 // hemi/sun/fill lights, the cast as lit cards from the Pool, plus one group per set used by the spec (only the shot's
@@ -137,12 +138,14 @@ export class Stage {
   private spec: VideoSpec;
   private sets = new Map<SetId, THREE.Group>();
   private dressing = new Map<SetId, THREE.Group>();
+  private screens = new Map<ShotSpec, Screen[]>();
   private movers = new Map<ShotSpec, (THREE.Object3D | null)[]>();
   private extraClouds: THREE.Mesh[] = [];
   private pool = new Pool();
   private actors: Actor[] = [];
   private fxs: Fx[] = [];
   private hemi: THREE.HemisphereLight; private sun: THREE.DirectionalLight; private fill: THREE.DirectionalLight;
+  private background: THREE.Mesh;
   private sky: THREE.Mesh; private skyMat: THREE.ShaderMaterial;
   private sunDisc: THREE.Sprite; private sunHalo: THREE.Sprite;
   private sunCache = new Map<number, THREE.Vector3>();
@@ -154,6 +157,14 @@ export class Stage {
   constructor(kit: Kit, spec: VideoSpec) {
     this.spec = spec;
     const R = this.root;
+    this.background = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+      uniforms: { top: { value: new THREE.Color() }, bottom: { value: new THREE.Color() } },
+      vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 1.0, 1.0); }",
+      fragmentShader: "uniform vec3 top, bottom; varying vec2 vUv; void main(){ gl_FragColor = vec4(mix(bottom, top, vUv.y), 1.0); }",
+      depthWrite: false, depthTest: false, fog: false, toneMapped: false,
+    }));
+    this.background.layers.set(NOINK); this.background.frustumCulled = false; this.background.renderOrder = -2;
+    R.add(this.background);
     // sky: 5 colour stops by elevation, written as tone-map-inverted linear values
     this.skyMat = new THREE.ShaderMaterial({
       uniforms: { c0: { value: new THREE.Color() }, c1: { value: new THREE.Color() }, c2: { value: new THREE.Color() },
@@ -212,12 +223,26 @@ export class Stage {
       this.sets.set(id, g); R.add(g);
     }
     setSight([]);
+    for (const s of spec.shots) this.screens.set(s, (s.screens ?? []).map(() => {
+      const d = createScreen(s.set === "plano"); d.group.visible = false; R.add(d.group); return d;
+    }));
     for (const s of spec.shots) this.movers.set(s, (s.movers ?? []).map((m) => {
       const o = kit[m.model];
       const g = o && kitClone(kit, m.model, new THREE.Box3().setFromObject(o).getSize(this.v).y * (m.scale ?? 1));
       if (g) { g.visible = false; R.add(g); }
       return g;
     }));
+  }
+
+  hudPoint(shot: ShotSpec, anchor: import("./hud").HudAnchor, offset: V3 = [0, 0, 0]) {
+    const p = new THREE.Vector3(...anchor.point).add(new THREE.Vector3(...offset));
+    if (anchor.screen !== undefined) {
+      const layer = this.screens.get(shot)?.[anchor.screen]?.layers.find(l => l.name === anchor.layer);
+      return layer ? layer.localToWorld(p) : null;
+    }
+    if (anchor.mover === undefined) return p;
+    const g = this.movers.get(shot)?.[anchor.mover];
+    return g ? g.localToWorld(p) : null;
   }
 
   /** camera-relative sun, frozen per shot: the shot's mean view direction turned by az toward screen right, lifted by el */
@@ -252,7 +277,14 @@ export class Stage {
     // ---- camera ----
     const c = camAt(shot, t, def.views, this.spec.fps, def.spots, def.walkways);
     cam.position.set(...c.pos); cam.up.set(0, 1, 0); cam.lookAt(...c.look); cam.rotateZ(THREE.MathUtils.degToRad(c.roll));
-    cam.fov = c.fov; cam.near = 0.2; cam.far = 1500; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+    cam.fov = c.fov; cam.near = 0.2; cam.far = 1500; cam.updateProjectionMatrix();
+    if (shot.set === "plano") {
+      // Keep the shared camera/post pipeline; use an orthographic projection with the same framing at the target.
+      const half = cam.position.distanceTo(V(c.look)) * Math.tan(THREE.MathUtils.degToRad(c.fov / 2));
+      cam.projectionMatrix.makeOrthographic(-half * cam.aspect, half * cam.aspect, half, -half, cam.near, cam.far);
+      cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+    }
+    cam.updateMatrixWorld();
     const look = V(c.look), dist = cam.position.distanceTo(look);
     cam.layers.enable(NOINK); // sky, clouds and sun sprites live on the no-ink layer but are still rendered
     for (const [id, g] of this.sets) g.visible = id === shot.set;
@@ -266,6 +298,10 @@ export class Stage {
       const u = THREE.MathUtils.clamp((t - t0) / (t1 - t0), 0, 1), dx = m.dx ?? 0, dz = m.dz ?? 0, dy = m.y ?? 0;
       g.position.set(x + dx + ((m.toDx ?? dx) - dx) * u, y + dy + ((m.toY ?? dy) - dy) * u, z + dz + ((m.toDz ?? dz) - dz) * u);
       g.rotation.y = THREE.MathUtils.degToRad(m.turn ?? 0);
+    });
+    for (const [s, displays] of this.screens) displays.forEach((d, i) => {
+      d.group.visible = s === shot;
+      if (s === shot) updateScreen(d, s.screens![i], s, t, def.spots[s.screens![i].at]);
     });
     // ---- light rig: camera-relative sun frozen per shot, two-tone uniforms, shadow fit ----
     const sunDir = this.shotSun(shot, def);
@@ -315,6 +351,12 @@ export class Stage {
       m.scale.set(cloud.width, cloud.height, 1);
       (m.material as THREE.MeshBasicMaterial).map = this.cloudMaps[shot.light][i % 4];
     });
+    this.background.visible = shot.set === "plano";
+    if (this.background.visible) {
+      const u = (this.background.material as THREE.ShaderMaterial).uniforms;
+      u.top.value.set(shot.background?.top ?? "#1d3a6b");
+      u.bottom.value.set(shot.background?.bottom ?? shot.background?.top ?? "#0b1730");
+    }
     // ---- cast: one card per actor, posed by its action, plus contact blobs ----
     const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0);
     const places: Place[] = [], fxp: FxPlace[] = [];
@@ -347,7 +389,7 @@ export class Stage {
         if (im < 0.7) fxp.push({ key: `puff|${q(im / 0.7, 20)}`, cw: 300, ch: 300, draw: (pen) => fxPuff(pen, im / 0.7), x: mid.x, y: p.y + 0.35 * sc, z: mid.z, w: 2.2 * sc, h: 2.2 * sc, soft: true });
         if (im > 0.2) fxp.push({ key: `stars|${q((im * 0.8) % 1, 24)}`, cw: 420, ch: 210, draw: (pen) => fxStars(pen, (im * 0.8) % 1), x: hands[a.who].head.x, y: hands[a.who].head.y + 0.55 * sc, z: hands[a.who].head.z, w: 1.1 * sc, h: 0.55 * sc });
       }
-      if (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march") blob(fxp, sunDir, shot.light, p.x, p.y, p.z, pop);
+      if (shot.set !== "plano" && (fo.mode === "stand" || fo.mode === "stroll" || fo.mode === "march")) blob(fxp, sunDir, shot.light, p.x, p.y, p.z, pop);
       if (shot.focus === a.who) focus = p.clone().setY(p.y + EYE * sc);
     }
     for (const th of shot.throws ?? []) { // a visible stone: hand -> forehead on an arc, with a trail; a burst on the hit

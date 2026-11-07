@@ -1,5 +1,7 @@
 import { SET_IDS, type SetId } from "./anchors";
 import type { SetDef } from "./types";
+import { bancada } from "./bancada";
+import { plano } from "./plano";
 import { palco } from "./palco";
 import { rua } from "./rua";
 import { paris } from "./paris";
@@ -16,5 +18,5 @@ const pending = (id: SetId): SetDef => ({
   build() { throw new Error(`cenário ainda não implementado: ${id}`); },
 });
 
-const BUILT: Partial<Record<SetId, SetDef>> = { palco, rua, paris, casa, escritorio, laboratorio, natureza, vale };
+const BUILT: Partial<Record<SetId, SetDef>> = { bancada, plano, palco, rua, paris, casa, escritorio, laboratorio, natureza, vale };
 export const SETS = Object.fromEntries(SET_IDS.map((id) => [id, BUILT[id] ?? pending(id)])) as Record<SetId, SetDef>;

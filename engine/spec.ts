@@ -1,3 +1,5 @@
+import { validateHud, type HudSpec } from "./hud";
+import { SCREEN_LAYERS, SCREEN_MODES } from "./screens";
 import { LIGHT_IDS } from "./style/lights";
 import { cameraCut, EASES, type CamKey } from "./camera";
 import { crowdFraming, speakerFraming } from "./framing";
@@ -41,11 +43,13 @@ export type EffectSpec = { kind: (typeof EFFECT_KINDS)[number]; at: string; dx?:
  *  between start and end (constant speed), facing `turn` degrees (0 = the model's own front); scale multiplies its height */
 export type MoverSpec = { model: string; at: string; dx?: number; dz?: number; y?: number; toDx?: number; toDz?: number; toY?: number;
   start?: number; end?: number; turn?: number; scale?: number };
+export type ScreenSpec = { at: string; mode: (typeof SCREEN_MODES)[number]; dx?: number; dz?: number; y?: number;
+  turn?: number; scale?: number; density?: number; toDensity?: number; speed?: number; trail?: boolean; explode?: [number, number][]; oled?: [number, number][]; highlight?: (typeof SCREEN_LAYERS)[number] };
 export type ShotSpec = { id: number; start: number; end: number; set: SetId; light: Light; cam: CamSpec; actors: ActorSpec[];
-  dof?: number; focus?: string; xfade?: number; kicks?: number[]; throws?: ThrowSpec[]; sky?: SkySpec; effects?: EffectSpec[]; movers?: MoverSpec[] };
+  dof?: number; focus?: string; xfade?: number; kicks?: number[]; throws?: ThrowSpec[]; sky?: SkySpec; effects?: EffectSpec[]; movers?: MoverSpec[]; screens?: ScreenSpec[]; hud?: HudSpec[]; background?: { top: string; bottom?: string } };
 export type SfxCue = { t: number; name: string; gainDb?: number };
 export type VideoSpec = { version: 1; slug: string; format: "historia" | "curiosidade" | "lista" | "e-se" | "e-se-serie"; fiction: boolean; fps: 30;
-  duration: number; cast: Record<string, CharDef>; shots: ShotSpec[]; dressing?: Partial<Record<SetId, PropSpec[]>>; flash?: number[]; sfx: SfxCue[]; music: { mood: Mood; stop?: number } };
+  duration: number; captionStyle?: "E" | "topo-caixa"; cast: Record<string, CharDef>; shots: ShotSpec[]; dressing?: Partial<Record<SetId, PropSpec[]>>; flash?: number[]; sfx: SfxCue[]; music: { mood: Mood; stop?: number } };
 
 const EPS = 1e-6;
 /** keys good enough to evaluate the camera (the detailed messages come from the scene pass) */
@@ -62,6 +66,7 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
   if (typeof x.slug !== "string" || !x.slug) errors.push("slug ausente");
   if (!["historia", "curiosidade", "lista", "e-se", "e-se-serie"].includes(x.format)) errors.push(`format inválido: ${x.format}`);
   if (typeof x.fiction !== "boolean") errors.push("fiction deve ser booleano");
+  if (x.captionStyle !== undefined && !["E", "topo-caixa"].includes(x.captionStyle)) errors.push("captionStyle inválido (E|topo-caixa)");
   if (x.fps !== 30) errors.push("fps deve ser 30");
   if (typeof x.duration !== "number" || !(x.duration > 0)) errors.push("duration inválida");
   if (!isObj(x.music) || !["curioso", "animado", "tenso", "calmo"].includes(x.music.mood)) errors.push("music.mood inválido");
@@ -113,6 +118,7 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
   let prevEnd = 0;
   shots.forEach((s, i) => {
     const c = `cena ${s?.id}`;
+    if (isObj(s)) errors.push(...validateHud(s.hud, s.start, s.end, Array.isArray(s.movers) ? s.movers.length : 0, Array.isArray(s.screens) ? s.screens.length : 0).map(e => `${c}: ${e}`));
     if (!isObj(s) || typeof s.start !== "number" || typeof s.end !== "number") { errors.push(`${c}: start/end inválidos`); return; }
     if (Math.abs(s.start - prevEnd) > EPS)
       errors.push(`${c}: começa em ${s.start.toFixed(1)} s mas ${i ? `a cena anterior termina em ${prevEnd.toFixed(1)} s` : "o vídeo começa em 0 s"}`);
@@ -218,7 +224,7 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
         (s.cam.punch === undefined || Array.isArray(s.cam.punch)) && (s.kicks === undefined || Array.isArray(s.kicks));
       const cast = isObj(x.cast) ? x.cast as Record<string, CharDef> : {};
       if (cameraValid) for (const speaker of placed.filter(ac => ac.action === "talk" || ac.who === s.focus)) {
-        const t = speakerFraming(s as ShotSpec, def, speaker as ActorSpec, cast);
+        const t = speakerFraming(s as ShotSpec, def, speaker as ActorSpec, cast, x.captionStyle);
         if (t !== undefined) errors.push(`${c}: quem fala (${speaker.who}) cortado pelo quadro em ${t.toFixed(6)} s ou cruza a faixa da legenda; use enquadramento inteiro ou close de rosto; altura mínima: aberto/baixo 18%, medio 35–45%, close 65%`);
       }
       for (const extra of actors.filter((ac) => typeof ac.path === "string" && Object.hasOwn(def.walkways, ac.path))) {
@@ -254,6 +260,34 @@ export function validateSpec(x: unknown, kit: Kit = {}): { ok: true; spec: Video
       if (e.start !== undefined) inside(e.start, "effect.start");
       if (e.end !== undefined) inside(e.end, "effect.end");
       if ((e.start ?? s.start) >= (e.end ?? s.end)) errors.push(`${n}: precisa de start < end`);
+    });
+    if (s.background !== undefined) {
+      const b = s.background, color = (v: unknown) => typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);
+      if (s.set !== "plano" || !isObj(b) || !color(b.top) || (b.bottom !== undefined && !color(b.bottom)))
+        errors.push(`${c}: background exige set plano e cores #rrggbb (top, bottom opcional)`);
+    }
+    if (s.set === "plano") {
+      if (list(s.screens, "screens").some(d => isObj(d) && (d.turn ?? 0) !== 0)) errors.push(`${c}: screen.turn deve ser zero no plano 2D`);
+      if (s.dof) errors.push(`${c}: plano 2D não usa dof`);
+    }
+    list(s.screens, "screens").forEach((d, j) => {
+      const n = `${c}: screen ${j + 1}`;
+      if (!isObj(d)) { errors.push(`${n} não é um objeto`); return; }
+      spot(d.at, "screen.at");
+      if (!(SCREEN_MODES as readonly string[]).includes(d.mode)) errors.push(`${n}: mode inválido`);
+      for (const k of ["dx", "dz", "y", "turn"]) if (d[k] !== undefined && !Number.isFinite(d[k])) errors.push(`${n}: ${k} inválido`);
+      if (d.scale !== undefined && !(typeof d.scale === "number" && d.scale >= 0.3 && d.scale <= 3)) errors.push(`${n}: scale deve ir de 0,3 a 3`);
+      for (const k of ["density", "toDensity"]) if (d[k] !== undefined && !(Number.isInteger(d[k]) && d[k] >= 2 && d[k] <= 128)) errors.push(`${n}: ${k} deve ser inteiro de 2 a 128`);
+      if (d.speed !== undefined && !(typeof d.speed === "number" && d.speed >= 0.1 && d.speed <= 10)) errors.push(`${n}: speed deve ir de 0,1 a 10 ciclos/s`);
+      for (const key of ["explode", "oled"]) if (d[key] !== undefined) {
+        const keys = d[key];
+        if (!Array.isArray(keys) || !keys.length || keys.some((k: any, i: number) =>
+          !Array.isArray(k) || k.length !== 2 || !Number.isFinite(k[0]) || k[0] < s.start || k[0] > s.end ||
+          !Number.isFinite(k[1]) || k[1] < 0 || k[1] > 1 || (i > 0 && k[0] <= keys[i - 1][0]))) errors.push(`${n}: ${key} exige chaves [tempo, valor 0–1] crescentes dentro da cena`);
+        if (s.set === "plano") errors.push(`${n}: ${key} exige monitor 3D`);
+      }
+      if (d.highlight !== undefined && !(SCREEN_LAYERS as readonly unknown[]).includes(d.highlight)) errors.push(`${n}: highlight inválido`);
+      if (d.trail !== undefined && typeof d.trail !== "boolean") errors.push(`${n}: trail deve ser booleano`);
     });
     list(s.movers, "movers").forEach((m, j) => {
       const n = `${c}: mover ${j + 1}`;

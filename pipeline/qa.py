@@ -37,6 +37,13 @@ def planned_frames(spec: dict, groups: list | None = None) -> set[int]:
         xf = s.get("xfade") or 0
         if xf > 0:
             out.update(range(round((s["start"] - xf / 2) * fps) - 1, round((s["start"] + xf / 2) * fps) + 2))
+    for shot in spec.get("shots", []):
+        for h in shot.get("hud", []):
+            times = [h["start"], h["end"]]
+            times.extend(item["t"] for item in h.get("items", []))
+            for t in times:
+                f = round(t * fps)
+                out.update((f - 1, f, f + 1))
     for t in spec.get("flash", []):
         f = round(t * fps)
         out.update(range(f - 1, f + 6))

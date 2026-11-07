@@ -34,7 +34,7 @@ const inside = (b: ReturnType<typeof bounds>) => b.depth && b.left >= -1 && b.ri
 export const CAPTION_TOP = 676;
 export const SPEAKER_MIN_HEIGHT: Record<string, number> = { aberto: 0.18, medio: 0.35, baixo: 0.18, close: 0.65 };
 /** A named face close keeps the chin above captions; other shots keep the complete card above them. */
-export function speakerFraming(shot: ShotSpec, def: SetDef, speaker: ActorSpec, cast: Record<string, CharDef>) {
+export function speakerFraming(shot: ShotSpec, def: SetDef, speaker: ActorSpec, cast: Record<string, CharDef>, captionStyle = "E") {
   const close = shot.cam.from === "close" && (shot.cam.recipe !== "glide" || shot.cam.to === "close");
   const project = projector(shot, def, cast);
   for (let f = 0; f <= Math.ceil((shot.end - shot.start) * 30); f++) {
@@ -57,7 +57,7 @@ export function speakerFraming(shot: ShotSpec, def: SetDef, speaker: ActorSpec, 
     const medium = shot.cam.from === "medio" && (shot.cam.recipe !== "glide" || shot.cam.to === "medio");
     const center = (b.left + b.right) / 2;
     const cropped = closeNow ? b.top > 1 || Math.abs(center) > 1 : !inside(b);
-    if (!b.depth || cropped || b.bottom < -1 + 2 * CAPTION_TOP / 1920 ||
+    if (!b.depth || cropped || (captionStyle === "topo-caixa" ? b.top > 1 - 2 * 380 / 1920 : b.bottom < -1 + 2 * CAPTION_TOP / 1920) ||
         height < minimum || (medium && height > 0.45)) return t;
   }
 }

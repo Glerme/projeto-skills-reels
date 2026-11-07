@@ -47,10 +47,10 @@ function keyCam(shot: ShotSpec, t: number, views: Record<string, Cam>, target: (
   const [ld, h, yaw, aim, fov, roll] = P[1].map((_, j) =>
     Math.min(Math.max(P[1][j], P[2][j]), Math.max(Math.min(P[1][j], P[2][j]), cr(P[0][j], P[1][j], P[2][j], P[3][j], u))));
   const A = target(a.on, f), B = target(b.on, f), c = mix3(A, B, u);
-  const y = (yaw0 + yaw) * Math.PI / 180, dist = Math.exp(ld);
+  const y = (shot.set === "plano" ? 0 : yaw0 + yaw) * Math.PI / 180, dist = Math.exp(ld);
   // every hold creeps in a little (reference: fov *= 1 - .00012 per frame)
   const creep = 1 - 0.00012 * Math.min(450, Math.round((t - shot.start) * fps));
-  return { pos: [c[0] + Math.sin(y) * dist, c[1] + h, c[2] + Math.cos(y) * dist], look: [c[0], c[1] + aim, c[2]], fov: fov * creep, roll };
+  return { pos: [c[0] + Math.sin(y) * dist, c[1] + (shot.set === "plano" ? aim : h), c[2] + Math.cos(y) * dist], look: [c[0], c[1] + aim, c[2]], fov: fov * creep, roll };
 }
 
 export function camAt(shot: ShotSpec, t: number, views: Record<string, Cam>, fps = 30, spots?: Record<string, V3>, walkways: Record<string, Walkway> = {}): Cam {
@@ -130,10 +130,13 @@ export function cameraCut(previous: ShotSpec, next: ShotSpec, views: Record<stri
   const i = tiers.indexOf(from), j = tiers.indexOf(next.cam.from);
   const errors: string[] = [];
   const angleLimit = previous.set === "paris" ? 2 : 15;
-  const lateralLimit = previous.set === "paris" ? 0.2 : Math.min(da, db) * 0.5;
+  const halfA = da * Math.tan(a.fov * Math.PI / 360), halfB = db * Math.tan(b.fov * Math.PI / 360);
+  const flat = previous.set === "plano";
+  const lateralLimit = flat ? Math.min(halfA, halfB) * 9 / 16 : previous.set === "paris" ? 0.2 : Math.min(da, db) * 0.5;
+  const zoomRatio = flat ? Math.max(halfA / halfB, halfB / halfA) : Math.max(da / db, db / da);
   if (angle > angleLimit + 1e-6 || sideways > lateralLimit + 1e-6 || (u[0] * v[0] < 0 && Math.min(Math.abs(u[0]), Math.abs(v[0])) > 0.5))
-    errors.push(`câmera muda de lado/eixo (deslocamento transversal > ${previous.set === "paris" ? "0,2 m" : "50% da menor distância"}) ou direção mais de ${angleLimit}°`);
-  if ((i >= 0 && j >= 0 && Math.abs(i - j) > 1) || Math.max(da / db, db / da) > 2.5 + 1e-6)
+    errors.push(`câmera muda de lado/eixo (deslocamento transversal > ${flat ? "50% da menor largura do quadro" : previous.set === "paris" ? "0,2 m" : "50% da menor distância"}) ou direção mais de ${angleLimit}°`);
+  if ((i >= 0 && j >= 0 && Math.abs(i - j) > 1) || zoomRatio > 2.5 + 1e-6)
     errors.push("câmera pula distância: use no máximo um degrau (aberto↔medio↔close) e razão de distância ≤ 2,5");
   return errors;
 }

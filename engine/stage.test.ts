@@ -58,6 +58,45 @@ test("Stage restores set dressing and sky after out-of-order seeks without a ren
     stage.update(a, 1, cam); assert.deepEqual(state(), first);
     stage.update({ ...golden, sky: { sun: false, clouds: 0 } }, 5, cam);
     assert.equal(stage.root.children.filter((o) => o instanceof THREE.Sprite && o.visible).length, 0);
+    const screenA: ShotSpec = { ...a, screens: [{ at: "centro", mode: "mistura" }] };
+    const screenB: ShotSpec = { ...b, screens: [{ at: "direita", mode: "oled" }] };
+    const displays = new Stage({}, { ...spec, shots: [screenA, screenB], dressing: {} });
+    displays.update(screenA, 0.2, cam);
+    const firstDisplay = displays["screens"].get(screenA)![0], secondDisplay = displays["screens"].get(screenB)![0];
+    const pixels = new Uint8Array(firstDisplay.texture.image.data as Uint8Array);
+    assert.equal(firstDisplay.group.visible, true); assert.equal(secondDisplay.group.visible, false);
+    displays.update(screenB, 3, cam);
+    assert.equal(firstDisplay.group.visible, false); assert.equal(secondDisplay.group.visible, true);
+    displays.update(screenA, 1.9, cam);
+    assert.notDeepEqual(firstDisplay.texture.image.data, pixels);
+    displays.update(screenA, 0.2, cam);
+    assert.deepEqual(firstDisplay.texture.image.data, pixels);
+
+    const flat: ShotSpec = { ...screenA, set: "plano", background: { top: "#123456", bottom: "#abcdef" },
+      cam: { recipe: "keys", from: "aberto", keys: [{ t: 0, dist: 12, yaw: 45, h: 4 }, { t: 2, on: [1, 0, 0], dist: 10 }] } };
+    const illustration = new Stage({}, { ...spec, shots: [flat, a], dressing: {} });
+    illustration.update(flat, 0, cam);
+    assert.equal(cam.projectionMatrix.elements[15], 1);
+    assert.equal(cam.position.x, 0); assert.equal(cam.position.y, 1.35);
+    const project = (z: number) => new THREE.Vector3(1, 1, z).project(cam);
+    assert.equal(project(0).x, project(-10).x, "no perspective scaling with depth");
+    assert.equal(illustration["background"].visible, true);
+    assert.equal(illustration["sky"].visible, false);
+    assert.equal(illustration["clouds"].some(c => c.visible), false);
+    const u = (illustration["background"].material as THREE.ShaderMaterial).uniforms;
+    assert.equal(u.top.value.getHexString(), "123456");
+    assert.equal(u.bottom.value.getHexString(), "abcdef");
+    const projection = cam.projectionMatrix.clone();
+    illustration.update(flat, 2, cam);
+    assert.notDeepEqual(cam.projectionMatrix, projection); assert.equal(cam.position.x, 1);
+    illustration.update(a, 1, cam);
+    assert.equal(cam.projectionMatrix.elements[15], 0);
+    assert.equal(illustration["background"].visible, false);
+    illustration.update({ ...flat, background: { top: "#334455" } }, 0, cam);
+    assert.equal(u.bottom.value.getHexString(), "334455");
+    illustration.update(flat, 0, cam);
+    assert.deepEqual(cam.projectionMatrix, projection);
+    assert.equal(u.bottom.value.getHexString(), "abcdef");
   } finally {
     SETS.rua.build = originalBuild;
     globalThis.document = previous;

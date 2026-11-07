@@ -28,6 +28,17 @@ _PROBLEMS = [
 ]
 
 
+# espeak pt-br lê o "x" de estrangeirismos como "ch" (pixel vira "pichel"): só a fala troca, a legenda não
+_SPOKEN = [(re.compile(r"pixel", re.I), "picsel")]
+
+
+def spoken(text: str) -> str:
+    """Texto que vai para o Kokoro, com a grafia que o espeak pronuncia certo."""
+    for rx, sub in _SPOKEN:
+        text = rx.sub(sub, text)
+    return text
+
+
 def check_text(text: str) -> list[str]:
     """Problemas do roteiro para a voz, em pt-BR (lista vazia = pode sintetizar)."""
     return [msg for rx, msg in _PROBLEMS if rx.search(text)]
@@ -43,7 +54,7 @@ def synth(text: str, out: Path, voice: str = "pm_alex") -> float:
 
     k = Kokoro(str(MODELS / "models/kokoro-v1.0.onnx"), str(MODELS / "voices/voices-v1.0.bin"),
                espeak_config=EspeakConfig(lib_path=ESPEAK_LIB, data_path=ESPEAK_DATA))
-    audio, sr = k.create(text, voice=voice, speed=1.0, lang="pt-br")
+    audio, sr = k.create(spoken(text), voice=voice, speed=1.0, lang="pt-br")
     out.parent.mkdir(parents=True, exist_ok=True)
     sf.write(str(out), audio, sr)
     return len(audio) / sr

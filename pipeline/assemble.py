@@ -107,7 +107,7 @@ def assemble(video_dir: Path) -> Path:
     dur = spec["duration"]
     # sound and captions
     mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], dur, d / "assets/mix.wav", stop=spec["music"].get("stop"))
-    captions.render_html(captions.group(words), d / "compositions/captions.html")
+    captions.render_html(captions.group(words), d / "compositions/captions.html", spec.get("captionStyle", "E"))
     # page
     ov_html, ov_js = overlays_html(spec)
     spec_json = json.dumps(spec, ensure_ascii=False).replace("</", "<\\/")

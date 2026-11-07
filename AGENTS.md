@@ -60,7 +60,8 @@ orca terminal wait --terminal <handle> --for exit --timeout-ms 1800000 --json
 cat videos/<slug>/agentes/<papel>.txt
 ```
 
-- Se o diretor errar o mesmo ponto duas vezes, rode o passo com Claude Opus no lugar do Codex.
+- Se o diretor (ou outro worker Codex) errar o mesmo ponto duas vezes, rode o passo com Claude Opus no lugar do Codex:
+  `WORKER_MODEL=opus bash scripts/worker.sh <papel> …` (o Opus pode tirar stills com `scripts/preview.sh` e olhar).
 - O revisor acha um problema novo a cada volta: pare em 3 voltas e decida.
 - O revisor Haiku é bom para regras, fraco para "isto parece o que deveria?". Na peça nova, o coordenador confere a
   folha de stills.

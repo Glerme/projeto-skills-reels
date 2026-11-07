@@ -85,19 +85,31 @@ TEMPLATE = """<template>
 """
 
 
-def render_html(groups: list[Group], out: Path) -> None:
+def render_html(groups: list[Group], out: Path, style: str = "E") -> None:
     """Escreve a sub-composição de legendas (um clip por grupo)."""
     rows = []
     for i, g in enumerate(groups):
         lines = _lines(g["text"])
         body = "<br>".join(html.escape(x) for x in lines)
+        if style == "topo-caixa":
+            stop = {"A", "O", "AS", "OS", "DE", "DA", "DO", "EM", "E", "UM", "UMA", "QUE", "PARA", "COM", "VOCÊ", "SE", "NO", "NA", "POR", "É"}
+            candidates = [w for w in re.findall(r"\w+", g["text"]) if w not in stop]
+            keyword = max(candidates, key=len, default="")
+            body = "<br>".join(" ".join(f'<b>{html.escape(w)}</b>' if w.strip(".,!?;:…") == keyword else html.escape(w) for w in line.split()) for line in lines)
         rows.append(f'    <div id="cap-{i}" class="clip cap" data-start="{g["start"]}" data-duration="{round(g["end"] - g["start"], 3)}" '
                     f'data-longest="{html.escape(max(lines, key=len))}"><span>{body}</span></div>')
     # one show + one hard kill per group (an instant set on the inner span, never a tween on the .clip)
     sets = "\n".join(f'    tl.set("#cap-{i} span", {{ opacity: 1, visibility: "visible" }}, {g["start"]});\n'
                      f'    tl.set("#cap-{i} span", {{ opacity: 0, visibility: "hidden" }}, {g["end"]});' for i, g in enumerate(groups))
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(TEMPLATE.format(groups="\n".join(rows), sets=sets), encoding="utf-8")
+    page = TEMPLATE.format(groups="\n".join(rows), sets=sets)
+    if style == "topo-caixa":
+        page = page.replace("</style>", """#root .cap { bottom: auto; top: 160px; }
+    #root .cap span { font-family: sans-serif; font-weight: 500; line-height: 1.2; -webkit-text-stroke: 0; text-shadow: 0 2px 4px #101a30; }
+    #root b { font-weight: inherit; border: 1px solid #9edbff; padding: 0 5px; position: relative; }
+    #root b::before { content: ''; position: absolute; inset: -2px; background: radial-gradient(circle at 2px 2px,#9edbff 2px,transparent 3px) top left / 4px 4px no-repeat, radial-gradient(circle,#9edbff 2px,transparent 3px) top right / 4px 4px no-repeat, radial-gradient(circle,#9edbff 2px,transparent 3px) bottom left / 4px 4px no-repeat, radial-gradient(circle,#9edbff 2px,transparent 3px) bottom right / 4px 4px no-repeat; }
+    </style>""").replace('fontFamily: "Archivo Black", fontWeight: 400', 'fontFamily: "sans-serif", fontWeight: 500').replace('Math.min(78,', 'Math.min(58,')
+    out.write_text(page, encoding="utf-8")
 
 
 def host_html(duration: float) -> str:

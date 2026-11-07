@@ -98,3 +98,31 @@ Pacotes que já estão no kit (todos CC0), para baixar de novo numa máquina nov
 - **Pirata** (`kit/characters/pirata.json`): bandana, barba, faixa e tapa-olho (`eyepatch`).
 
 Catálogo visual: regenere com `bash scripts/catalogo.sh` e veja as folhas em `docs/kit/catalogo/*.jpg`.
+
+### Tela de pixels (`screens`)
+
+Peça procedural genérica `pixel-display`, sem baixar modelo: carcaça neutra com contorno e tela luminosa em +z.
+Use `shots[].screens: [{"at":"centro","mode":"imagem"}]`; não entra no `dressing` nem em `models.json`.
+Modos: `imagem subpixels mistura grade varredura rastro lcd oled`; posição, escala e controles em `cenas.md`.
+A tela mantém pixels nítidos no close; LCD/OLED usam a mesma imagem escura, com preto cinza visível no LCD e apagado no OLED.
+`mistura` começa com vermelho aceso; verde e azul entram em rampas de 0,6 s nos terços seguintes,
+com o mesmo fade da soma num quadrado grande;
+`grade` mistura duas densidades fixas; `varredura` retorna por fora da tela, com perda suave de brilho por linha; `rastro` usa paisagem e bola clara com contorno.
+
+No cenário `plano`, o mesmo `screens` usa moldura, pé e base 2D sem volume, com o contorno do perfil.
+Sem modelos novos: os oito modos e as transições continuam iguais. `imagem` usa 128 colunas por padrão;
+`grade` vai de 24 a 128. A textura de 768 × 432 preserva o detalhe no zoom; `subpixels` continua sendo o close RGB.
+
+### Bancada de objetos (`bancada`)
+
+Parede curva azul-roxa listrada, móveis num anel a 14 m (sempre longe da peça) e halo que fica atrás da peça em qualquer yaw; piso quadriculado e pedestal com anel emissivo (topo em y = 0,32 m, raio 2,2 m).
+`centro` apoia o objeto no topo; spots `esquerda`, `direita`, `fundo`, `esquina` ficam no chão.
+Views `aberto`, `medio`, `close`, `baixo` (três quartos), `aereo`. Use `screens` em `centro`,
+com escala 0,55 para o teste das views; `dof: 24` e `focus: "centro"` desfocam bem o escritório.
+Câmera `keys`: iniciar o próximo plano no fim do anterior. Teste: `videos/_teste-bancada/video.json`.
+
+- **Monitor desmontável (`screens`, 3D):** cinco lâminas paralelas, de trás para frente: luz de fundo,
+  polarizador de trás (vertical), cristal (bastões girando), filtro RGB, polarizador da frente (horizontal).
+  `explode` afasta as lâminas para trás e para cima, em escada; veja de três quartos (yaw −40° a −50°); `highlight` destaca uma lâmina; `oled` remove as camadas LCD por fade.
+  Moldura e suporte ficam fixos. Tela lisa: `mode: "branco"`. Chaves e âncoras HUD em `cenas.md`;
+  teste sem atores no pedestal de `bancada`: `videos/_teste-explodido/`.

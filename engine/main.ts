@@ -1,3 +1,4 @@
+import { drawHud } from "./hud";
 // HyperFrames entry for every video. The spec (video.json) is inlined in the page as #video-spec; one Stage per
 // canvas is posed for the time HyperFrames seeks to (hf-seek). Post chain: InkPass (own pass) -> lens blur pre ->
 // lens main -> [bloom + NEUTRAL tone map + grade] (one EffectPass), MSAA 4. Ink runs before the DOF so lines blur
@@ -47,8 +48,8 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
   scene.add(stage.root);
   const props = catalog?.map(item => item.model ? catalogProp(item.model, kit) : null) ?? [];
   props.forEach(group => { if (group) scene.add(group); });
-  const overlay = catalog ? document.createElement("canvas") : null;
-  if (overlay) { overlay.width = W; overlay.height = H; canvas.after(overlay); }
+  const overlay = (catalog || spec.shots.some(s => s.hud?.length)) ? document.createElement("canvas") : null;
+  if (overlay) { overlay.width = W; overlay.height = H; canvas.after(overlay); overlay.style.pointerEvents = "none"; }
   scene.fog = stage.fog; scene.background = null;
   const fx = {
     ink: new InkPass(scene, cam),
@@ -82,11 +83,13 @@ const makeView = (canvas: HTMLCanvasElement, kit: Kit, W: number, H: number) => 
     fx.lens.focus = Math.max(0.3, target.sub(cam.position).dot(fwd));
     fx.lens.cInf = shot.dof ?? 0; // blur-disc radius in px at 1080x1920 for things at infinity; 0 = all sharp
     gradeFor(fx.grade, shot.light);
+    if (shot.set === "plano") fx.grade.amount = 0;
     fx.grain.seed = Math.round(t * spec.fps); // deterministic per frame
     composer.render(0); // fixed delta: frames are seeked out of order
     if (overlay) {
       overlay.style.opacity = canvas.style.opacity;
       const ctx = overlay.getContext("2d")!; ctx.clearRect(0, 0, W, H);
+      drawHud(ctx, shot.hud ?? [], t, cam, (a, offset) => stage.hudPoint(shot, a, offset));
       if (catalog?.[shot.id - 1].anchors) drawCatalogAnchors(ctx, shot, cam);
     }
   };
@@ -107,6 +110,8 @@ const renderAt = (views: Draw[], time: number) => {
   views.forEach((draw, i) => {
     const l = layers[i];
     canvases[i].style.opacity = l ? String(l.alpha) : "0";
+    const hud = canvases[i].nextElementSibling;
+    if (hud instanceof HTMLCanvasElement && !canvases.includes(hud)) hud.style.opacity = canvases[i].style.opacity;
     if (l) draw(l.shot, t);
   });
   flash.style.opacity = String(flashAlpha(spec, t));
