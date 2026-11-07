@@ -106,3 +106,29 @@ class AssembleTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Assemble2dTest(unittest.TestCase):
+    def setUp(self):
+        self.d = tempfile.TemporaryDirectory()
+        self.dir = Path(self.d.name) / "mini2d"
+        shutil.copytree(MINI, self.dir)
+        spec = json.loads((self.dir / "video.json").read_text(encoding="utf-8"))
+        (self.dir / "video.json").write_text(json.dumps({"mode": "2d", "duration": spec["duration"], "music": spec["music"]}), encoding="utf-8")
+
+    def tearDown(self):
+        self.d.cleanup()
+
+    def test_scene_embedded_without_engine(self):
+        (self.dir / "scene.html").write_text('<svg id="peca"></svg><script>tl.to("#peca", {x: 1}, at("{w}"));</script>', encoding="utf-8")
+        html = assemble(self.dir).read_text(encoding="utf-8")
+        self.assertIn('<svg id="peca">', html)
+        self.assertNotIn("{{", html)
+        self.assertIn('data-track-kind="captions"', html)
+        self.assertTrue((self.dir / "assets/mix.wav").exists())
+        self.assertFalse((self.dir / "lib/engine.js").exists())
+
+    def test_missing_scene_exits_1(self):
+        with self.assertRaises(SystemExit) as e, contextlib.redirect_stderr(io.StringIO()):
+            check(self.dir)
+        self.assertEqual(e.exception.code, 1)
