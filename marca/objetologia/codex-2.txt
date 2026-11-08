@@ -1,0 +1,3 @@
+Criados os cinco arquivos pedidos em `marca/objetologia/`, com haste removida e símbolo ampliado.
+[Ver folha comparativa](marca/objetologia/final-folha.png). PNGs gerados com `rsvg-convert`; dimensões conferidas.
+Originais preservados, sem commit. Não fiz inspeção visual.

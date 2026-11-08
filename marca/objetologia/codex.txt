@@ -1,0 +1,8 @@
+- A: lâmpada acesa com filamento e raios.
+- B: lâmpada com engrenagem — **recomendada**, comunica “como funciona por dentro”.
+- C: vista explodida do vidro, filamento e rosca.
+- D: lâmpada com chave de boca integrada.
+
+[Ver comparação](marca/objetologia/folha.png). SVGs, PNGs e versão B com nome entregues na mesma pasta.
+
+Conferidos visualmente, inclusive a 110 px. Sem commit; a fonte do SVG com nome pode variar entre sistemas.

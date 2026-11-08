@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title"><title id="title">Objetologia — símbolo D</title><defs>
+ <radialGradient id="bg" cx="45%" cy="38%" r="72%"><stop stop-color="#1f2c5c"/><stop offset=".55" stop-color="#141d42"/><stop offset="1" stop-color="#0b112a"/></radialGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".28"/></filter>
+</defs><rect width="1080" height="1080" fill="url(#bg)"/><g filter="url(#shadow)"><path d="M451 670v-31c0-62-102-97-102-228a191 191 0 1 1 382 0c0 131-102 166-102 228v31z" fill="#f5b82e"/>
+<path d="M540 220a191 191 0 0 1 191 191c0 131-102 166-102 228v31h-34v-38c0-79 94-109 94-221 0-93-63-166-149-191z" fill="#d99a20"/>
+<path d="M393 412c0-72 43-126 100-143" fill="none" stroke="#fff0b8" stroke-width="25" stroke-linecap="round"/><path d="M522 667V525" stroke="#94601c" stroke-width="17" stroke-linecap="round"/>
+<path d="M489 370c-25 8-42 32-42 59 0 34 24 63 57 69v58h72v-58c33-6 57-35 57-69 0-27-17-51-42-59v61l-51 29-51-29z" fill="#5b6688"/>
+<path d="M514 543h48" stroke="#c9d1e3" stroke-width="11" stroke-linecap="round"/><g><rect x="451" y="665" width="178" height="122" rx="27" fill="#8f9ab5"/>
+<path d="M478 679h125v90H478z" fill="#c9d1e3"/>
+<path d="M462 697l156 -12m-156 48l156 -12m-156 48l156 -12" stroke="#5b6688" stroke-width="13" stroke-linecap="round"/>
+<path d="M495 787h90v12a27 27 0 0 1 -27 27h-36a27 27 0 0 1 -27 -27z" fill="#8f9ab5"/></g></g></svg>
