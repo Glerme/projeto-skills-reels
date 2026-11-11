@@ -2,7 +2,7 @@
 
 Faça a logo do perfil **Objetologia** (shorts que explicam como funcionam os objetos do dia a dia).
 O símbolo é uma **lâmpada**, no mesmo estilo 2D dos nossos vídeos explicadores
-(leia `~/.claude/skills/explicador-2d/references/estilo.md`: paleta, sombra, cantos arredondados).
+(leia `~/Documentos/projetos/explicador-2d/skill/references/estilo.md`: paleta, sombra, cantos arredondados).
 
 ## Estilo (obrigatório)
 - Desenho vetorial chapado, limpo, SEM contorno preto grosso; leve sombra e um brilho, como as peças dos vídeos.

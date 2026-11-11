@@ -81,7 +81,7 @@ def analyze(F: np.ndarray, planned: set[int]) -> tuple[list[str], dict]:
     return probs, {"mean": mean, "diff": diff}
 
 
-RANGES = {"explicador": (90, 130), "historia": (50, 70), "curiosidade": (30, 45), "lista": (45, 60), "e-se": (15, 25), "e-se-serie": (45, 60)}  # formatos.md
+RANGES = {"historia": (50, 70), "curiosidade": (30, 45), "lista": (45, 60), "e-se": (15, 25), "e-se-serie": (45, 60)}  # formatos.md
 
 
 def metrics(spec: dict, words: list[dict]) -> list[str]:

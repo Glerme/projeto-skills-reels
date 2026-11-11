@@ -90,42 +90,12 @@ def _validate(spec: dict) -> None:
         raise SystemExit(1)
 
 
-def _check_2d(video_dir: Path, spec: dict) -> None:
-    """modo 2d: a imagem vem de scene.html (SVG + GSAP), sem o motor 3D"""
-    errs = []
-    if not isinstance(spec.get("duration"), (int, float)) or spec["duration"] <= 0:
-        errs.append("duration precisa ser um número > 0")
-    if not isinstance(spec.get("music"), dict) or "mood" not in spec["music"]:
-        errs.append("music.mood é obrigatório")
-    if not (Path(video_dir) / "scene.html").exists():
-        errs.append("modo 2d precisa de scene.html na pasta do vídeo")
-    if errs:
-        print("\n".join(errs), file=sys.stderr)
-        raise SystemExit(1)
-
-
 def check(video_dir: Path) -> dict:
     """só valida: resolve o elenco do acervo e roda o validador (não grava nada); devolve o spec resolvido"""
     spec = json.loads((Path(video_dir) / "video.json").read_text(encoding="utf-8"))
-    if spec.get("mode") == "2d":
-        _check_2d(video_dir, spec)
-        return spec
     spec = resolve_cast(spec)
     _validate(spec)
     return spec
-
-
-def assemble_2d(d: Path, spec: dict, words: list) -> Path:
-    dur = spec["duration"]
-    html = ((ROOT / "template/index-2d.html").read_text(encoding="utf-8")
-            .replace("{{DURATION}}", str(dur))
-            .replace("{{CAPTIONS_HOST}}", captions.host_html(dur))
-            .replace("{{WORDS}}", json.dumps(words, ensure_ascii=False).replace("</", "<\\/"))
-            .replace("{{SCENE}}", (d / "scene.html").read_text(encoding="utf-8")))  # last: the scene may contain braces
-    shutil.copy2(ROOT / "template/hyperframes.json", d / "hyperframes.json")
-    index = d / "index.html"
-    index.write_text(html, encoding="utf-8")
-    return index
 
 
 def assemble(video_dir: Path) -> Path:
@@ -136,8 +106,6 @@ def assemble(video_dir: Path) -> Path:
     # sound and captions
     mix(d / "assets/voice.wav", words, spec.get("sfx", []), spec["music"]["mood"], dur, d / "assets/mix.wav", stop=spec["music"].get("stop"))
     captions.render_html(captions.group(words), d / "compositions/captions.html", spec.get("captionStyle", "E"))
-    if spec.get("mode") == "2d":
-        return assemble_2d(d, spec, words)
     engine = ROOT / "lib/engine.js"
     if not engine.exists():
         raise SystemExit("falta lib/engine.js: rode `npm run build`")
